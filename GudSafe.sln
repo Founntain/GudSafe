@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GudSafe.WebApp", "GudSafe.WebApp\GudSafe.WebApp.csproj", "{5518BA4D-7941-412E-B12C-2A9C7EDBF6FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GudSafe.Data", "GudSafe.Data\GudSafe.Data.csproj", "{C6103193-864B-4CE6-A787-3A4277A7D170}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{5518BA4D-7941-412E-B12C-2A9C7EDBF6FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5518BA4D-7941-412E-B12C-2A9C7EDBF6FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5518BA4D-7941-412E-B12C-2A9C7EDBF6FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6103193-864B-4CE6-A787-3A4277A7D170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6103193-864B-4CE6-A787-3A4277A7D170}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6103193-864B-4CE6-A787-3A4277A7D170}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6103193-864B-4CE6-A787-3A4277A7D170}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
