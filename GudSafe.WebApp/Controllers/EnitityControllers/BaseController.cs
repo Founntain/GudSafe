@@ -7,7 +7,7 @@ namespace GudSafe.WebApp.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class BaseController<TController> : ControllerBase
+public class BaseController<TController> : Controller
 {
     protected readonly GudSafeContext _context;
     protected readonly IMapper _mapper;

@@ -3,6 +3,7 @@ using GudSafe.Data;
 using GudSafe.Data.Entities;
 using GudSafe.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
 
 namespace GudSafe.WebApp.Controllers;
@@ -17,9 +18,9 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
 
     [HttpGet]
     [Route("{name}")]
-    public ActionResult Get(string name)
+    public async Task<ActionResult> Get(string name)
     {
-        var file = _context.Files.FirstOrDefault(x => x.UniqueId == Guid.Parse(name));
+        var file = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == Guid.Parse(name));
 
         if (file == null)
             return NotFound();
@@ -29,9 +30,9 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
 
     [HttpGet]
     [Route("{name}/thumbnail")]
-    public ActionResult GetThumb(string name)
+    public async Task<ActionResult> GetThumb(string name)
     {
-        var file = _context.Files.FirstOrDefault(x => x.UniqueId == Guid.Parse(name));
+        var file = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == Guid.Parse(name));
 
         if (file == null)
             return NotFound();
@@ -82,5 +83,24 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
             Url = $"{Request.Scheme}://{Request.Host}/api/files/{newEntry.Entity.UniqueId}",
             ThumbnailUrl = $"{Request.Scheme}://{Request.Host}/api/files/{newEntry.Entity.UniqueId}/thumbnail"
         });
+    }
+    
+    [HttpPost]
+    [Route("delete")]
+    public async Task<ActionResult> Delete(Guid id)
+    {
+        if (id == Guid.Empty)
+            return BadRequest("Please supply a valid ID");
+
+        var fileToDelete = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == id);
+
+        if (fileToDelete == default)
+            return NotFound("The file you try to delete wasn't found");
+
+        _context.Files.Remove(fileToDelete);
+
+        var result = await _context.SaveChangesAsync();
+
+        return result == 1 ? Ok() : BadRequest("File could not be deleted, please try again alter");
     }
 }

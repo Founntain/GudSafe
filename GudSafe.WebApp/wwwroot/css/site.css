@@ -1,5 +1,7 @@
 html {
   font-size: 14px;
+  background: #371B58 !important;
+  color: white !important;
 }
 
 @media (min-width: 768px) {
@@ -15,4 +17,36 @@ html {
 
 body {
   margin-bottom: 60px;
+  background: #371B58 !important;
+  color: white !important;
 }
+
+.navbar-custom{
+  background: #4C3575 !important;
+  color: white !important;
+  border-color: black !important;
+}
+
+.uploadContainer {
+  height: 250px;
+  width: 250px;
+  border: 1px #4C3575 solid;
+  border-radius: 5px;
+}
+
+.upload{
+  width: auto;
+  height: 100%;
+  border-radius: 5px;
+  display: block;
+  max-width: 200px;
+  object-fit: contain;
+  margin: auto;
+}
+
+.uploadBox{
+  height: 200px;
+  width: 200px;
+  display: inline-block;
+}
+

@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddMvc(options => { options.EnableEndpointRouting = false; });
+builder.Services.AddMvc(options => { options.EnableEndpointRouting = false; }).AddControllersAsServices();
 
 builder.Services.AddDbContext<GudSafeContext>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
