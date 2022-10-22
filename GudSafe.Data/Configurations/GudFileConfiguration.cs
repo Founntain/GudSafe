@@ -9,7 +9,7 @@ public class GudFileConfiguration : BaseConfiguration<GudFile>
     {
         base.Configure(builder);
 
-        builder.HasIndex(x => x.Name).IsUnique();
+        //builder.HasIndex(x => x.Name).IsUnique();
 
         builder.HasOne(x => x.Creator).WithMany(x => x.FilesUploaded);
         builder.HasMany(x => x.Collections).WithMany(x => x.Files);

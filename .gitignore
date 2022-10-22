@@ -4,3 +4,8 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 GudSafe.sln.DotSettings.user
+dataSources.xml
+
+*.db
+*.db-shm
+*.db-wal
