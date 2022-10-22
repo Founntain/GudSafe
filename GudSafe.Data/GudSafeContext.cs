@@ -10,7 +10,7 @@ public class GudSafeContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<GudFile> Files { get; set; }
     public DbSet<Collection> Collections { get; set; }
-    
+
     public GudSafeContext()
     {
         Database.EnsureCreated();

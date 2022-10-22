@@ -1,8 +1,7 @@
-namespace GudSafe.Data.Entities
+namespace GudSafe.Data.Entities;
+
+public class GudCollection : BaseEntity
 {
-    public class GudCollection : BaseEntity
-    {
-        public virtual User Creator { get; set; }
-        public virtual HashSet<GudFile> Files { get; set; } = new ();
-    }
+    public virtual User Creator { get; set; }
+    public virtual HashSet<GudFile> Files { get; set; } = new();
 }

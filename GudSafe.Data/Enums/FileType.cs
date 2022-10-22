@@ -1,10 +1,9 @@
-namespace GudSafe.Data.Enums
+namespace GudSafe.Data.Enums;
+
+public enum FileType
 {
-    public enum FileType
-    {
-        Image,
-        Audio,
-        Video,
-        Other
-    }
+    Image,
+    Audio,
+    Video,
+    Other
 }

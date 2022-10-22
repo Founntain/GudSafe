@@ -1,14 +1,15 @@
+using GudSafe.Data.Entities;
 using GudSafe.Data.Enums;
 
-namespace GudSafe.Data.Entities;
+namespace GudSafe.Data.Models;
 
-public class GudFile : BaseEntity
+public class GudFileModel : BaseModel
 {
     public byte[] FileData { get; set; }
     public byte[] Thumbnail { get; set; }
     public FileType FileType { get; set; }
     public string FileExtension { get; set; }
 
-    public virtual User Creator { get; set; }
-    public virtual HashSet<GudCollection> Collections { get; set; }
+    public UserModel Creator { get; set; }
+    public List<GudCollectionModel> Collections { get; set; }
 }

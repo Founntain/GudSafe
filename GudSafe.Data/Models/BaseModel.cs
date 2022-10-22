@@ -1,9 +1,8 @@
-namespace GudSafe.Data.Models
+namespace GudSafe.Data.Models;
+
+public class BaseModel
 {
-    public class BaseModel
-    {
-        public ulong Id { get; set; }
-        public DateTimeOffset CreationTime { get; set; }
-        public string Name { get; set; }
-    }
+    public ulong Id { get; set; }
+    public DateTimeOffset CreationTime { get; set; }
+    public string Name { get; set; }
 }
