@@ -11,7 +11,6 @@ public class UserConfiguration : BaseConfiguration<User>
         base.Configure(builder);
 
         builder.HasIndex(x => x.Name).IsUnique();
-        builder.HasIndex(x => x.Email).IsUnique();
         builder.HasIndex(x => x.ApiKey).IsUnique();
 
         builder.HasMany(x => x.FilesUploaded).WithOne(x => x.Creator);

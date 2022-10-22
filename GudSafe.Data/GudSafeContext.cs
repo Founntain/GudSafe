@@ -1,7 +1,6 @@
 ﻿using GudSafe.Data.Configurations;
 using GudSafe.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 
 namespace GudSafe.Data;
 
@@ -9,7 +8,7 @@ public class GudSafeContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<GudFile> Files { get; set; }
-    public DbSet<Collection> Collections { get; set; }
+    public DbSet<GudCollection> Collections { get; set; }
 
     public GudSafeContext()
     {
@@ -21,5 +20,11 @@ public class GudSafeContext : DbContext
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new GudFileConfiguration());
         modelBuilder.ApplyConfiguration(new GudCollectionConfiguration());
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlite("Data Source=GudSafe.db");
+        optionsBuilder.UseLazyLoadingProxies();
     }
 }
