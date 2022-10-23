@@ -86,7 +86,23 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
         }
         else
         {
-            newFile.ThumbnailData = Array.Empty<byte>();
+            using var bitmap = new SKBitmap();
+            using var surface = SKSurface.Create(new SKImageInfo(200, 200));
+            using var paint = new SKPaint();
+
+            paint.Color = SKColors.White;
+            paint.TextAlign = SKTextAlign.Center;
+            paint.TextSize = 36;
+            paint.IsAntialias = true;
+            paint.FilterQuality = SKFilterQuality.High;
+
+            surface.Canvas.DrawColor(new SKColor(255, 255, 255, 25));
+            surface.Canvas.DrawText($".{newFile.FileExtension}", 100, 109, paint);
+            surface.Canvas.Flush();
+
+            using var data = surface.Snapshot().Encode(SKEncodedImageFormat.Webp, 75);
+
+            newFile.ThumbnailData = data.ToArray();
         }
 
         var newEntry = await _context.Files.AddAsync(newFile);
