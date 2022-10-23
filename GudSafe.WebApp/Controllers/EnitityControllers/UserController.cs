@@ -23,13 +23,13 @@ public class UserController : BaseEntityController<UserController, User, UserMod
             || string.IsNullOrWhiteSpace(model.Password))
             return BadRequest("Please provide a Name and Password");
 
-        var hashedPassword = PasswordManager.HashPassword(model.Password);
+        PasswordManager.HashPassword(model.Password, out var salt, out var hashedPassword);
 
         var user = new User
         {
             Name = model.Name,
-            Password = hashedPassword.Item2,
-            Salt = hashedPassword.Item1
+            Password = hashedPassword,
+            Salt = salt
         };
 
         await _context.Users.AddAsync(user);

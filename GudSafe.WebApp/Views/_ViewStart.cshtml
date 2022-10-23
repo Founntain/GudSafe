@@ -1,3 +1,8 @@
-﻿@{
+﻿@using System.Security.Claims
+@{
     Layout = "_Layout";
+
+    var userName = User.FindFirstValue(ClaimTypes.Name);
+
+    ViewData["LoggedIn"] = userName != null;
 }
