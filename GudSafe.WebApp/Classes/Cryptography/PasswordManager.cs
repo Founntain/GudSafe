@@ -8,19 +8,20 @@ public class PasswordManager
     /// <summary>
     /// Hashes and salts a given password
     /// </summary>
-    /// <param name="password"></param>
-    /// <returns>Returns a tuple with (Salt, Hashed Password)</returns>
-    public static Tuple<string, string> HashPassword(string password){
-        var salt = HashString(GetSalt());
-            
+    /// <param name="password">The password to be hashed</param>
+    /// <param name="salt">The salt generated</param>
+    /// <param name="hashedPassword">The hashed password</param>
+    public static void HashPassword(string password, out string salt, out string hashedPassword)
+    {
+        salt = HashString(GetSalt());
+
         var passwordWithSalt = password + salt;
 
-        var hashedPassword = HashString(passwordWithSalt);
-
-        return new Tuple<string, string>(salt, hashedPassword);
+        hashedPassword = HashString(passwordWithSalt);
     }
 
-    public static bool CheckIfPasswordIsCorrect(string password, string salt, string storedPassword){
+    public static bool CheckIfPasswordIsCorrect(string password, string salt, string storedPassword)
+    {
         var passwordWithSalt = password + salt;
 
         var hashedPassword = HashString(passwordWithSalt);
@@ -30,13 +31,16 @@ public class PasswordManager
         return result;
     }
 
-    private static string HashString(string input){
-        using(var sha256Hash = SHA256.Create()){
+    private static string HashString(string input)
+    {
+        using (var sha256Hash = SHA256.Create())
+        {
             var data = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
 
             var builder = new StringBuilder();
 
-            for(var i = 0; i < data.Length; i++){
+            for (var i = 0; i < data.Length; i++)
+            {
                 builder.Append(data[i].ToString("x2"));
             }
 
@@ -46,7 +50,8 @@ public class PasswordManager
         }
     }
 
-    private static string GetSalt(){
+    private static string GetSalt()
+    {
         var rng = new RNGCryptoServiceProvider();
 
         var data = new byte[2048];
