@@ -1,0 +1,24 @@
+@using System.Globalization
+@model GudSafe.Data.ViewModels.UserSettingsViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Dashboard - UserSettings";
+}
+
+<div>
+    <h1 class="display-4">User Settings</h1>
+
+    <div class="text-center">
+        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
+        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
+        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
+    </div>
+    
+    <div>
+        <form>
+            <label for="apikey">API-Key</label>
+            <input class="form-control" name="apikey" type="text" placeholder="APIKEY" value="@Model.ApiKey"/>
+        </form>
+    </div>
+</div>

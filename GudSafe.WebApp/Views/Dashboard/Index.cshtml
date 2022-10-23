@@ -1,7 +1,3 @@
-@using System.Globalization
-@model GudSafe.Data.ViewModels.DashboardViewModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
 @{
     ViewData["Title"] = "Dashboard - Home";
 }
@@ -10,32 +6,10 @@
     <h1 class="display-4">Uploads</h1>
 
     <div>
-        <a class="btn btn-primary">Gallery</a>
-        <a class="btn btn-primary">User settings</a>
-        <a class="btn btn-primary">ShareX profile</a>
+        <div>
+                <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
+                <a class="btn btn-primary" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
+                <a class="btn btn-primary" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
+            </div>
     </div>
-
-    <div class="row">
-
-        @{
-            foreach (var file in Model?.Files)
-            {
-                <div class="col-lg-4 col-md-12 mb-4 ">
-                    <div class="uploadBox">
-                        <img class="upload" src="https://localhost:7026/api/files/@file.UniqueId"/>
-                    </div>
-
-                    <div class="align-self-end">
-                        <p>@file.CreationTime.ToString("f", new CultureInfo("en-us"))</p>
-                        <hr/>
-                        <form class="align-self-end" method="post" asp-controller="Dashboard" asp-action="Delete" asp-route-id="@file.UniqueId">
-                            <button class="btn btn-danger align-self-end">Delete</button>
-                        </form>
-                    </div>
-                </div>
-            }
-        }
-
-    </div>
-
 </div>
