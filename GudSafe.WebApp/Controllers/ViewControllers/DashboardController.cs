@@ -48,7 +48,7 @@ public class DashboardController : Controller
         var viewmodel = new UserSettingsViewModel
         {
             User = _mapper.Map<UserModel>(user),
-            ApiKey = user?.ApiKey ?? ""
+            ApiKey = user?.ApiKey ?? string.Empty
         };
 
         return View(viewmodel);
