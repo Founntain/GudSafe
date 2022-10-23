@@ -1,9 +1,7 @@
-using System.Net.Http.Headers;
 using AutoMapper;
 using GudSafe.Data;
-using Microsoft.AspNetCore.Mvc;
 
-namespace GudSafe.WebApp.Controllers;
+namespace GudSafe.WebApp.Controllers.EnitityControllers;
 
 public class UploadController : BaseController<UploadController>
 {

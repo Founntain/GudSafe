@@ -2,14 +2,15 @@
 using System.Globalization;
 using System.Security.Claims;
 using GudSafe.Data;
+using GudSafe.Data.Cryptography;
 using GudSafe.Data.ViewModels;
-using GudSafe.WebApp.Classes.Cryptography;
-using Microsoft.AspNetCore.Mvc;
 using GudSafe.WebApp.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
-namespace GudSafe.WebApp.Controllers;
+namespace GudSafe.WebApp.Controllers.ViewControllers;
 
 public class HomeController : Controller
 {
@@ -58,7 +59,7 @@ public class HomeController : Controller
         {
             new(ClaimTypes.Name, user.Name),
             new("LastChanged", user.LastChangedTicks.ToString(CultureInfo.InvariantCulture)),
-            new(ClaimTypes.Role, "User")
+            new(ClaimTypes.Role, user.UserRole.ToString())
         };
 
         var claimsIdent = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -92,5 +93,11 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+    }
+
+    [HttpPost]
+    public IActionResult ChangePassword(StringValues returnurl)
+    {
+        throw new NotImplementedException();
     }
 }

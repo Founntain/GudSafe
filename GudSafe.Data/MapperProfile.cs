@@ -1,6 +1,7 @@
 using AutoMapper;
 using GudSafe.Data.Entities;
 using GudSafe.Data.Models;
+using GudSafe.Data.Models.EntityModels;
 
 namespace GudSafe.Data;
 

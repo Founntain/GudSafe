@@ -1,4 +1,4 @@
-namespace GudSafe.Data.Models;
+namespace GudSafe.Data.Models.EntityModels;
 
 public class BaseModel
 {

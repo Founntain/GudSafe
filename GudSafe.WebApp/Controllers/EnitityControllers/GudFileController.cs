@@ -1,12 +1,13 @@
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
-using GudSafe.Data.Models;
+using GudSafe.Data.Models.EntityModels;
+using GudSafe.WebApp.Classes.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
 
-namespace GudSafe.WebApp.Controllers;
+namespace GudSafe.WebApp.Controllers.EnitityControllers;
 
 [Route("api/files")]
 public class GudFileController : BaseEntityController<GudFileController, GudFile, GudFileModel>
@@ -41,20 +42,15 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
     }
 
     [HttpPost]
+    [UserAccess]
     [Route("upload")]
+    // TODO: Maybe Admin Customizable number
+    [DisableRequestSizeLimit]
     public async Task<IActionResult> UploadFile(IFormFile file)
     {
-        var requestHeaders = Request.Headers;
+        var token = Request.Headers["apikey"].First();
 
-        var token = requestHeaders["apikey"].First();
-
-        if (string.IsNullOrEmpty(token))
-            return BadRequest("API key is empty or not provided");
-
-        var user = _context.Users.FirstOrDefault(x => x.ApiKey == token);
-
-        if (user == null)
-            return NotFound("The user with the provided API key was not found");
+        var user = await _context.Users.FirstAsync(x => x.ApiKey == token);
 
         await using var memStream = new MemoryStream();
 

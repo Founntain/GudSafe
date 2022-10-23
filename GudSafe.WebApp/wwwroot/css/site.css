@@ -1,6 +1,6 @@
 html {
   font-size: 14px;
-  background: #371B58 !important;
+  background: #282C34 !important;
   color: white !important;
 }
 
@@ -17,12 +17,12 @@ html {
 
 body {
   margin-bottom: 60px;
-  background: #371B58 !important;
+  background: #282C34 !important;
   color: white !important;
 }
 
 .navbar-custom{
-  background: #4C3575 !important;
+  background: #21252B !important;
   color: white !important;
   border-color: black !important;
 }
@@ -30,7 +30,7 @@ body {
 .uploadContainer {
   height: 250px;
   width: 250px;
-  border: 1px #4C3575 solid;
+  border: 1px #21252B solid;
   border-radius: 5px;
 }
 
@@ -50,3 +50,10 @@ body {
   display: inline-block;
 }
 
+.btn-gudsafe{
+  background-color: #FFCC22 !important;
+}
+
+.btn-gudsafe:hover{
+  background-color: #ecbb20 !important;
+}

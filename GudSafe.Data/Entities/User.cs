@@ -1,4 +1,6 @@
 using System.Security.Cryptography;
+using GudSafe.Data.Enums;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace GudSafe.Data.Entities;
 
@@ -8,6 +10,7 @@ public class User : BaseEntity
     public string Salt { get; set; }
     public string ApiKey { get; set; } = GenerateApiKey();
     public long LastChangedTicks { get; set; } = DateTime.Now.Ticks;
+    public UserRole UserRole { get; set; } = UserRole.Default;
 
     public virtual HashSet<GudFile> FilesUploaded { get; set; } = new();
 

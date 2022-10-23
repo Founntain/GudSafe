@@ -3,14 +3,15 @@ using System.Text;
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
-using GudSafe.Data.Models;
+using GudSafe.Data.Models.EntityModels;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes;
+using GudSafe.WebApp.Controllers.EnitityControllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace GudSafe.WebApp.Controllers;
+namespace GudSafe.WebApp.Controllers.ViewControllers;
 
 [RequiresLogin("/Home/Login")]
 public class DashboardController : Controller
@@ -33,10 +34,13 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> Gallery()
     {
-        var files = (await FindUser())?.FilesUploaded.OrderByDescending(x => x.CreationTime).ToList() ?? new List<GudFile>();
+        var user = await FindUser();
+        
+        var files = user?.FilesUploaded.OrderByDescending(x => x.CreationTime).ToList() ?? new List<GudFile>();
 
         return View(new GalleryViewModel
         {
+            Username = user?.Name,
             Files = files.ToList()
         });
     }
@@ -89,10 +93,13 @@ public class DashboardController : Controller
     {
         await _fileController.Delete(id);
 
-        var files = (await FindUser())?.FilesUploaded ?? new HashSet<GudFile>();
+        var user = await FindUser();
+        
+        var files = user?.FilesUploaded ?? new HashSet<GudFile>();
 
         return View("Index", new GalleryViewModel
         {
+            Username = user?.Name ?? "Unkown",
             Files = files.ToList()
         });
     }
@@ -101,5 +108,16 @@ public class DashboardController : Controller
     {
         return _context.Users
             .FirstOrDefaultAsync(x => x.Name == User.FindFirstValue(ClaimTypes.Name));
+    }
+
+    public async Task<IActionResult> AdminSettings()
+    {
+        var user = await FindUser();
+        
+        return View(new AdminSettingsViewModel
+        {
+            ApiKey = user.ApiKey,
+            NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+        });
     }
 }

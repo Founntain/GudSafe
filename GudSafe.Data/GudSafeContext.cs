@@ -20,6 +20,8 @@ public class GudSafeContext : DbContext
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new GudFileConfiguration());
         modelBuilder.ApplyConfiguration(new GudCollectionConfiguration());
+
+        modelBuilder.Seed();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

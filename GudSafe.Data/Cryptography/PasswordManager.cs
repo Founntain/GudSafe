@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace GudSafe.WebApp.Classes.Cryptography;
+namespace GudSafe.Data.Cryptography;
 
 public class PasswordManager
 {

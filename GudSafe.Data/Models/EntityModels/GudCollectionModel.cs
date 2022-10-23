@@ -1,6 +1,6 @@
 using GudSafe.Data.Entities;
 
-namespace GudSafe.Data.Models;
+namespace GudSafe.Data.Models.EntityModels;
 
 public class GudCollectionModel : BaseModel
 {

@@ -3,17 +3,9 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    ViewData["Title"] = "Dashboard - Home";
+    ViewData["Title"] = @Model.Username + "'s Gallery";
 }
 <div class="text-center">
-    <h1 class="display-4">Gallery</h1>
-
-    <div>
-        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
-        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
-        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
-    </div>
-
     <div class="row">
 
         @{

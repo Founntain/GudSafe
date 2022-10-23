@@ -1,24 +1,42 @@
-@using System.Globalization
 @model GudSafe.Data.ViewModels.UserSettingsViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    ViewData["Title"] = "Dashboard - UserSettings";
+    ViewData["Title"] = "User Settings";
 }
 
 <div>
-    <h1 class="display-4">User Settings</h1>
-
-    <div class="text-center">
-        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
-        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
-        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
-    </div>
-    
     <div>
         <form>
             <label for="apikey">API-Key</label>
-            <input class="form-control" name="apikey" type="text" disabled="disabled" placeholder="APIKEY" value="@Model.ApiKey"/>
+            <div class="row">
+                <input class="form-control col" style="border-radius: 5px 0px 0px 5px" name="apikey" type="text" disabled="disabled" placeholder="APIKEY" value="@Model.ApiKey"/>
+                <a class="btn btn-danger col-auto" style="border-radius: 0px 5px 5px 0px">Reset API Key</a>
+            </div>
+
+            <div>
+                @using (Html.BeginForm("ChangePassword", "Home", new {returnUrl = Context.Request.Query["returnUrl"]}, FormMethod.Post))
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Password, "Password")
+                        @Html.TextBoxFor(m => m.Password, new {@class = "form-control", type = "password", placeholder = "Password"})
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Password, "New Password")
+                        @Html.TextBoxFor(m => m.Password, new {@class = "form-control", type = "password", placeholder = "New password"})
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Password, "Confirm New Password")
+                        @Html.TextBoxFor(m => m.Password, new {@class = "form-control", type = "password", placeholder = "Confirm new password"})
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">Login</button>
+                    </div>
+                }
+            </div>
         </form>
     </div>
 </div>

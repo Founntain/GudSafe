@@ -1,7 +1,6 @@
-using GudSafe.Data.Entities;
 using GudSafe.Data.Enums;
 
-namespace GudSafe.Data.Models;
+namespace GudSafe.Data.Models.EntityModels;
 
 public class GudFileModel : BaseModel
 {

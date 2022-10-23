@@ -1,11 +1,10 @@
 @model GudSafe.Data.ViewModels.LoginViewModel
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Login™ powered by Logout";
 }
 
 <div>
-    <h1 class="display-4 text-center">Login™ powered by Logout</h1>
     @using (Html.BeginForm("Login", "Home", new {returnUrl = Context.Request.Query["returnUrl"]}, FormMethod.Post))
     {
         <div class="form-group">
@@ -15,7 +14,7 @@
 
         <div class="form-group">
             @Html.LabelFor(m => m.Password, "Password")
-            @Html.TextBoxFor(m => m.Password, new {@class = "form-control", @type = "password", @placeholder = "username"})
+            @Html.TextBoxFor(m => m.Password, new {@class = "form-control", @type = "password", @placeholder = "password"})
         </div>
 
         <div class="form-group">

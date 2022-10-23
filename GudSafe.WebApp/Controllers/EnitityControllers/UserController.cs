@@ -1,12 +1,15 @@
 using AutoMapper;
 using GudSafe.Data;
+using GudSafe.Data.Cryptography;
 using GudSafe.Data.Entities;
-using GudSafe.Data.Models;
+using GudSafe.Data.Models.EntityModels;
 using GudSafe.Data.Models.RequestModels;
-using GudSafe.WebApp.Classes.Cryptography;
+using GudSafe.Data.ViewModels;
+using GudSafe.WebApp.Classes.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
-namespace GudSafe.WebApp.Controllers;
+namespace GudSafe.WebApp.Controllers.EnitityControllers;
 
 public class UserController : BaseEntityController<UserController, User, UserModel>
 {
@@ -17,6 +20,7 @@ public class UserController : BaseEntityController<UserController, User, UserMod
 
     [HttpPost]
     [Route("create")]
+    [AdminAccess]
     public async Task<ActionResult> Create([FromBody] CreateUserModel model)
     {
         if (string.IsNullOrWhiteSpace(model.Name)
@@ -24,6 +28,11 @@ public class UserController : BaseEntityController<UserController, User, UserMod
             return BadRequest("Please provide a Name and Password");
 
         PasswordManager.HashPassword(model.Password, out var salt, out var hashedPassword);
+
+        if (_context.Users.Any(x => x.Name.ToLower() == model.Name.ToLower()))
+        {
+            return BadRequest($"User with the name {model.Name} already exists, please choose another username");
+        }
 
         var user = new User
         {
@@ -34,8 +43,21 @@ public class UserController : BaseEntityController<UserController, User, UserMod
 
         await _context.Users.AddAsync(user);
 
-        await _context.SaveChangesAsync();
-        
-        return Ok(user);
+        var result = await _context.SaveChangesAsync();
+
+        return result == 1 ? Ok(user) : BadRequest("Couldn't save user in Database");
+    }
+
+    [HttpPost]
+    [Route("createFromUi")]
+    public async Task<IActionResult> CreateFromUi([FromForm] AdminSettingsViewModel model)
+    {
+        Request.Headers["apikey"] = model.ApiKey;
+
+        return await Create(new CreateUserModel()
+        {
+            Name = model.NewUserUsername,
+            Password = model.NewUserPassword
+        });
     }
 }

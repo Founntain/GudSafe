@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using GudSafe.Data.Enums
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -41,13 +42,28 @@
 </header>
 <div class="container">
     <main role="main" class="pb-3">
+        <h1 class="display-4 text-center">@ViewData["Title"]</h1>
+        <div class="text-center">
+            @if (ViewData["LoggedIn"] as bool? == true)
+            {
+                <div class="row">
+                    <a class="btn btn-gudsafe col" style="border-radius: 5px 0px 0px 5px" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
+                    <a class="btn btn-gudsafe col" style="border-radius: 0px; border-left: 1px black solid; border-right: 1px black solid" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
+                    @if ((string) ViewData["UserRole"]! == UserRole.Admin.ToString())
+                    {
+                        <a class="btn btn-gudsafe col" style="border-radius: 0px; border-left: 0px black solid; border-right: 1px black solid" asp-controller="Dashboard" asp-action="AdminSettings">Admin settings</a>
+                    }
+                    <a class="btn btn-gudsafe col" style="border-radius: 0px 5px 5px 0px" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
+                </div>
+            }
+        </div>
         @RenderBody()
     </main>
 </div>
 
 <footer class="border-top footer text-muted navbar-custom">
     <div class="container text-light">
-        &copy; 2022 - GudSafe - <a asp-area="" asp-controller="Home" asp-action="Login">Login</a>
+        &copy; 2022 - GudSafe
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,11 +1,11 @@
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
-using GudSafe.Data.Models;
+using GudSafe.Data.Models.EntityModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace GudSafe.WebApp.Controllers;
+namespace GudSafe.WebApp.Controllers.EnitityControllers;
 
 public class BaseEntityController<TController, TEntity, TModel> : BaseController<TController>
     where TEntity : BaseEntity

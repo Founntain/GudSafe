@@ -1,0 +1,30 @@
+@model GudSafe.Data.ViewModels.AdminSettingsViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Admin Settings";
+}
+
+<div>
+    @using (Html.BeginForm("CreateFromUi", "User", FormMethod.Post ))
+    {
+        <div class="form-group">
+            @Html.LabelFor(m => m.ApiKey, "Your API Key")
+            @Html.TextBoxFor(m => m.ApiKey, new {@class = "form-control", type = "password", disabled="disabled", placeholder = "Api Key"})
+        </div>
+        
+        <div class="form-group">
+            @Html.LabelFor(m => m.NewUserUsername, "Username")
+            @Html.TextBoxFor(m => m.NewUserUsername, new {@class = "form-control", type = "text", placeholder = "Username"})
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.NewUserPassword, "Generated Password")
+            @Html.TextBoxFor(m => m.NewUserPassword, new {@class = "form-control", type = "text", disabled="disabled", value="test", placeholder = "New password"})
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Create User</button>
+        </div>
+    }
+</div>
