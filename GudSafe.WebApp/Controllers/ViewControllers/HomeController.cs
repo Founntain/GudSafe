@@ -37,7 +37,7 @@ public class HomeController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(LoginViewModel loginModel)
+    public async Task<IActionResult> Login(LoginViewModel loginModel, string? returnUrl)
     {
         if (string.IsNullOrWhiteSpace(loginModel.Name) || string.IsNullOrWhiteSpace(loginModel.Password))
             return BadRequest();
@@ -72,6 +72,11 @@ public class HomeController : Controller
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdent),
             authProperties);
+
+        if (!string.IsNullOrWhiteSpace(returnUrl))
+        {
+            return Redirect(returnUrl);
+        }
 
         return RedirectToAction("Index");
     }

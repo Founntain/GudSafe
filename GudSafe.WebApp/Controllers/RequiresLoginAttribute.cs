@@ -26,7 +26,7 @@ public class RequiresLoginAttribute : ActionFilterAttribute
 
         if (context.HttpContext.User.FindFirstValue(ClaimTypes.Name) == null)
         {
-            context.Result = new RedirectResult(_loginUrl);
+            context.Result = new RedirectResult($"{_loginUrl}?returnUrl={context.HttpContext.Request.Path}");
         }
     }
 }
