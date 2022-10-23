@@ -62,19 +62,29 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
 
         var fileBytes = memStream.ToArray();
 
-        using var bitmap = SKBitmap.Decode(fileBytes);
-        using var scaled = bitmap.Resize(new SKImageInfo(bitmap.Width / 4, bitmap.Height / 4), SKFilterQuality.Medium);
-        using var data = scaled.Encode(SKEncodedImageFormat.Webp, 75);
-
-        var newEntry = await _context.Files.AddAsync(new GudFile
+        var newFile = new GudFile
         {
             Creator = user,
             FileData = fileBytes,
             FileExtension = Path.GetExtension(file.FileName)[1..],
             FileType = file.ContentType,
-            ThumbnailData = data.ToArray(),
             Name = file.FileName
-        });
+        };
+
+        if (file.ContentType.Contains("image"))
+        {
+            using var bitmap = SKBitmap.Decode(fileBytes);
+            
+            var ratio = Math.Max(bitmap.Width / 200d , bitmap.Height / 200d);
+
+            using var scaled = bitmap.Resize(new SKImageInfo((int) (bitmap.Width / ratio), (int) (bitmap.Height / ratio)),
+                SKFilterQuality.Medium);
+            using var data = scaled.Encode(SKEncodedImageFormat.Webp, 75);
+
+            newFile.ThumbnailData = data.ToArray();
+        }
+
+        var newEntry = await _context.Files.AddAsync(newFile);
 
         await _context.SaveChangesAsync();
 
@@ -84,7 +94,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
             ThumbnailUrl = $"{Request.Scheme}://{Request.Host}/api/files/{newEntry.Entity.UniqueId}/thumbnail"
         });
     }
-    
+
     [HttpPost]
     [Route("delete")]
     public async Task<ActionResult> Delete(Guid id)
