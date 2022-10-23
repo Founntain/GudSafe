@@ -75,8 +75,8 @@ public class DashboardController : Controller
                     { "apikey", user.ApiKey }
                 },
             FileFormName = "file",
-            URL = "{json:url}",
-            ThumbnailURL = "{json:thumbnailurl}"
+            URL = "$json:url$",
+            ThumbnailURL = "$json:thumbnailurl$"
         };
 
         var json = JsonConvert.SerializeObject(shareXProfile);
