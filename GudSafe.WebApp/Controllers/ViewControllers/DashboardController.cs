@@ -1,11 +1,8 @@
-using System.ComponentModel;
-using System.Net;
-using System.Runtime.Loader;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using GudSafe.Data;
+using GudSafe.Data.Entities;
 using GudSafe.Data.Models;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes;
@@ -15,6 +12,7 @@ using Newtonsoft.Json;
 
 namespace GudSafe.WebApp.Controllers;
 
+[RequiresLogin("/Home/Login")]
 public class DashboardController : Controller
 {
     private readonly GudFileController _fileController;
@@ -33,9 +31,9 @@ public class DashboardController : Controller
         return View();
     }
 
-    public IActionResult Gallery()
+    public async Task<IActionResult> Gallery()
     {
-        var files = _context.Users.FirstOrDefault()?.FilesUploaded.OrderByDescending(x => x.CreationTime).ToList() ?? new ();
+        var files = (await FindUser())?.FilesUploaded.OrderByDescending(x => x.CreationTime).ToList() ?? new List<GudFile>();
 
         return View(new GalleryViewModel
         {
@@ -45,12 +43,12 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> UserSettings()
     {
-        var user = await _context.Users.FirstOrDefaultAsync();
-
+        var user = await FindUser();
+        
         var viewmodel = new UserSettingsViewModel
         {
             User = _mapper.Map<UserModel>(user),
-            ApiKey = user.ApiKey
+            ApiKey = user?.ApiKey ?? ""
         };
 
         return View(viewmodel);
@@ -58,7 +56,7 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> ShareXProfile()
     {
-        var user = await _context.Users.FirstOrDefaultAsync();
+        var user = await FindUser();
 
         if (user == default) return NotFound("User not found");
 
@@ -72,7 +70,7 @@ public class DashboardController : Controller
             Headers =
                 new Dictionary<string, object>
                 {
-                    { "apikey", user.ApiKey }
+                    {"apikey", user.ApiKey}
                 },
             FileFormName = "file",
             URL = "$json:url$",
@@ -82,7 +80,7 @@ public class DashboardController : Controller
         var json = JsonConvert.SerializeObject(shareXProfile);
 
         var data = Encoding.UTF8.GetBytes(json);
-        
+
         return File(data, "application/octet-stream", $"GudSafe-{Request.Host}.sxcu");
     }
 
@@ -91,11 +89,17 @@ public class DashboardController : Controller
     {
         await _fileController.Delete(id);
 
-        var files = _context.Users.FirstOrDefault()?.FilesUploaded ?? new();
+        var files = (await FindUser())?.FilesUploaded ?? new HashSet<GudFile>();
 
         return View("Index", new GalleryViewModel
         {
             Files = files.ToList()
         });
+    }
+
+    private Task<User?> FindUser()
+    {
+        return _context.Users
+            .FirstOrDefaultAsync(x => x.Name == User.FindFirstValue(ClaimTypes.Name));
     }
 }

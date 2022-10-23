@@ -1,4 +1,4 @@
-namespace GudSafe.WebApp.Models;
+namespace GudSafe.Data.ViewModels;
 
 public class LoginViewModel
 {

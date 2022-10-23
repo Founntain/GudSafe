@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Security.Claims;
 using GudSafe.Data;
+using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using GudSafe.WebApp.Models;
