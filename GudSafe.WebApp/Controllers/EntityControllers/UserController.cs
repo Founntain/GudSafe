@@ -3,7 +3,7 @@ using GudSafe.Data;
 using GudSafe.Data.Entities;
 using GudSafe.Data.Models.EntityModels;
 
-namespace GudSafe.WebApp.Controllers.EnitityControllers;
+namespace GudSafe.WebApp.Controllers.EntityControllers;
 
 public class UserController : BaseEntityController<UserController, User, UserModel>
 {

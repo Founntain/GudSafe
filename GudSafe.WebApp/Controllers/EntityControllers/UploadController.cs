@@ -1,7 +1,7 @@
 using AutoMapper;
 using GudSafe.Data;
 
-namespace GudSafe.WebApp.Controllers.EnitityControllers;
+namespace GudSafe.WebApp.Controllers.EntityControllers;
 
 public class UploadController : BaseController<UploadController>
 {

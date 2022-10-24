@@ -2,7 +2,7 @@ using AutoMapper;
 using GudSafe.Data;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GudSafe.WebApp.Controllers.EnitityControllers;
+namespace GudSafe.WebApp.Controllers.EntityControllers;
 
 [ApiController]
 [Route("[controller]")]

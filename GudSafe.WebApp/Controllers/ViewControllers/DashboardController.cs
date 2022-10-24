@@ -9,7 +9,7 @@ using GudSafe.Data.Models.EntityModels;
 using GudSafe.Data.Models.RequestModels;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes;
-using GudSafe.WebApp.Controllers.EnitityControllers;
+using GudSafe.WebApp.Controllers.EntityControllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -120,11 +120,14 @@ public class DashboardController : Controller
             .FirstOrDefaultAsync(x => x.Name == User.FindFirstValue(ClaimTypes.Name));
     }
 
-    public IActionResult AdminSettings()
+    public async Task<IActionResult> AdminSettings()
     {
+        var users = await _context.Users.Select(x => x.Name).ToListAsync();
+        
         return View(new AdminSettingsViewModel
         {
-            NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+            NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-')),
+            Users = users
         });
     }
     
@@ -209,6 +212,11 @@ public class DashboardController : Controller
     }
 
     public IActionResult ChangePassword(StringValues returnurl)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IActionResult ResetPasswordOfUser([FromForm] AdminSettingsViewModel model)
     {
         throw new NotImplementedException();
     }

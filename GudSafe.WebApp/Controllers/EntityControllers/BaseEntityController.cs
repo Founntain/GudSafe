@@ -5,7 +5,7 @@ using GudSafe.Data.Models.EntityModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace GudSafe.WebApp.Controllers.EnitityControllers;
+namespace GudSafe.WebApp.Controllers.EntityControllers;
 
 public class BaseEntityController<TController, TEntity, TModel> : BaseController<TController>
     where TEntity : BaseEntity

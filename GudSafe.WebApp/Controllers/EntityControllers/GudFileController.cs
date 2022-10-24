@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
 
-namespace GudSafe.WebApp.Controllers.EnitityControllers;
+namespace GudSafe.WebApp.Controllers.EntityControllers;
 
 [Route("files")]
 public class GudFileController : BaseEntityController<GudFileController, GudFile, GudFileModel>
