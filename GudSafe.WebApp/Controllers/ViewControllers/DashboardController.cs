@@ -35,7 +35,7 @@ public class DashboardController : Controller
     public async Task<IActionResult> Gallery()
     {
         var user = await FindUser();
-        
+
         var files = user?.FilesUploaded.OrderByDescending(x => x.CreationTime).ToList() ?? new List<GudFile>();
 
         return View(new GalleryViewModel
@@ -48,7 +48,7 @@ public class DashboardController : Controller
     public async Task<IActionResult> UserSettings()
     {
         var user = await FindUser();
-        
+
         var viewmodel = new UserSettingsViewModel
         {
             User = _mapper.Map<UserModel>(user),
@@ -94,8 +94,11 @@ public class DashboardController : Controller
         await _fileController.Delete(id);
 
         var user = await FindUser();
-        
+
         var files = user?.FilesUploaded ?? new HashSet<GudFile>();
+
+        HttpContext.Response.StatusCode = 302;
+        HttpContext.Response.Headers["Location"] = "/Dashboard/Gallery";
 
         return View("Gallery", new GalleryViewModel
         {
@@ -113,7 +116,7 @@ public class DashboardController : Controller
     public async Task<IActionResult> AdminSettings()
     {
         var user = await FindUser();
-        
+
         return View(new AdminSettingsViewModel
         {
             ApiKey = user.ApiKey,
