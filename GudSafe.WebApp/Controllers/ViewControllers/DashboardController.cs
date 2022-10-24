@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -22,10 +23,10 @@ namespace GudSafe.WebApp.Controllers.ViewControllers;
 [Authorize]
 public class DashboardController : Controller
 {
-    private readonly GudFileController _fileController;
-    private readonly UserController _userController;
     private readonly GudSafeContext _context;
+    private readonly GudFileController _fileController;
     private readonly IMapper _mapper;
+    private readonly UserController _userController;
 
     public DashboardController(GudFileController fileController, UserController userController, GudSafeContext context,
         IMapper mapper)
@@ -129,11 +130,14 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> AdminSettings()
     {
-        var users = await _context.Users.Select(x => x.Name).ToListAsync();
+        var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
+        {
+            Text = x.Name,
+            Value = x.UniqueId.ToString()
+        }).ToListAsync();
 
         return View(new AdminSettingsViewModel
         {
-            NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-')),
             Users = users
         });
     }
@@ -143,13 +147,19 @@ public class DashboardController : Controller
     {
         var requestUser = await FindUser();
 
+        var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
+        {
+            Text = x.Name,
+            Value = x.UniqueId.ToString()
+        }).ToListAsync();
+
         if (requestUser == null)
         {
             ModelState.AddModelError("CantAuthorized", "Couldn't Authorize");
 
             return View("AdminSettings", new AdminSettingsViewModel
             {
-                NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+                Users = users
             });
         }
 
@@ -159,7 +169,7 @@ public class DashboardController : Controller
 
             return View("AdminSettings", new AdminSettingsViewModel
             {
-                NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+                Users = users
             });
         }
 
@@ -169,7 +179,7 @@ public class DashboardController : Controller
 
             return View("AdminSettings", new AdminSettingsViewModel
             {
-                NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+                Users = users
             });
         }
 
@@ -179,7 +189,7 @@ public class DashboardController : Controller
 
             return View("AdminSettings", new AdminSettingsViewModel
             {
-                NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+                Users = users
             });
         }
 
@@ -203,18 +213,20 @@ public class DashboardController : Controller
             var result = await _context.SaveChangesAsync();
 
             if (result != 1)
-            {
                 ModelState.AddModelError("CantSaveUserInDb", "The user can't be saved in the database");
-            }
             else
-            {
                 ModelState.AddModelError("Success", "User successfully created");
-            }
         }
+
+        users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
+        {
+            Text = x.Name,
+            Value = x.UniqueId.ToString()
+        }).ToListAsync();
 
         return View("AdminSettings", new AdminSettingsViewModel
         {
-            NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+            Users = users
         });
     }
 
@@ -308,8 +320,47 @@ public class DashboardController : Controller
             authProperties);
     }
 
-    public IActionResult ResetPasswordOfUser([FromForm] AdminSettingsViewModel model)
+    public async Task<IActionResult> ResetPasswordOfUser([FromForm] AdminSettingsViewModel model)
     {
-        throw new NotImplementedException();
+        PasswordManager.HashPassword(model.ResetUserPwNewPassword!, out var salt, out var password);
+
+        var user = await _context.Users.FirstAsync(x => x.UniqueId.ToString() == model.SelectedUser);
+
+        user.Password = password;
+        user.Salt = salt;
+
+        var result = await _context.SaveChangesAsync();
+        
+        if(result == 1)
+            ModelState.AddModelError("Success", "Password successfully resetted");
+        else
+            ModelState.AddModelError("Error", "Password couldn't be resetted");
+
+        var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
+        {
+            Text = x.Name,
+            Value = x.UniqueId.ToString()
+        }).ToListAsync();
+        
+        return View("AdminSettings", new AdminSettingsViewModel
+        {
+            Users = users
+        });
+    }
+
+    public async Task<IActionResult> ResetApiKey()
+    {
+        var user = await FindUser();
+
+        var newApiKey = Data.Entities.User.GenerateApiKey();
+
+        user.ApiKey = newApiKey;
+
+        var result = await _context.SaveChangesAsync();
+
+        if (result == 1)
+            return View();
+
+        return View("UserSettings");
     }
 }

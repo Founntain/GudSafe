@@ -9,16 +9,16 @@
     {
         <div class="form-group">
             @Html.LabelFor(m => m.Name, "Name")
-            @Html.TextBoxFor(m => m.Name, new {@class = "form-control", @type = "text", @placeholder = "username"})
+            @Html.TextBoxFor(m => m.Name, new {@class = "form-control", @type = "text", @placeholder = "Enter username"})
         </div>
 
         <div class="form-group">
             @Html.LabelFor(m => m.Password, "Password")
-            @Html.TextBoxFor(m => m.Password, new {@class = "form-control", @type = "password", @placeholder = "password"})
+            @Html.TextBoxFor(m => m.Password, new {@class = "form-control", @type = "password", @placeholder = "Enter password"})
         </div>
 
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Login</button>
+        <div class="row">
+            <button class="btn btn-gudsafe-primary col m-3" type="submit">Login</button>
         </div>
     }
 </div>
