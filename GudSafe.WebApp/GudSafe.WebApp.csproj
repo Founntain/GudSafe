@@ -13,6 +13,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.10" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="SkiaSharp" Version="2.88.3" />
+        <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
     </ItemGroup>
 
     <ItemGroup>
