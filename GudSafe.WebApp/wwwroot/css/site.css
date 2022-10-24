@@ -50,10 +50,10 @@ body {
   display: inline-block;
 }
 
-.btn-gudsafe{
+.btn-gudsafe-primary{
   background-color: #FFCC22 !important;
 }
 
-.btn-gudsafe:hover{
+.btn-gudsafe-primary:hover{
   background-color: #ecbb20 !important;
 }

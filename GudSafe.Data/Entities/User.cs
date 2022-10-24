@@ -14,7 +14,7 @@ public class User : BaseEntity
 
     public virtual HashSet<GudFile> FilesUploaded { get; set; } = new();
 
-    private static string GenerateApiKey()
+    public static string GenerateApiKey()
     {
         var key = new byte[64];
 
