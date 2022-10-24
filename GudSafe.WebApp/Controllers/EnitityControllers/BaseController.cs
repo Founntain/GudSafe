@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GudSafe.WebApp.Controllers.EnitityControllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 [Produces("application/json")]
 public class BaseController<TController> : Controller
 {

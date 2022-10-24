@@ -2,7 +2,9 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using GudSafe.Data;
+using GudSafe.Data.Cryptography;
 using GudSafe.Data.Entities;
+using GudSafe.Data.Enums;
 using GudSafe.Data.Models.EntityModels;
 using GudSafe.Data.Models.RequestModels;
 using GudSafe.Data.ViewModels;
@@ -74,7 +76,7 @@ public class DashboardController : Controller
             Name = $"GudSafe {Request.Host}",
             DestinationType = "ImageUploader, FileUploader",
             RequestMethod = "POST",
-            RequestURL = $"{Request.Scheme}://{Request.Host}/api/files/upload",
+            RequestURL = $"{Request.Scheme}://{Request.Host}/files/upload",
             Body = "MultipartFormData",
             Headers =
                 new Dictionary<string, object>
@@ -118,42 +120,90 @@ public class DashboardController : Controller
             .FirstOrDefaultAsync(x => x.Name == User.FindFirstValue(ClaimTypes.Name));
     }
 
-    public async Task<IActionResult> AdminSettings()
+    public IActionResult AdminSettings()
     {
-        var user = await FindUser();
-
         return View(new AdminSettingsViewModel
         {
-            ApiKey = user.ApiKey,
             NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
         });
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateUserFromUi([FromForm] AdminSettingsViewModel model)
+    public async Task<IActionResult> CreateUser([FromForm] AdminSettingsViewModel model)
     {
-        var user = await FindUser();
-        
-        Request.Headers["apikey"] = model.ApiKey;
+        var requestUser = await FindUser();
 
-        if (string.IsNullOrWhiteSpace(model.ApiKey) || string.IsNullOrWhiteSpace(model.NewUserPassword) ||
-            string.IsNullOrWhiteSpace(model.NewUserUsername))
-            return BadRequest();
-
-        var result = (ObjectResult) await _userController.Create(new CreateUserModel
+        if (requestUser == null)
         {
-            Name = model.NewUserUsername,
-            Password = model.NewUserPassword
-        });
+            ModelState.AddModelError("CantAuthorized", "Couldn't Authorize");
+            
+            return View("AdminSettings", new AdminSettingsViewModel
+            {
+                NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+            });
+        }
 
-        if (result.StatusCode != 200)
+        if (requestUser.UserRole != UserRole.Admin)
+        {
+            ModelState.AddModelError("NotAuthorizedCreate", "You are not authorized to create user");
+            
+            return View("AdminSettings", new AdminSettingsViewModel
+            {
+                NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(model.NewUserUsername))
+        {
+            ModelState.AddModelError("UsernameNotExists", "Username can't be empty.");
+            
+            return View("AdminSettings", new AdminSettingsViewModel
+            {
+                NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(model.NewUserPassword))
+        {
+            ModelState.AddModelError("PasswordNotExists", "Password can't be empty.");
+            
+            return View("AdminSettings", new AdminSettingsViewModel
+            {
+                NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+            });
+        }
+
+        PasswordManager.HashPassword(model.NewUserPassword, out var salt, out var hashedPassword);
+
+        if (_context.Users.Any(x => x.Name.ToLower() == model.NewUserUsername.ToLower()))
         {
             ModelState.AddModelError("UsernameExists", "The username already exists");
         }
+        else
+        {
+            var user = new User
+            {
+                Name = model.NewUserUsername,
+                Password = hashedPassword,
+                Salt = salt
+            };
 
+            await _context.Users.AddAsync(user);
+
+            var result = await _context.SaveChangesAsync();
+
+            if (result != 1)
+            {
+                ModelState.AddModelError("CantSaveUserInDb", "The user can't be saved in the database");
+            }
+            else
+            {
+                ModelState.AddModelError("Success", "User successfully created");
+            }
+        }
+        
         return View("AdminSettings", new AdminSettingsViewModel
         {
-            ApiKey = user?.ApiKey,
             NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
         });
     }

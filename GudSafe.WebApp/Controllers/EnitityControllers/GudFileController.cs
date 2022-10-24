@@ -9,7 +9,7 @@ using SkiaSharp;
 
 namespace GudSafe.WebApp.Controllers.EnitityControllers;
 
-[Route("api/files")]
+[Route("files")]
 public class GudFileController : BaseEntityController<GudFileController, GudFile, GudFileModel>
 {
     public static readonly string ImagesPath = "gudfiles";
@@ -153,8 +153,8 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
 
         return Ok(new
         {
-            Url = $"{Request.Scheme}://{Request.Host}/api/files/{newEntry.Entity.UniqueId}",
-            ThumbnailUrl = $"{Request.Scheme}://{Request.Host}/api/files/{newEntry.Entity.UniqueId}/thumbnail"
+            Url = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}",
+            ThumbnailUrl = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}/thumbnail"
         });
     }
 
