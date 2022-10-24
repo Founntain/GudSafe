@@ -1,6 +1,5 @@
 using GudSafe.Data;
 using GudSafe.WebApp.Controllers;
-using GudSafe.WebApp.Controllers.EnitityControllers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,9 +21,6 @@ builder.Services.AddScoped<LoginCookieAuth>();
 
 builder.Services.AddDbContext<GudSafeContext>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-Directory.CreateDirectory(GudFileController.ImagesPath);
-Directory.CreateDirectory(GudFileController.ThumbnailsPath);
 
 var app = builder.Build();
 

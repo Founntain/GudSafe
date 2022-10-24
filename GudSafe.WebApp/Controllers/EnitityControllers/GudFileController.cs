@@ -105,6 +105,8 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
         var imagePath = Path.Combine(ImagesPath, $"{newFile.UniqueId}.{newFile.FileExtension}");
         var thumbnailPath = Path.Combine(ThumbnailsPath, newFile.UniqueId.ToString());
 
+        Directory.CreateDirectory(ThumbnailsPath);
+
         await using var imageFs = new FileStream(imagePath, FileMode.Create);
         await stream.CopyToAsync(imageFs);
 
