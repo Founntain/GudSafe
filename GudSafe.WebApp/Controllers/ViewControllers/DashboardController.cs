@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
@@ -6,14 +7,14 @@ using GudSafe.Data.Cryptography;
 using GudSafe.Data.Entities;
 using GudSafe.Data.Enums;
 using GudSafe.Data.Models.EntityModels;
-using GudSafe.Data.Models.RequestModels;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes;
 using GudSafe.WebApp.Controllers.EntityControllers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
 namespace GudSafe.WebApp.Controllers.ViewControllers;
@@ -26,7 +27,8 @@ public class DashboardController : Controller
     private readonly GudSafeContext _context;
     private readonly IMapper _mapper;
 
-    public DashboardController(GudFileController fileController, UserController userController, GudSafeContext context, IMapper mapper)
+    public DashboardController(GudFileController fileController, UserController userController, GudSafeContext context,
+        IMapper mapper)
     {
         _fileController = fileController;
         _context = context;
@@ -63,6 +65,11 @@ public class DashboardController : Controller
         };
 
         return View(viewmodel);
+    }
+
+    public IActionResult PasswordChanged()
+    {
+        return View();
     }
 
     public async Task<IActionResult> ShareXProfile()
@@ -123,14 +130,14 @@ public class DashboardController : Controller
     public async Task<IActionResult> AdminSettings()
     {
         var users = await _context.Users.Select(x => x.Name).ToListAsync();
-        
+
         return View(new AdminSettingsViewModel
         {
             NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-')),
             Users = users
         });
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromForm] AdminSettingsViewModel model)
     {
@@ -139,7 +146,7 @@ public class DashboardController : Controller
         if (requestUser == null)
         {
             ModelState.AddModelError("CantAuthorized", "Couldn't Authorize");
-            
+
             return View("AdminSettings", new AdminSettingsViewModel
             {
                 NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
@@ -149,7 +156,7 @@ public class DashboardController : Controller
         if (requestUser.UserRole != UserRole.Admin)
         {
             ModelState.AddModelError("NotAuthorizedCreate", "You are not authorized to create user");
-            
+
             return View("AdminSettings", new AdminSettingsViewModel
             {
                 NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
@@ -159,7 +166,7 @@ public class DashboardController : Controller
         if (string.IsNullOrWhiteSpace(model.NewUserUsername))
         {
             ModelState.AddModelError("UsernameNotExists", "Username can't be empty.");
-            
+
             return View("AdminSettings", new AdminSettingsViewModel
             {
                 NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
@@ -169,7 +176,7 @@ public class DashboardController : Controller
         if (string.IsNullOrWhiteSpace(model.NewUserPassword))
         {
             ModelState.AddModelError("PasswordNotExists", "Password can't be empty.");
-            
+
             return View("AdminSettings", new AdminSettingsViewModel
             {
                 NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
@@ -204,16 +211,101 @@ public class DashboardController : Controller
                 ModelState.AddModelError("Success", "User successfully created");
             }
         }
-        
+
         return View("AdminSettings", new AdminSettingsViewModel
         {
             NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
         });
     }
 
-    public IActionResult ChangePassword(StringValues returnurl)
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(UserSettingsViewModel model)
     {
-        throw new NotImplementedException();
+        var user = await FindUser();
+
+        if (user == null)
+            return View("UserSettings");
+
+        var isPasswordCorrect = PasswordManager.CheckIfPasswordIsCorrect(model.Password, user.Salt, user.Password);
+
+        if (!isPasswordCorrect)
+        {
+            ModelState.Clear();
+            ModelState.AddModelError("PasswordNotCorrect", "The entered password was not correct");
+
+            model.Password = "";
+            model.NewPassword = "";
+            model.ConfirmNewPassword = "";
+
+            model.ApiKey = user.ApiKey;
+            model.User = _mapper.Map<UserModel>(user);
+
+            return View("UserSettings", model);
+        }
+
+        if (model.NewPassword != model.ConfirmNewPassword)
+        {
+            ModelState.Clear();
+            ModelState.AddModelError("NewPasswordsDontMatch", "The new passwords don't match");
+
+            model.Password = "";
+            model.NewPassword = "";
+            model.ConfirmNewPassword = "";
+
+            model.ApiKey = user.ApiKey;
+            model.User = _mapper.Map<UserModel>(user);
+
+            return View("UserSettings", model);
+        }
+
+        PasswordManager.HashPassword(model.NewPassword, out var salt, out var hashedPassword);
+
+        var lastChangedTime = DateTimeOffset.UtcNow;
+
+        user.Password = hashedPassword;
+        user.Salt = salt;
+        user.LastChangedTicks = lastChangedTime.Ticks;
+
+        _context.Users.Update(user);
+
+        await _context.SaveChangesAsync();
+
+        await RefreshLogin(user, lastChangedTime);
+
+        ModelState.Clear();
+        ModelState.AddModelError("Success", "Password successfully changed");
+
+        model.Password = "";
+        model.NewPassword = "";
+        model.ConfirmNewPassword = "";
+
+        model.ApiKey = user.ApiKey;
+        model.User = _mapper.Map<UserModel>(user);
+
+
+        return RedirectToAction("PasswordChanged");
+    }
+
+    private async Task RefreshLogin(User user, DateTimeOffset lastChangedTime)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name, user.Name),
+            new("LastChanged", lastChangedTime.Ticks.ToString(CultureInfo.InvariantCulture)),
+            new(ClaimTypes.Role, user.UserRole.ToString())
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        var authProperties = new AuthenticationProperties
+        {
+            ExpiresUtc = lastChangedTime.AddMinutes(30),
+            IssuedUtc = lastChangedTime
+        };
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity),
+            authProperties);
     }
 
     public IActionResult ResetPasswordOfUser([FromForm] AdminSettingsViewModel model)

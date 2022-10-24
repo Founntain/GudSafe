@@ -8,7 +8,6 @@ using GudSafe.WebApp.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 
 namespace GudSafe.WebApp.Controllers.ViewControllers;
 

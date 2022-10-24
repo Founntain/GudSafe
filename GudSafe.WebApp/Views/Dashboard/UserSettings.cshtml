@@ -8,30 +8,35 @@
 <div>
     <div>
         <label for="apikey">API-Key</label>
-        
+
         <div class="row">
-            <input class="form-control col" style="border-radius: 5px 0px 0px 5px" name="apikey" type="text" disabled="disabled" placeholder="APIKEY" value="@Model.ApiKey"/>
+            <input class="form-control col" style="border-radius: 5px 0px 0px 5px" name="apikey" type="text" readonly="readonly" placeholder="APIKEY" value="@Model.ApiKey"/>
             <a class="btn btn-danger col-auto" style="border-radius: 0px 5px 5px 0px">Reset API Key</a>
         </div>
 
         <div>
             <h1 class="display-6 mt-1">Change password</h1>
-            
+
+            @Html.ValidationSummary()
+
             @using (Html.BeginForm("ChangePassword", "Dashboard", new {returnUrl = Context.Request.Query["returnUrl"]}, FormMethod.Post))
             {
                 <div class="form-group row">
                     @Html.LabelFor(m => m.Password, "Password")
-                    @Html.TextBoxFor(m => m.Password, new {@class = "form-control", type = "password", placeholder = "Password"})
+                    @Html.TextBoxFor(m => m.Password,
+                        new {@class = "form-control", autocomplete = "current-password", id = "current-password", required = true, type = "password", placeholder = "Password"})
                 </div>
 
                 <div class="form-group row">
-                    @Html.LabelFor(m => m.Password, "New Password")
-                    @Html.TextBoxFor(m => m.Password, new {@class = "form-control", type = "password", placeholder = "New password"})
+                    @Html.LabelFor(m => m.NewPassword, "New Password")
+                    @Html.TextBoxFor(m => m.NewPassword,
+                        new {@class = "form-control", autocomplete = "new-password", id = "new-password", required = true, type = "password", placeholder = "New password"})
                 </div>
 
                 <div class="form-group row">
-                    @Html.LabelFor(m => m.Password, "Confirm New Password")
-                    @Html.TextBoxFor(m => m.Password, new {@class = "form-control", type = "password", placeholder = "Confirm new password"})
+                    @Html.LabelFor(m => m.ConfirmNewPassword, "Confirm New Password")
+                    @Html.TextBoxFor(m => m.ConfirmNewPassword,
+                        new {@class = "form-control", autocomplete = "new-password", id = "new-password", required = true, type = "password", placeholder = "Confirm new password"})
                 </div>
 
                 <div class="form-group row mt-3">
