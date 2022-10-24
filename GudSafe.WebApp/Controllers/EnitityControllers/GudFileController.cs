@@ -26,6 +26,8 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
         if (file == null)
             return NotFound();
 
+        HttpContext.Response.Headers.Add("Content-Disposition", $"filename={file.Name}");
+
         return File(file.FileData, file.FileType);
     }
 
