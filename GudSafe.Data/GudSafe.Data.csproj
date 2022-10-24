@@ -8,15 +8,10 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="12.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.10" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.10" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="Microsoft.AspNetCore.Mvc.ViewFeatures">
-        <HintPath>..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.6\Microsoft.AspNetCore.Mvc.ViewFeatures.dll</HintPath>
-      </Reference>
     </ItemGroup>
 
 </Project>
