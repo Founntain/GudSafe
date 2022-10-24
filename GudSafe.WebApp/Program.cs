@@ -15,6 +15,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.EventsType = typeof(LoginCookieAuth);
         options.SlidingExpiration = true;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.LoginPath = "/Home/Login";
+        options.LogoutPath = "/Home/Logout";
+        options.Cookie.Name = "GudSafe.Session";
     });
 
 builder.Services.AddScoped<LoginCookieAuth>();

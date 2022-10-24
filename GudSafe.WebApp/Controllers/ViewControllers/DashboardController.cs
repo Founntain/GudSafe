@@ -8,6 +8,7 @@ using GudSafe.Data.Models.RequestModels;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes;
 using GudSafe.WebApp.Controllers.EnitityControllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
@@ -15,6 +16,7 @@ using Newtonsoft.Json;
 
 namespace GudSafe.WebApp.Controllers.ViewControllers;
 
+[Authorize]
 public class DashboardController : Controller
 {
     private readonly GudFileController _fileController;
@@ -128,7 +130,6 @@ public class DashboardController : Controller
     }
     
     [HttpPost]
-    [Route("createUserFromUi")]
     public async Task<IActionResult> CreateUserFromUi([FromForm] AdminSettingsViewModel model)
     {
         var user = await FindUser();
