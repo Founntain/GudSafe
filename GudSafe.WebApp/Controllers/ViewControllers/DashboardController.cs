@@ -4,27 +4,30 @@ using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
 using GudSafe.Data.Models.EntityModels;
+using GudSafe.Data.Models.RequestModels;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes;
 using GudSafe.WebApp.Controllers.EnitityControllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
 namespace GudSafe.WebApp.Controllers.ViewControllers;
 
-[RequiresLogin("/Home/Login")]
 public class DashboardController : Controller
 {
     private readonly GudFileController _fileController;
+    private readonly UserController _userController;
     private readonly GudSafeContext _context;
     private readonly IMapper _mapper;
 
-    public DashboardController(GudFileController fileController, GudSafeContext context, IMapper mapper)
+    public DashboardController(GudFileController fileController, UserController userController, GudSafeContext context, IMapper mapper)
     {
         _fileController = fileController;
         _context = context;
         _mapper = mapper;
+        _userController = userController;
     }
 
     public IActionResult Index()
@@ -122,5 +125,40 @@ public class DashboardController : Controller
             ApiKey = user.ApiKey,
             NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
         });
+    }
+    
+    [HttpPost]
+    [Route("createUserFromUi")]
+    public async Task<IActionResult> CreateUserFromUi([FromForm] AdminSettingsViewModel model)
+    {
+        var user = await FindUser();
+        
+        Request.Headers["apikey"] = model.ApiKey;
+
+        if (string.IsNullOrWhiteSpace(model.ApiKey) || string.IsNullOrWhiteSpace(model.NewUserPassword) ||
+            string.IsNullOrWhiteSpace(model.NewUserUsername))
+            return BadRequest();
+
+        var result = (ObjectResult) await _userController.Create(new CreateUserModel
+        {
+            Name = model.NewUserUsername,
+            Password = model.NewUserPassword
+        });
+
+        if (result.StatusCode != 200)
+        {
+            ModelState.AddModelError("UsernameExists", "The username already exists");
+        }
+
+        return View("AdminSettings", new AdminSettingsViewModel
+        {
+            ApiKey = user?.ApiKey,
+            NewUserPassword = string.Join("", Guid.NewGuid().ToString().Split('-'))
+        });
+    }
+
+    public IActionResult ChangePassword(StringValues returnurl)
+    {
+        throw new NotImplementedException();
     }
 }

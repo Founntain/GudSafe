@@ -5,8 +5,8 @@ namespace GudSafe.Data.ViewModels;
 
 public class AdminSettingsViewModel
 {
-    public string ApiKey { get; set; }
+    public string? ApiKey { get; set; }
     
-    public string NewUserUsername { get; set; }
-    public string NewUserPassword { get; set; }
+    public string? NewUserUsername { get; set; }
+    public string? NewUserPassword { get; set; }
 }

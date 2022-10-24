@@ -46,7 +46,7 @@
         <div class="text-center">
             @if (ViewData["LoggedIn"] as bool? == true)
             {
-                <div class="row">
+                <div class="row mb-3">
                     <a class="btn btn-gudsafe col" style="border-radius: 5px 0px 0px 5px" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
                     <a class="btn btn-gudsafe col" style="border-radius: 0px; border-left: 1px black solid; border-right: 1px black solid" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
                     @if ((string) ViewData["UserRole"]! == UserRole.Admin.ToString())

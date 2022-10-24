@@ -166,6 +166,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
             return BadRequest("Please supply a valid ID");
 
         var thumbnailPath = Path.Combine(ThumbnailsPath, id.ToString());
+        
         if (System.IO.File.Exists(thumbnailPath))
             System.IO.File.Delete(thumbnailPath);
 
@@ -175,6 +176,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
             return NotFound("The file you try to delete wasn't found");
 
         var imagePath = Path.Combine(ImagesPath, $"{id}.{fileToDelete.FileExtension}");
+        
         if (System.IO.File.Exists(imagePath))
             System.IO.File.Delete(imagePath);
 

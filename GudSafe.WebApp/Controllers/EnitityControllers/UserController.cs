@@ -7,7 +7,7 @@ using GudSafe.Data.Models.RequestModels;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes.Attributes;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
+using Microsoft.EntityFrameworkCore;
 
 namespace GudSafe.WebApp.Controllers.EnitityControllers;
 
@@ -30,9 +30,7 @@ public class UserController : BaseEntityController<UserController, User, UserMod
         PasswordManager.HashPassword(model.Password, out var salt, out var hashedPassword);
 
         if (_context.Users.Any(x => x.Name.ToLower() == model.Name.ToLower()))
-        {
             return BadRequest($"User with the name {model.Name} already exists, please choose another username");
-        }
 
         var user = new User
         {
@@ -54,10 +52,23 @@ public class UserController : BaseEntityController<UserController, User, UserMod
     {
         Request.Headers["apikey"] = model.ApiKey;
 
-        return await Create(new CreateUserModel()
+        if (string.IsNullOrWhiteSpace(model.ApiKey) || string.IsNullOrWhiteSpace(model.NewUserPassword) ||
+            string.IsNullOrWhiteSpace(model.NewUserUsername))
+            return BadRequest();
+
+        var result = (ObjectResult) await Create(new CreateUserModel
         {
             Name = model.NewUserUsername,
             Password = model.NewUserPassword
         });
+
+        if (result.StatusCode != 200)
+        {
+            ModelState.AddModelError("UsernameExists", "The username already exists");
+            
+            return result;
+        }
+
+        return RedirectToAction("AdminSettings", "Dashboard");
     }
 }
