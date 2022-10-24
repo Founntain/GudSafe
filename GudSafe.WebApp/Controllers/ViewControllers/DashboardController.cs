@@ -97,7 +97,7 @@ public class DashboardController : Controller
         
         var files = user?.FilesUploaded ?? new HashSet<GudFile>();
 
-        return View("Index", new GalleryViewModel
+        return View("Gallery", new GalleryViewModel
         {
             Username = user?.Name ?? "Unkown",
             Files = files.ToList()
