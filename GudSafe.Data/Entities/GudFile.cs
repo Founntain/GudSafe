@@ -4,8 +4,6 @@ namespace GudSafe.Data.Entities;
 
 public class GudFile : BaseEntity
 {
-    public byte[] FileData { get; set; }
-    public byte[] ThumbnailData { get; set; }
     public string FileType { get; set; }
     public string FileExtension { get; set; }
 

@@ -12,6 +12,9 @@ namespace GudSafe.WebApp.Controllers.EnitityControllers;
 [Route("api/files")]
 public class GudFileController : BaseEntityController<GudFileController, GudFile, GudFileModel>
 {
+    public static readonly string ImagesPath = "gudfiles";
+    public static readonly string ThumbnailsPath = Path.Combine(ImagesPath, "thumbnails");
+
     public GudFileController(GudSafeContext context, IMapper mapper, ILogger<GudFileController> logger) : base(context,
         mapper, logger)
     {
@@ -21,26 +24,52 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
     [Route("{name}")]
     public async Task<ActionResult> Get(string name)
     {
-        var file = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == Guid.Parse(name));
+        var guid = Guid.Parse(name);
+        var dbFile = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
 
-        if (file == null)
+        if (dbFile == null)
             return NotFound();
 
-        HttpContext.Response.Headers.Add("Content-Disposition", $"filename={file.Name}");
+        try
+        {
+            var file = System.IO.File.Open($"{Path.Combine(ImagesPath, name)}", FileMode.Open);
 
-        return File(file.FileData, file.FileType);
+            HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
+
+            return File(file, dbFile.FileType);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+
+            return NotFound("The requested file was not found, was it deleted or moved?");
+        }
     }
 
     [HttpGet]
     [Route("{name}/thumbnail")]
     public async Task<ActionResult> GetThumb(string name)
     {
-        var file = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == Guid.Parse(name));
+        var guid = Guid.Parse(name);
+        var dbFile = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
 
-        if (file == null)
+        if (dbFile == null)
             return NotFound();
 
-        return File(file.ThumbnailData, "image/webp");
+        try
+        {
+            var file = System.IO.File.Open($"{Path.Combine(ThumbnailsPath, name)}", FileMode.Open);
+
+            HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
+
+            return File(file, "image/webp");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+
+            return NotFound("The requested file was not found, was it deleted or moved?");
+        }
     }
 
     [HttpPost]
@@ -48,30 +77,40 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
     [Route("upload")]
     // TODO: Maybe Admin Customizable number
     [DisableRequestSizeLimit]
-    public async Task<IActionResult> UploadFile(IFormFile file)
+    [RequestFormLimits(MultipartBodyLengthLimit = 1024L * 1024L * 500L)]
+    public async Task<IActionResult> UploadFile()
     {
+        if (Request.ContentType == null || !Request.ContentType.StartsWith("multipart/form-data"))
+            return BadRequest();
+
+        var file = Request.Form.Files[0];
+
         var token = Request.Headers["apikey"].First();
 
         var user = await _context.Users.FirstAsync(x => x.ApiKey == token);
 
-        await using var memStream = new MemoryStream();
-
-        await file.CopyToAsync(memStream);
-
-        var fileBytes = memStream.ToArray();
+        await using var stream = file.OpenReadStream();
 
         var newFile = new GudFile
         {
             Creator = user,
-            FileData = fileBytes,
             FileExtension = Path.GetExtension(file.FileName)[1..],
             FileType = file.ContentType,
             Name = file.FileName
         };
 
+        var newEntry = await _context.Files.AddAsync(newFile);
+
+        var imagePath = Path.Combine(ImagesPath, newFile.UniqueId.ToString());
+        var thumbnailPath = Path.Combine(ThumbnailsPath, newFile.UniqueId.ToString());
+
+        await using var imageFs = new FileStream(imagePath, FileMode.Create);
+        await stream.CopyToAsync(imageFs);
+
         if (file.ContentType.Contains("image"))
         {
-            using var bitmap = SKBitmap.Decode(fileBytes);
+            imageFs.Seek(0, SeekOrigin.Begin);
+            using var bitmap = SKBitmap.Decode(imageFs);
 
             var ratio = Math.Max(bitmap.Width / 200d, bitmap.Height / 200d);
 
@@ -80,7 +119,9 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
                 SKFilterQuality.Medium);
             using var data = scaled.Encode(SKEncodedImageFormat.Webp, 75);
 
-            newFile.ThumbnailData = data.ToArray();
+            await using var fs = System.IO.File.OpenWrite(thumbnailPath);
+
+            await data.AsStream().CopyToAsync(fs);
         }
         else
         {
@@ -100,10 +141,10 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
 
             using var data = surface.Snapshot().Encode(SKEncodedImageFormat.Webp, 75);
 
-            newFile.ThumbnailData = data.ToArray();
-        }
+            await using var fs = System.IO.File.OpenWrite(thumbnailPath);
 
-        var newEntry = await _context.Files.AddAsync(newFile);
+            await data.AsStream().CopyToAsync(fs);
+        }
 
         await _context.SaveChangesAsync();
 
@@ -120,6 +161,14 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
     {
         if (id == Guid.Empty)
             return BadRequest("Please supply a valid ID");
+
+        var thumbnailPath = Path.Combine(ThumbnailsPath, id.ToString());
+        if (System.IO.File.Exists(thumbnailPath))
+            System.IO.File.Delete(thumbnailPath);
+
+        var imagePath = Path.Combine(ImagesPath, id.ToString());
+        if (System.IO.File.Exists(imagePath))
+            System.IO.File.Delete(imagePath);
 
         var fileToDelete = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == id);
 

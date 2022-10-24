@@ -22,7 +22,6 @@ public class UserAccessAttribute : Attribute, IAsyncActionFilter
         if (user == default)
         {
             context.Result = new UnauthorizedResult();
-            await next();
             return;
         }
 

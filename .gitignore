@@ -9,3 +9,4 @@ dataSources.xml
 *.db
 *.db-shm
 *.db-wal
+**/gudfiles/**
