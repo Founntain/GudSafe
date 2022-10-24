@@ -32,7 +32,8 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
 
         try
         {
-            var file = System.IO.File.Open($"{Path.Combine(ImagesPath, name)}", FileMode.Open);
+            var file = System.IO.File.Open($"{Path.Combine(ImagesPath, $"{name}.{dbFile.FileExtension}")}",
+                FileMode.Open);
 
             HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
 
@@ -101,7 +102,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
 
         var newEntry = await _context.Files.AddAsync(newFile);
 
-        var imagePath = Path.Combine(ImagesPath, newFile.UniqueId.ToString());
+        var imagePath = Path.Combine(ImagesPath, $"{newFile.UniqueId}.{newFile.FileExtension}");
         var thumbnailPath = Path.Combine(ThumbnailsPath, newFile.UniqueId.ToString());
 
         await using var imageFs = new FileStream(imagePath, FileMode.Create);
@@ -166,14 +167,14 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
         if (System.IO.File.Exists(thumbnailPath))
             System.IO.File.Delete(thumbnailPath);
 
-        var imagePath = Path.Combine(ImagesPath, id.ToString());
-        if (System.IO.File.Exists(imagePath))
-            System.IO.File.Delete(imagePath);
-
         var fileToDelete = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == id);
 
         if (fileToDelete == default)
             return NotFound("The file you try to delete wasn't found");
+
+        var imagePath = Path.Combine(ImagesPath, $"{id}.{fileToDelete.FileExtension}");
+        if (System.IO.File.Exists(imagePath))
+            System.IO.File.Delete(imagePath);
 
         _context.Files.Remove(fileToDelete);
 
