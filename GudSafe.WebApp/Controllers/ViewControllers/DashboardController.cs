@@ -26,15 +26,15 @@ public class DashboardController : Controller
     private readonly GudSafeContext _context;
     private readonly GudFileController _fileController;
     private readonly IMapper _mapper;
-    private readonly UserController _userController;
+    private readonly ILogger<DashboardController> _logger;
 
-    public DashboardController(GudFileController fileController, UserController userController, GudSafeContext context,
-        IMapper mapper)
+    public DashboardController(GudFileController fileController, GudSafeContext context, IMapper mapper,
+        ILogger<DashboardController> logger)
     {
         _fileController = fileController;
         _context = context;
         _mapper = mapper;
-        _userController = userController;
+        _logger = logger;
     }
 
     public IActionResult Index()
@@ -77,7 +77,13 @@ public class DashboardController : Controller
     {
         var user = await FindUser();
 
-        if (user == default) return NotFound("User not found");
+        if (user == default)
+        {
+            _logger.LogWarning("The logged in user {Name} wasn't found in the database",
+                User.FindFirstValue(ClaimTypes.Name));
+
+            return BadRequest("User not found");
+        }
 
         var shareXProfile = new ShareXProfile
         {
@@ -110,14 +116,22 @@ public class DashboardController : Controller
 
         var user = await FindUser();
 
-        var files = user?.FilesUploaded ?? new HashSet<GudFile>();
+        if (user == default)
+        {
+            _logger.LogWarning("The logged in user {Name} wasn't found in the database",
+                User.FindFirstValue(ClaimTypes.Name));
+
+            return BadRequest("User not found");
+        }
+
+        var files = user.FilesUploaded;
 
         HttpContext.Response.StatusCode = 302;
         HttpContext.Response.Headers["Location"] = "/Dashboard/Gallery";
 
         return View("Gallery", new GalleryViewModel
         {
-            Username = user?.Name ?? "Unkown",
+            Username = user.Name,
             Files = files.ToList()
         });
     }
@@ -147,21 +161,19 @@ public class DashboardController : Controller
     {
         var requestUser = await FindUser();
 
+        if (requestUser == default)
+        {
+            _logger.LogWarning("The logged in user {Name} wasn't found in the database",
+                User.FindFirstValue(ClaimTypes.Name));
+
+            return BadRequest("User not found");
+        }
+
         var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
         {
             Text = x.Name,
             Value = x.UniqueId.ToString()
         }).ToListAsync();
-
-        if (requestUser == null)
-        {
-            ModelState.AddModelError("CantAuthorized", "Couldn't Authorize");
-
-            return View("AdminSettings", new AdminSettingsViewModel
-            {
-                Users = users
-            });
-        }
 
         if (requestUser.UserRole != UserRole.Admin)
         {
@@ -236,7 +248,12 @@ public class DashboardController : Controller
         var user = await FindUser();
 
         if (user == null)
-            return View("UserSettings");
+        {
+            _logger.LogWarning("The logged in user {Name} wasn't found in the database",
+                User.FindFirstValue(ClaimTypes.Name));
+
+            return BadRequest("User not found");
+        }
 
         var isPasswordCorrect = PasswordManager.CheckIfPasswordIsCorrect(model.Password, user.Salt, user.Password);
 
@@ -277,8 +294,6 @@ public class DashboardController : Controller
         user.Password = hashedPassword;
         user.Salt = salt;
         user.LastChangedTicks = lastChangedTime.Ticks;
-
-        _context.Users.Update(user);
 
         await _context.SaveChangesAsync();
 
@@ -330,18 +345,18 @@ public class DashboardController : Controller
         user.Salt = salt;
 
         var result = await _context.SaveChangesAsync();
-        
-        if(result == 1)
-            ModelState.AddModelError("Success", "Password successfully resetted");
+
+        if (result == 1)
+            ModelState.AddModelError("Success", "Password successfully reset");
         else
-            ModelState.AddModelError("Error", "Password couldn't be resetted");
+            ModelState.AddModelError("Error", "Password couldn't be reset");
 
         var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
         {
             Text = x.Name,
             Value = x.UniqueId.ToString()
         }).ToListAsync();
-        
+
         return View("AdminSettings", new AdminSettingsViewModel
         {
             Users = users
@@ -351,6 +366,14 @@ public class DashboardController : Controller
     public async Task<IActionResult> ResetApiKey()
     {
         var user = await FindUser();
+
+        if (user == null)
+        {
+            _logger.LogWarning("The logged in user {Name} wasn't found in the database",
+                User.FindFirstValue(ClaimTypes.Name));
+
+            return BadRequest("User not found");
+        }
 
         var newApiKey = Data.Entities.User.GenerateApiKey();
 

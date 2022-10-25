@@ -9,14 +9,14 @@ namespace GudSafe.WebApp.Controllers.EntityControllers;
 [Produces("application/json")]
 public class BaseController<TController> : Controller
 {
-    protected readonly GudSafeContext _context;
-    protected readonly IMapper _mapper;
-    private readonly ILogger<TController> _logger;
+    protected readonly GudSafeContext Context;
+    protected readonly IMapper Mapper;
+    protected readonly ILogger<TController> Logger;
 
     public BaseController(GudSafeContext context, IMapper mapper, ILogger<TController> logger)
     {
-        _context = context;
-        _mapper = mapper;
-        _logger = logger;
+        Context = context;
+        Mapper = mapper;
+        Logger = logger;
     }
 }

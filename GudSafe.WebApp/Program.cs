@@ -22,6 +22,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.Name = "GudSafe.Session";
     });
 
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddConsole();
+    loggingBuilder.AddDebug();
+    loggingBuilder.AddEventSourceLogger();
+});
+
 builder.Services.AddScoped<LoginCookieAuth>();
 
 builder.Services.AddDbContext<GudSafeContext>();

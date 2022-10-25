@@ -1,7 +1,6 @@
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
-using GudSafe.Data.Models.EntityModels;
 using GudSafe.WebApp.Classes.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +9,7 @@ using SkiaSharp;
 namespace GudSafe.WebApp.Controllers.EntityControllers;
 
 [Route("files")]
-public class GudFileController : BaseEntityController<GudFileController, GudFile, GudFileModel>
+public class GudFileController : BaseEntityController<GudFileController>
 {
     public static readonly string ImagesPath = "gudfiles";
     public static readonly string ThumbnailsPath = Path.Combine(ImagesPath, "thumbnails");
@@ -25,15 +24,16 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
     public async Task<ActionResult> Get(string name)
     {
         var guid = Guid.Parse(name);
-        var dbFile = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
+        var dbFile = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
 
         if (dbFile == null)
             return NotFound();
 
+        var path = Path.Combine(ThumbnailsPath, $"{name}.{dbFile.FileExtension}");
+        
         try
         {
-            var file = System.IO.File.Open($"{Path.Combine(ImagesPath, $"{name}.{dbFile.FileExtension}")}",
-                FileMode.Open);
+            var file = System.IO.File.Open(path, FileMode.Open);
 
             HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
 
@@ -41,7 +41,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Logger.LogWarning(e, "The file {Name} was not found", path);
 
             return NotFound("The requested file was not found, was it deleted or moved?");
         }
@@ -52,14 +52,16 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
     public async Task<ActionResult> GetThumb(string name)
     {
         var guid = Guid.Parse(name);
-        var dbFile = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
+        var dbFile = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
 
         if (dbFile == null)
             return NotFound();
 
+        var path = Path.Combine(ThumbnailsPath, name);
+        
         try
         {
-            var file = System.IO.File.Open($"{Path.Combine(ThumbnailsPath, name)}", FileMode.Open);
+            var file = System.IO.File.Open(path, FileMode.Open);
 
             HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
 
@@ -67,7 +69,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Logger.LogWarning(e, "The file {Name} was not found", path);
 
             return NotFound("The requested file was not found, was it deleted or moved?");
         }
@@ -88,7 +90,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
 
         var token = Request.Headers["apikey"].First();
 
-        var user = await _context.Users.FirstAsync(x => x.ApiKey == token);
+        var user = await Context.Users.FirstAsync(x => x.ApiKey == token);
 
         await using var stream = file.OpenReadStream();
 
@@ -100,7 +102,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
             Name = file.FileName
         };
 
-        var newEntry = await _context.Files.AddAsync(newFile);
+        var newEntry = await Context.Files.AddAsync(newFile);
 
         var imagePath = Path.Combine(ImagesPath, $"{newFile.UniqueId}.{newFile.FileExtension}");
         var thumbnailPath = Path.Combine(ThumbnailsPath, newFile.UniqueId.ToString());
@@ -149,7 +151,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
             await data.AsStream().CopyToAsync(fs);
         }
 
-        await _context.SaveChangesAsync();
+        await Context.SaveChangesAsync();
 
         return Ok(new
         {
@@ -170,7 +172,7 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
         if (System.IO.File.Exists(thumbnailPath))
             System.IO.File.Delete(thumbnailPath);
 
-        var fileToDelete = await _context.Files.FirstOrDefaultAsync(x => x.UniqueId == id);
+        var fileToDelete = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == id);
 
         if (fileToDelete == default)
             return NotFound("The file you try to delete wasn't found");
@@ -180,9 +182,9 @@ public class GudFileController : BaseEntityController<GudFileController, GudFile
         if (System.IO.File.Exists(imagePath))
             System.IO.File.Delete(imagePath);
 
-        _context.Files.Remove(fileToDelete);
+        Context.Files.Remove(fileToDelete);
 
-        var result = await _context.SaveChangesAsync();
+        var result = await Context.SaveChangesAsync();
 
         return result == 1 ? Ok() : BadRequest("File could not be deleted, please try again alter");
     }
