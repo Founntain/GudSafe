@@ -3,8 +3,6 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using AspNetCoreHero.ToastNotification.Enums;
-using AspNetCoreHero.ToastNotification.Helpers;
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Cryptography;
@@ -13,7 +11,6 @@ using GudSafe.Data.Enums;
 using GudSafe.Data.Models.EntityModels;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes;
-using GudSafe.WebApp.Classes.Attributes;
 using GudSafe.WebApp.Controllers.EntityControllers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -175,40 +172,32 @@ public class DashboardController : Controller
 
         if (requestUser.UserRole != UserRole.Admin)
         {
-            //TempData.AddStatus("You are not authorized to create a user", ToastNotificationType.Error);
             _notyf.Error("You are not authorized to create a user");
 
             return Json(new {success = false, message = "You are not authorized to create a user"});
-            //return RedirectToAction("AdminSettings");
         }
 
         if (string.IsNullOrWhiteSpace(model.NewUserUsername))
         {
-            //TempData.AddStatus("Username can't be empty.", ToastNotificationType.Error);
             _notyf.Error("Username can't be empty.");
 
             return Json(new {success = false, message = "Username can't be empty."});
-            //return RedirectToAction("AdminSettings");
         }
 
         if (string.IsNullOrWhiteSpace(model.NewUserPassword))
         {
-            //TempData.AddStatus("Password can't be empty.", ToastNotificationType.Error);
             _notyf.Error("Password can't be empty.");
 
             return Json(new {success = false, message = "Password can't be empty."});
-            //return RedirectToAction("AdminSettings");
         }
 
         PasswordManager.HashPassword(model.NewUserPassword, out var salt, out var hashedPassword);
 
         if (_context.Users.Any(x => x.Name.ToLower() == model.NewUserUsername.ToLower()))
         {
-            //TempData.AddStatus("The username already exists", ToastNotificationType.Error);
             _notyf.Error("The username already exists");
 
             return Json(new {success = false, message = "The username already exists"});
-            //return RedirectToAction("AdminSettings");
         }
 
         var user = new User
@@ -235,7 +224,6 @@ public class DashboardController : Controller
 
         model.Users = users;
         return Json(new {success = true, model});
-        //return RedirectToAction("AdminSettings");
     }
 
     [HttpPost]
