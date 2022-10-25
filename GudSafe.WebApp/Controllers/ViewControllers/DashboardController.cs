@@ -1,6 +1,10 @@
 using System.Globalization;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Enums;
+using AspNetCoreHero.ToastNotification.Helpers;
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Cryptography;
@@ -9,6 +13,7 @@ using GudSafe.Data.Enums;
 using GudSafe.Data.Models.EntityModels;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes;
+using GudSafe.WebApp.Classes.Attributes;
 using GudSafe.WebApp.Controllers.EntityControllers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -27,14 +32,16 @@ public class DashboardController : Controller
     private readonly GudFileController _fileController;
     private readonly IMapper _mapper;
     private readonly ILogger<DashboardController> _logger;
+    private readonly INotyfService _notyf;
 
     public DashboardController(GudFileController fileController, GudSafeContext context, IMapper mapper,
-        ILogger<DashboardController> logger)
+        ILogger<DashboardController> logger, INotyfService notyf)
     {
         _fileController = fileController;
         _context = context;
         _mapper = mapper;
         _logger = logger;
+        _notyf = notyf;
     }
 
     public IActionResult Index()
@@ -66,11 +73,6 @@ public class DashboardController : Controller
         };
 
         return View(viewmodel);
-    }
-
-    public IActionResult PasswordChanged()
-    {
-        return View();
     }
 
     public async Task<IActionResult> ShareXProfile()
@@ -126,7 +128,7 @@ public class DashboardController : Controller
 
         var files = user.FilesUploaded;
 
-        HttpContext.Response.StatusCode = 302;
+        HttpContext.Response.StatusCode = (int) HttpStatusCode.Redirect;
         HttpContext.Response.Headers["Location"] = "/Dashboard/Gallery";
 
         return View("Gallery", new GalleryViewModel
@@ -157,7 +159,7 @@ public class DashboardController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromForm] AdminSettingsViewModel model)
+    public async Task<JsonResult> CreateUser(AdminSettingsViewModel model)
     {
         var requestUser = await FindUser();
 
@@ -166,8 +168,64 @@ public class DashboardController : Controller
             _logger.LogWarning("The logged in user {Name} wasn't found in the database",
                 User.FindFirstValue(ClaimTypes.Name));
 
-            return BadRequest("User not found");
+            _notyf.Error("User not found");
+
+            return Json(new {success = false, message = "User not found"});
         }
+
+        if (requestUser.UserRole != UserRole.Admin)
+        {
+            //TempData.AddStatus("You are not authorized to create a user", ToastNotificationType.Error);
+            _notyf.Error("You are not authorized to create a user");
+
+            return Json(new {success = false, message = "You are not authorized to create a user"});
+            //return RedirectToAction("AdminSettings");
+        }
+
+        if (string.IsNullOrWhiteSpace(model.NewUserUsername))
+        {
+            //TempData.AddStatus("Username can't be empty.", ToastNotificationType.Error);
+            _notyf.Error("Username can't be empty.");
+
+            return Json(new {success = false, message = "Username can't be empty."});
+            //return RedirectToAction("AdminSettings");
+        }
+
+        if (string.IsNullOrWhiteSpace(model.NewUserPassword))
+        {
+            //TempData.AddStatus("Password can't be empty.", ToastNotificationType.Error);
+            _notyf.Error("Password can't be empty.");
+
+            return Json(new {success = false, message = "Password can't be empty."});
+            //return RedirectToAction("AdminSettings");
+        }
+
+        PasswordManager.HashPassword(model.NewUserPassword, out var salt, out var hashedPassword);
+
+        if (_context.Users.Any(x => x.Name.ToLower() == model.NewUserUsername.ToLower()))
+        {
+            //TempData.AddStatus("The username already exists", ToastNotificationType.Error);
+            _notyf.Error("The username already exists");
+
+            return Json(new {success = false, message = "The username already exists"});
+            //return RedirectToAction("AdminSettings");
+        }
+
+        var user = new User
+        {
+            Name = model.NewUserUsername,
+            Password = hashedPassword,
+            Salt = salt
+        };
+
+        await _context.Users.AddAsync(user);
+
+        var result = await _context.SaveChangesAsync();
+
+        if (result != 1)
+            _notyf.Error("The user can't be saved in the database");
+        else
+            _notyf.Success("User successfully created");
 
         var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
         {
@@ -175,75 +233,13 @@ public class DashboardController : Controller
             Value = x.UniqueId.ToString()
         }).ToListAsync();
 
-        if (requestUser.UserRole != UserRole.Admin)
-        {
-            ModelState.AddModelError("NotAuthorizedCreate", "You are not authorized to create user");
-
-            return View("AdminSettings", new AdminSettingsViewModel
-            {
-                Users = users
-            });
-        }
-
-        if (string.IsNullOrWhiteSpace(model.NewUserUsername))
-        {
-            ModelState.AddModelError("UsernameNotExists", "Username can't be empty.");
-
-            return View("AdminSettings", new AdminSettingsViewModel
-            {
-                Users = users
-            });
-        }
-
-        if (string.IsNullOrWhiteSpace(model.NewUserPassword))
-        {
-            ModelState.AddModelError("PasswordNotExists", "Password can't be empty.");
-
-            return View("AdminSettings", new AdminSettingsViewModel
-            {
-                Users = users
-            });
-        }
-
-        PasswordManager.HashPassword(model.NewUserPassword, out var salt, out var hashedPassword);
-
-        if (_context.Users.Any(x => x.Name.ToLower() == model.NewUserUsername.ToLower()))
-        {
-            ModelState.AddModelError("UsernameExists", "The username already exists");
-        }
-        else
-        {
-            var user = new User
-            {
-                Name = model.NewUserUsername,
-                Password = hashedPassword,
-                Salt = salt
-            };
-
-            await _context.Users.AddAsync(user);
-
-            var result = await _context.SaveChangesAsync();
-
-            if (result != 1)
-                ModelState.AddModelError("CantSaveUserInDb", "The user can't be saved in the database");
-            else
-                ModelState.AddModelError("Success", "User successfully created");
-        }
-
-        users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
-        {
-            Text = x.Name,
-            Value = x.UniqueId.ToString()
-        }).ToListAsync();
-
-        return View("AdminSettings", new AdminSettingsViewModel
-        {
-            Users = users
-        });
+        model.Users = users;
+        return Json(new {success = true, model});
+        //return RedirectToAction("AdminSettings");
     }
 
     [HttpPost]
-    public async Task<IActionResult> ChangePassword(UserSettingsViewModel model)
+    public async Task<JsonResult> ChangePassword(UserSettingsViewModel model)
     {
         var user = await FindUser();
 
@@ -252,39 +248,25 @@ public class DashboardController : Controller
             _logger.LogWarning("The logged in user {Name} wasn't found in the database",
                 User.FindFirstValue(ClaimTypes.Name));
 
-            return BadRequest("User not found");
+            _notyf.Error("User not found");
+
+            return Json(new {success = false, message = "User not found"});
         }
 
         var isPasswordCorrect = PasswordManager.CheckIfPasswordIsCorrect(model.Password, user.Salt, user.Password);
 
         if (!isPasswordCorrect)
         {
-            ModelState.Clear();
-            ModelState.AddModelError("PasswordNotCorrect", "The entered password was not correct");
+            _notyf.Error("The entered password was not correct");
 
-            model.Password = "";
-            model.NewPassword = "";
-            model.ConfirmNewPassword = "";
-
-            model.ApiKey = user.ApiKey;
-            model.User = _mapper.Map<UserModel>(user);
-
-            return View("UserSettings", model);
+            return Json(new {success = false, message = "The entered password was not correct"});
         }
 
         if (model.NewPassword != model.ConfirmNewPassword)
         {
-            ModelState.Clear();
-            ModelState.AddModelError("NewPasswordsDontMatch", "The new passwords don't match");
+            _notyf.Error("The new passwords don't match");
 
-            model.Password = "";
-            model.NewPassword = "";
-            model.ConfirmNewPassword = "";
-
-            model.ApiKey = user.ApiKey;
-            model.User = _mapper.Map<UserModel>(user);
-
-            return View("UserSettings", model);
+            return Json(new {success = false, message = "The new passwords don't match"});
         }
 
         PasswordManager.HashPassword(model.NewPassword, out var salt, out var hashedPassword);
@@ -299,18 +281,9 @@ public class DashboardController : Controller
 
         await RefreshLogin(user, lastChangedTime);
 
-        ModelState.Clear();
-        ModelState.AddModelError("Success", "Password successfully changed");
+        _notyf.Success("Password successfully changed");
 
-        model.Password = "";
-        model.NewPassword = "";
-        model.ConfirmNewPassword = "";
-
-        model.ApiKey = user.ApiKey;
-        model.User = _mapper.Map<UserModel>(user);
-
-
-        return RedirectToAction("PasswordChanged");
+        return Json(new {success = true, message = "Password successfully changed"});
     }
 
     private async Task RefreshLogin(User user, DateTimeOffset lastChangedTime)
@@ -335,7 +308,8 @@ public class DashboardController : Controller
             authProperties);
     }
 
-    public async Task<IActionResult> ResetPasswordOfUser([FromForm] AdminSettingsViewModel model)
+    [HttpPost]
+    public async Task<JsonResult> ResetPasswordOfUser(AdminSettingsViewModel model)
     {
         PasswordManager.HashPassword(model.ResetUserPwNewPassword!, out var salt, out var password);
 
@@ -347,23 +321,16 @@ public class DashboardController : Controller
         var result = await _context.SaveChangesAsync();
 
         if (result == 1)
-            ModelState.AddModelError("Success", "Password successfully reset");
+            _notyf.Success($"{user.Name}'s password successfully reset");
         else
-            ModelState.AddModelError("Error", "Password couldn't be reset");
+            _notyf.Error($"{user.Name}'s password couldn't be reset");
 
-        var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
-        {
-            Text = x.Name,
-            Value = x.UniqueId.ToString()
-        }).ToListAsync();
-
-        return View("AdminSettings", new AdminSettingsViewModel
-        {
-            Users = users
-        });
+        model = new AdminSettingsViewModel();
+        return Json(new {success = true, model});
     }
 
-    public async Task<IActionResult> ResetApiKey()
+    [HttpPost]
+    public async Task<JsonResult> ResetApiKey()
     {
         var user = await FindUser();
 
@@ -372,7 +339,9 @@ public class DashboardController : Controller
             _logger.LogWarning("The logged in user {Name} wasn't found in the database",
                 User.FindFirstValue(ClaimTypes.Name));
 
-            return BadRequest("User not found");
+            _notyf.Error("User not found");
+
+            return Json(new {success = false, message = "User not found"});
         }
 
         var newApiKey = Data.Entities.User.GenerateApiKey();
@@ -382,8 +351,8 @@ public class DashboardController : Controller
         var result = await _context.SaveChangesAsync();
 
         if (result == 1)
-            return View();
+            _notyf.Success("Api key successfully reset");
 
-        return View("UserSettings");
+        return Json(new {success = true, apiKey = newApiKey});
     }
 }

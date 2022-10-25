@@ -1,3 +1,5 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using GudSafe.Data;
 using GudSafe.WebApp.Controllers;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -27,6 +29,13 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.AddConsole();
     loggingBuilder.AddDebug();
     loggingBuilder.AddEventSourceLogger();
+});
+
+builder.Services.AddNotyf(config =>
+{
+    config.Position = NotyfPosition.TopCenter;
+    config.DurationInSeconds = 4;
+    config.IsDismissable = true;
 });
 
 builder.Services.AddScoped<LoginCookieAuth>();
@@ -59,6 +68,8 @@ app.UseStaticFiles();
 
 //app.UseRouting();
 app.UseMvc();
+
+app.UseNotyf();
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {

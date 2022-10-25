@@ -7,33 +7,32 @@
 
 <div>
     @Html.ValidationSummary()
-    
+
     <h1 class="display-6 mt-1">Create new user</h1>
-    @using (Html.BeginForm("CreateUser", "Dashboard", FormMethod.Post))
-    {
+    <form id="createNewUser">
         <div class="form-group">
             @Html.LabelFor(m => m.NewUserUsername, "Username")
-            @Html.TextBoxFor(m => m.NewUserUsername, new {@class = "form-control", type = "text", placeholder = "Username"})
+            @Html.TextBoxFor(m => m.NewUserUsername, new {@class = "form-control", required = "required", type = "text", placeholder = "Username"})
         </div>
 
         <div class="form-group">
             @Html.LabelFor(m => m.NewUserPassword, "Generated Password")
-            @Html.TextBoxFor(m => m.NewUserPassword, new {@class = "form-control", type = "text", @readonly = "readonly", placeholder = "New password"})
+            @Html.TextBoxFor(m => m.NewUserPassword, new {@class = "form-control", required = "required", type = "text", @readonly = "readonly", placeholder = "New password"})
         </div>
 
         <div class="form-group row">
-            <button class="btn btn-gudsafe-primary m-2 col" type="submit">Create User</button>
+            <button class="btn btn-gudsafe-primary m-2 col" type="button" onclick="CreateNewUser()">Create User</button>
         </div>
-    }
-    
+    </form>
+
     @if (Model.Users != null)
     {
         <h1 class="display-6 mt-1">Reset users password</h1>
-        @using (Html.BeginForm("ResetPasswordOfUser", "Dashboard", FormMethod.Post))
-        {
+
+        <form id="resetUserPassword">
             <div class="form-group">
                 @Html.LabelFor(m => m.SelectedUser, "Select user to reset password")
-                @Html.DropDownListFor(m => m.SelectedUser, selectList: new SelectList(Model.Users, "Value", "Text"), new {@class="form-control" })
+                @Html.DropDownListFor(m => m.SelectedUser, selectList: new SelectList(Model.Users, "Value", "Text"), new {@class = "form-control"})
             </div>
 
             <div class="form-group">
@@ -42,8 +41,59 @@
             </div>
 
             <div class="form-group row">
-                <button class="btn btn-danger m-2 col" type="submit">Reset password</button>
+                <button class="btn btn-danger m-2 col" type="button" onclick="ResetUserPassword()">Reset password</button>
             </div>
-        }
+        </form>
     }
 </div>
+
+@section Scripts
+{
+    <script>
+        function CreateNewUser() {
+            let form = $("#createNewUser");
+            let data = form.serialize();
+        
+            $.ajax({
+                url: "@Url.Action("CreateUser")",
+                type: "POST",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        form.trigger("reset");
+                        $("#@Html.IdFor(m => m.NewUserPassword)").val(result.model.newUserPassword);
+                        
+                        $("#@Html.IdFor(m => m.ResetUserPwNewPassword)").val(result.model.resetUserPwNewPassword);
+                        
+                        $("#@Html.IdFor(m => m.SelectedUser)").empty();
+                        $.each(result.model.users, function (index, item) {
+                            $("#@Html.IdFor(m => m.SelectedUser)").append($('<option>', {value: item.value, text: item.text}));
+                        });
+                    }
+                },
+            });
+        }
+        
+        function ResetUserPassword()
+        {
+            let form = $("#resetUserPassword");
+            let data = form.serialize();
+            
+            $.ajax({
+                url: "@Url.Action("ResetPasswordOfUser")",
+                type: "POST",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        form.trigger("reset");
+                        $("#@Html.IdFor(m => m.NewUserPassword)").val(result.model.newUserPassword);
+                        
+                        $("#@Html.IdFor(m => m.ResetUserPwNewPassword)").val(result.model.resetUserPwNewPassword);
+                    }
+                },
+            });
+        }
+    </script>
+}

@@ -1,4 +1,5 @@
 ﻿@using GudSafe.Data.Enums
+@using AspNetCoreHero.ToastNotification.Notyf.Models
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,5 +71,6 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
+@await Component.InvokeAsync("Notyf")
 </body>
 </html>

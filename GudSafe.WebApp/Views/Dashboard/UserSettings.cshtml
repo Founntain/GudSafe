@@ -7,22 +7,21 @@
 
 <div>
     <div>
-        <label for="apikey">API-Key</label>
-        @using (Html.BeginForm("ResetApiKey", "Dashboard", FormMethod.Post))
-        {
+        <form id="resetApiKey">
             <div class="row">
-                <input class="form-control col" style="border-radius: 5px 0px 0px 5px" name="apikey" type="text" disabled="disabled" placeholder="APIKEY" value="@Model.ApiKey"/>
-                <button class="btn btn-danger col-auto" style="border-radius: 0px 5px 5px 0px">Reset API Key</button>
+                <label for="apikey">API-Key</label>
+                <input class="form-control col" style="border-radius: 5px 0px 0px 5px" id="apikey" type="text" disabled="disabled" placeholder="APIKEY" value="@Model.ApiKey"/>
+                <button class="btn btn-danger col-auto" type="button" onclick="resetApiKey()" style="border-radius: 0px 5px 5px 0px">Reset API Key</button>
             </div>
-        }
+        </form>
 
         <div>
             <h1 class="display-6 mt-1">Change password</h1>
 
             @Html.ValidationSummary()
 
-            @using (Html.BeginForm("ChangePassword", "Dashboard", new {returnUrl = Context.Request.Query["returnUrl"]}, FormMethod.Post))
-            {
+            @* @using (Html.BeginForm("ChangePassword", "Dashboard", new {returnUrl = Context.Request.Query["returnUrl"]}, FormMethod.Post)) *@
+            <form id="changePassword">
                 <div class="form-group row">
                     @Html.LabelFor(m => m.Password, "Password")
                     @Html.TextBoxFor(m => m.Password,
@@ -42,9 +41,42 @@
                 </div>
 
                 <div class="form-group row mt-3">
-                    <button class="btn btn-gudsafe-primary" type="submit">Change password</button>
+                    <button class="btn btn-gudsafe-primary" type="button" onclick="changePassword()">Change password</button>
                 </div>
-            }
+            </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function changePassword() {
+            let data = $("#changePassword").serialize();
+        
+            $.ajax({
+                url: "@Url.Action("ChangePassword")",
+                type: "POST",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        $("#changePassword").trigger("reset");
+                    }
+                },
+            });
+        }
+
+        function resetApiKey() {
+            $.ajax({
+                url: "@Url.Action("ResetApiKey")",
+                type: "POST",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function (result) {
+                    if (result.success) {
+                        $("#apikey").val(result.apiKey);
+                    }
+                },
+            });
+        }
+    </script>
+}
