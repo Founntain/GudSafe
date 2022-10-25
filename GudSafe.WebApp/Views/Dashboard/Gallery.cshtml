@@ -11,7 +11,7 @@
         @{
             foreach (var file in Model?.Files)
             {
-                <div class="col-lg-4 col-md-12 mb-4 ">
+                <div class="col-lg-4 col-md-12 mb-4 " id="@file.UniqueId">
                     <div class="uploadBox">
                         <a href="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId">
                             <img class="upload" src="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId/thumbnail"/>
@@ -21,8 +21,8 @@
                     <div class="align-self-end">
                         <p>@file.CreationTime.ToString("f", new CultureInfo("en-us"))</p>
                         <hr/>
-                        <form class="align-self-end" method="post" asp-controller="Dashboard" asp-action="Delete" asp-route-id="@file.UniqueId">
-                            <button class="btn btn-danger align-self-end">Delete</button>
+                        <form class="align-self-end">
+                            <button class="btn btn-danger align-self-end" type="button" onclick="deleteFile('@file.UniqueId.ToString()')">Delete</button>
                         </form>
                     </div>
                 </div>
@@ -31,3 +31,22 @@
 
     </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        function deleteFile(id) {
+            $.ajax({
+                url: "@Url.Action("Delete")",
+                type: "POST",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                data: {id: id},
+                success: function (result) {
+                    if (result.success) {
+                        $("#" + id).remove();
+                    }
+                }
+            });
+        }
+    </script>
+}

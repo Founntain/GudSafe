@@ -109,10 +109,8 @@ public class DashboardController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<JsonResult> Delete(Guid id)
     {
-        await _fileController.Delete(id);
-
         var user = await FindUser();
 
         if (user == default)
@@ -120,19 +118,16 @@ public class DashboardController : Controller
             _logger.LogWarning("The logged in user {Name} wasn't found in the database",
                 User.FindFirstValue(ClaimTypes.Name));
 
-            return BadRequest("User not found");
+            _notyf.Error("User not found");
+
+            return Json(new {success = false});
         }
 
-        var files = user.FilesUploaded;
+        await _fileController.Delete(id);
 
-        HttpContext.Response.StatusCode = (int) HttpStatusCode.Redirect;
-        HttpContext.Response.Headers["Location"] = "/Dashboard/Gallery";
+        _notyf.Success($"File {id} deleted successfully", 2);
 
-        return View("Gallery", new GalleryViewModel
-        {
-            Username = user.Name,
-            Files = files.ToList()
-        });
+        return Json(new {success = true});
     }
 
     private Task<User?> FindUser()
