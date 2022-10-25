@@ -1,5 +1,3 @@
-using GudSafe.Data.Enums;
-
 namespace GudSafe.Data.Entities;
 
 public class GudFile : BaseEntity
