@@ -23,14 +23,14 @@
 
     @if (Model.Users != null)
     {
-        <h1 class="display-6 mb-1">Reset users password</h1>
+        <h1 class="display-6 mb-1">User management</h1>
 
-        <form id="resetUserPassword" class="mb-2">
-            @Html.LabelFor(m => m.SelectedUser, "Select user to reset password", new {@class = "form-label"})
+        <form id="userManagement" class="mb-2">
+            @Html.LabelFor(m => m.SelectedUser, "Select user to edit", new {@class = "form-label"})
             <div class="input-group">
                 @Html.DropDownListFor(m => m.SelectedUser, selectList: new SelectList(Model.Users, "Value", "Text"), new {@class = "form-select"})
-                <button class="btn btn-danger me-1" type="button" onclick="ResetUserPassword()">Reset password</button>
-                <button class="btn btn-danger" type="button" onclick="">Delete</button>
+                <button class="btn btn-orange" type="button" onclick="ResetUserPassword()">Reset password</button>
+                <button class="btn btn-danger" type="button" onclick="DeleteUser()">Delete</button>
             </div>
         </form>
 
@@ -77,7 +77,7 @@
         
         function ResetUserPassword()
         {
-            let form = $("#resetUserPassword");
+            let form = $("#userManagement");
             let data = form.serialize();
             
             $.ajax({
@@ -96,6 +96,34 @@
                 },
                 error: function (result) {
                     $("#resetPasswordInfo").addClass("visually-hidden");
+                }
+            });
+        }
+        
+        function DeleteUser()
+        {
+            let form = $("#userManagement");
+            let data = form.serialize();
+            
+            $.ajax({
+                url: "@Url.Action("DeleteUser")",
+                type: "POST",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        form.trigger("reset");
+                                                
+                        $("#@Html.IdFor(m => m.SelectedUser)").empty();
+                        $.each(result.model.users, function (index, item) {
+                            $("#@Html.IdFor(m => m.SelectedUser)").append($('<option>', {value: item.value, text: item.text}));
+                        });
+                    }
+                    else {
+                        $("#resetPasswordInfo").addClass("visually-hidden");
+                    }
+                },
+                error: function (result) {
                 }
             });
         }

@@ -58,6 +58,14 @@ body {
   background-color: #ecbb20 !important;
 }
 
+.btn-orange{
+  background-color: #ffa500 !important;
+}
+
+.btn-orange:hover{
+  background-color: #df7500 !important;
+}
+
 .btn.active {
     background-color: #20222b !important;
     color: #fff !important;

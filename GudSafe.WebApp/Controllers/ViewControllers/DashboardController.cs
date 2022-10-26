@@ -218,6 +218,7 @@ public class DashboardController : Controller
         }).ToListAsync();
 
         model.Users = users;
+
         return Json(new {success = true, model});
     }
 
@@ -307,6 +308,22 @@ public class DashboardController : Controller
             _notyf.Success($"{user.Name}'s password successfully reset");
         else
             _notyf.Error($"{user.Name}'s password couldn't be reset");
+
+        return Json(new {success = true, model});
+    }
+
+    [HttpPost]
+    public async Task<JsonResult> DeleteUser(AdminSettingsViewModel model)
+    {
+        //TODO: delete user and all his data
+
+        var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
+        {
+            Text = x.Name,
+            Value = x.UniqueId.ToString()
+        }).ToListAsync();
+
+        model.Users = users;
 
         return Json(new {success = true, model});
     }
