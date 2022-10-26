@@ -47,7 +47,6 @@
         function CreateNewUser() {
             let form = $("#createNewUser");
             let data = form.serialize();
-            $("#generatedPasswordInfo").addClass("visually-hidden");
         
             $.ajax({
                 url: "@Url.Action("CreateUser")",
@@ -66,7 +65,13 @@
                         $("#generatedPasswordInfo input").val(result.model.newUserPassword);
                         $("#generatedPasswordInfo").removeClass("visually-hidden");
                     }
+                    else {
+                        $("#generatedPasswordInfo").addClass("visually-hidden");
+                    }
                 },
+                error: function (xhr, status, error) {
+                    $("#generatedPasswordInfo").addClass("visually-hidden");
+                }
             });
         }
         
@@ -74,7 +79,6 @@
         {
             let form = $("#resetUserPassword");
             let data = form.serialize();
-            $("#resetPasswordInfo").addClass("visually-hidden");
             
             $.ajax({
                 url: "@Url.Action("ResetPasswordOfUser")",
@@ -86,7 +90,13 @@
                         $("#resetPasswordInfo input").val(result.model.resetUserPwNewPassword);
                         $("#resetPasswordInfo").removeClass("visually-hidden");
                     }
+                    else {
+                        $("#resetPasswordInfo").addClass("visually-hidden");
+                    }
                 },
+                error: function (result) {
+                    $("#resetPasswordInfo").addClass("visually-hidden");
+                }
             });
         }
     </script>
