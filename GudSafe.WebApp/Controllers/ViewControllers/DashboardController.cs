@@ -43,7 +43,7 @@ public class DashboardController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        return RedirectToAction("Gallery");
     }
 
     public async Task<IActionResult> Gallery()
@@ -308,7 +308,6 @@ public class DashboardController : Controller
         else
             _notyf.Error($"{user.Name}'s password couldn't be reset");
 
-        model = new AdminSettingsViewModel();
         return Json(new {success = true, model});
     }
 

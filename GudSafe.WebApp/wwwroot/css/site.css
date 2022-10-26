@@ -57,3 +57,20 @@ body {
 .btn-gudsafe-primary:hover{
   background-color: #ecbb20 !important;
 }
+
+.btn.active {
+    background-color: #20222b !important;
+    color: #fff !important;
+}
+
+.btn:focus{
+  box-shadow: none !important;
+}
+
+.form-control:focus{
+  box-shadow: none !important;
+}
+
+.form-select:focus{
+  box-shadow: none !important;
+}

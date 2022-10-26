@@ -5,45 +5,38 @@
     ViewData["Title"] = "Admin Settings";
 }
 
-<div>
+<div class="container">
     @Html.ValidationSummary()
 
-    <h1 class="display-6 mt-1">Create new user</h1>
-    <form id="createNewUser">
-        <div class="form-group">
-            @Html.LabelFor(m => m.NewUserUsername, "Username")
+    <h1 class="display-6 mb-1">Create new user</h1>
+    <form id="createNewUser" class="mb-2">
+        <div class="input-group has-validation">
             @Html.TextBoxFor(m => m.NewUserUsername, new {@class = "form-control", required = "required", type = "text", placeholder = "Username"})
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.NewUserPassword, "Generated Password")
-            @Html.TextBoxFor(m => m.NewUserPassword, new {@class = "form-control", required = "required", type = "text", @readonly = "readonly", placeholder = "New password"})
-        </div>
-
-        <div class="form-group row">
-            <button class="btn btn-gudsafe-primary m-2 col" type="button" onclick="CreateNewUser()">Create User</button>
+            <button class="btn btn-gudsafe-primary" type="button" onclick="CreateNewUser()">Create User</button>
         </div>
     </form>
 
+    <div class="input-group visually-hidden mb-4" id="generatedPasswordInfo">
+        <span class="input-group-text">Generated password: </span>
+        <input type="text" class="form-control" value="" readonly="readonly"/>
+    </div>
+
     @if (Model.Users != null)
     {
-        <h1 class="display-6 mt-1">Reset users password</h1>
+        <h1 class="display-6 mb-1">Reset users password</h1>
 
-        <form id="resetUserPassword">
-            <div class="form-group">
-                @Html.LabelFor(m => m.SelectedUser, "Select user to reset password")
-                @Html.DropDownListFor(m => m.SelectedUser, selectList: new SelectList(Model.Users, "Value", "Text"), new {@class = "form-control"})
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.ResetUserPwNewPassword, "Generated Password")
-                @Html.TextBoxFor(m => m.ResetUserPwNewPassword, new {@class = "form-control", type = "text", @readonly = "readonly", placeholder = "New password"})
-            </div>
-
-            <div class="form-group row">
-                <button class="btn btn-danger m-2 col" type="button" onclick="ResetUserPassword()">Reset password</button>
+        <form id="resetUserPassword" class="mb-2">
+            @Html.LabelFor(m => m.SelectedUser, "Select user to reset password", new {@class = "form-label"})
+            <div class="input-group has-validation">
+                @Html.DropDownListFor(m => m.SelectedUser, selectList: new SelectList(Model.Users, "Value", "Text"), new {@class = "form-select"})
+                <button class="btn btn-danger" type="button" onclick="ResetUserPassword()">Reset password</button>
             </div>
         </form>
+
+        <div class="input-group visually-hidden" id="resetPasswordInfo">
+            <span class="input-group-text">New password: </span>
+            <input type="text" class="form-control" value="" readonly="readonly"/>
+        </div>
     }
 </div>
 
@@ -53,6 +46,7 @@
         function CreateNewUser() {
             let form = $("#createNewUser");
             let data = form.serialize();
+            $("#generatedPasswordInfo").addClass("visually-hidden");
         
             $.ajax({
                 url: "@Url.Action("CreateUser")",
@@ -62,14 +56,14 @@
                 success: function (result) {
                     if (result.success) {
                         form.trigger("reset");
-                        $("#@Html.IdFor(m => m.NewUserPassword)").val(result.model.newUserPassword);
-                        
-                        $("#@Html.IdFor(m => m.ResetUserPwNewPassword)").val(result.model.resetUserPwNewPassword);
                         
                         $("#@Html.IdFor(m => m.SelectedUser)").empty();
                         $.each(result.model.users, function (index, item) {
                             $("#@Html.IdFor(m => m.SelectedUser)").append($('<option>', {value: item.value, text: item.text}));
                         });
+                        
+                        $("#generatedPasswordInfo input").val(result.model.newUserPassword);
+                        $("#generatedPasswordInfo").removeClass("visually-hidden");
                     }
                 },
             });
@@ -79,6 +73,7 @@
         {
             let form = $("#resetUserPassword");
             let data = form.serialize();
+            $("#resetPasswordInfo").addClass("visually-hidden");
             
             $.ajax({
                 url: "@Url.Action("ResetPasswordOfUser")",
@@ -88,9 +83,9 @@
                 success: function (result) {
                     if (result.success) {
                         form.trigger("reset");
-                        $("#@Html.IdFor(m => m.NewUserPassword)").val(result.model.newUserPassword);
                         
-                        $("#@Html.IdFor(m => m.ResetUserPwNewPassword)").val(result.model.resetUserPwNewPassword);
+                        $("#resetPasswordInfo input").val(result.model.resetUserPwNewPassword);
+                        $("#resetPasswordInfo").removeClass("visually-hidden");
                     }
                 },
             });
