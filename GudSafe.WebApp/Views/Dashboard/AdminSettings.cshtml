@@ -17,7 +17,7 @@
     </form>
 
     <div class="input-group visually-hidden mb-4" id="generatedPasswordInfo">
-        <span class="input-group-text">Generated password: </span>
+        <span class="input-group-text">Generated password</span>
         <input type="text" class="form-control" value="" readonly="readonly"/>
     </div>
 
@@ -27,14 +27,15 @@
 
         <form id="resetUserPassword" class="mb-2">
             @Html.LabelFor(m => m.SelectedUser, "Select user to reset password", new {@class = "form-label"})
-            <div class="input-group has-validation">
+            <div class="input-group">
                 @Html.DropDownListFor(m => m.SelectedUser, selectList: new SelectList(Model.Users, "Value", "Text"), new {@class = "form-select"})
-                <button class="btn btn-danger" type="button" onclick="ResetUserPassword()">Reset password</button>
+                <button class="btn btn-danger me-1" type="button" onclick="ResetUserPassword()">Reset password</button>
+                <button class="btn btn-danger" type="button" onclick="">Delete</button>
             </div>
         </form>
 
         <div class="input-group visually-hidden" id="resetPasswordInfo">
-            <span class="input-group-text">New password: </span>
+            <span class="input-group-text">New password</span>
             <input type="text" class="form-control" value="" readonly="readonly"/>
         </div>
     }
