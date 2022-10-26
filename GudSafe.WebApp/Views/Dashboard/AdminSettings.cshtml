@@ -82,8 +82,6 @@
                 data: data,
                 success: function (result) {
                     if (result.success) {
-                        form.trigger("reset");
-                        
                         $("#resetPasswordInfo input").val(result.model.resetUserPwNewPassword);
                         $("#resetPasswordInfo").removeClass("visually-hidden");
                     }
