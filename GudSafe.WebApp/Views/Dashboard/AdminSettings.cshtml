@@ -30,7 +30,7 @@
             <div class="input-group">
                 @Html.DropDownListFor(m => m.SelectedUser, selectList: new SelectList(Model.Users, "Value", "Text"), new {@class = "form-select"})
                 <button class="btn btn-orange" type="button" onclick="ResetUserPassword()">Reset password</button>
-                <button class="btn btn-danger" type="button" onclick="DeleteUser()">Delete</button>
+                <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteConfirmation">Delete?</button>
             </div>
         </form>
 
@@ -39,6 +39,24 @@
             <input type="text" class="form-control" value="" readonly="readonly"/>
         </div>
     }
+</div>
+
+<div class="modal fade" id="deleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content text-dark">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationLabel">Are you sure?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Do you want to delete the selected user?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="DeleteUser()">Delete</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts
@@ -104,6 +122,9 @@
         {
             let form = $("#userManagement");
             let data = form.serialize();
+            
+            let dialog = $("#deleteConfirmation");
+            dialog.modal("hide");
             
             $.ajax({
                 url: "@Url.Action("DeleteUser")",

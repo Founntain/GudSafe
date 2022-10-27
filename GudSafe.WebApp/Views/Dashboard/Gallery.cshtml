@@ -38,7 +38,7 @@
     <script>
         function deleteFile(id) {
             $.ajax({
-                url: "@Url.Action("Delete")",
+                url: "@Url.Action("DeleteFile")",
                 type: "POST",
                 contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
                 data: {id: id},

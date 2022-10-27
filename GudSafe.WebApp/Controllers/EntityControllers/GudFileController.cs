@@ -167,25 +167,48 @@ public class GudFileController : BaseEntityController<GudFileController>
         if (id == Guid.Empty)
             return BadRequest("Please supply a valid ID");
 
-        var thumbnailPath = Path.Combine(ThumbnailsPath, id.ToString());
+        var apiKey = Request.Headers["apikey"].FirstOrDefault();
 
-        if (System.IO.File.Exists(thumbnailPath))
-            System.IO.File.Delete(thumbnailPath);
+        if (apiKey == null)
+            return Unauthorized();
 
         var fileToDelete = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == id);
 
         if (fileToDelete == default)
-            return NotFound("The file you try to delete wasn't found");
+            return new NotFoundObjectResult("The file you try to delete wasn't found");
 
-        var imagePath = Path.Combine(ImagesPath, $"{id}.{fileToDelete.FileExtension}");
+        var canDelete = fileToDelete.Creator.ApiKey == apiKey;
 
-        if (System.IO.File.Exists(imagePath))
-            System.IO.File.Delete(imagePath);
+        if (!canDelete)
+            return Unauthorized();
+
+        DeleteFileFromDrive(fileToDelete, Logger);
 
         Context.Files.Remove(fileToDelete);
 
         var result = await Context.SaveChangesAsync();
 
         return result == 1 ? Ok() : BadRequest("File could not be deleted, please try again alter");
+    }
+
+    public static void DeleteFileFromDrive(GudFile file, ILogger logger)
+    {
+        try
+        {
+            System.IO.File.Delete($"{ImagesPath}/{file.UniqueId}.{file.FileExtension}");
+        }
+        catch (Exception)
+        {
+            logger.LogError("The file {FileName} couldn't be deleted", file.UniqueId);
+        }
+
+        try
+        {
+            System.IO.File.Delete($"{ThumbnailsPath}/{file.UniqueId}");
+        }
+        catch (Exception)
+        {
+            logger.LogError("The thumbnail file {FileName} couldn't be deleted", file.UniqueId);
+        }
     }
 }

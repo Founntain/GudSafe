@@ -1,0 +1,10 @@
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div>
+    <h3>Sorry, it seems like you do not have permission to access the url: </h3>
+    <h4>@Context.Request.Host@Context.Request.Query["returnUrl"]</h4>
+    <hr/>
+    <h4>If you think this is a mistake contact your admin or check the server logs</h4>
+</div>

@@ -38,6 +38,11 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel loginModel, string? returnUrl)
@@ -45,9 +50,7 @@ public class HomeController : Controller
         if (string.IsNullOrWhiteSpace(loginModel.Name) || string.IsNullOrWhiteSpace(loginModel.Password))
             return BadRequest();
 
-        var context = new GudSafeContext();
-
-        var user = context.Users.FirstOrDefault(x => x.Name == loginModel.Name);
+        var user = _context.Users.FirstOrDefault(x => x.Name == loginModel.Name);
 
         if (user == null)
             return BadRequest();

@@ -26,15 +26,13 @@ namespace GudSafe.WebApp.Controllers.ViewControllers;
 public class DashboardController : Controller
 {
     private readonly GudSafeContext _context;
-    private readonly GudFileController _fileController;
     private readonly IMapper _mapper;
     private readonly ILogger<DashboardController> _logger;
     private readonly INotyfService _notyf;
 
-    public DashboardController(GudFileController fileController, GudSafeContext context, IMapper mapper,
-        ILogger<DashboardController> logger, INotyfService notyf)
+    public DashboardController(GudSafeContext context, IMapper mapper, ILogger<DashboardController> logger,
+        INotyfService notyf)
     {
-        _fileController = fileController;
         _context = context;
         _mapper = mapper;
         _logger = logger;
@@ -70,6 +68,21 @@ public class DashboardController : Controller
         };
 
         return View(viewmodel);
+    }
+
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AdminSettings()
+    {
+        var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
+        {
+            Text = x.Name,
+            Value = x.UniqueId.ToString()
+        }).ToListAsync();
+
+        return View(new AdminSettingsViewModel
+        {
+            Users = users
+        });
     }
 
     public async Task<IActionResult> ShareXProfile()
@@ -109,7 +122,7 @@ public class DashboardController : Controller
     }
 
     [HttpPost]
-    public async Task<JsonResult> Delete(Guid id)
+    public async Task<JsonResult> DeleteFile(Guid id)
     {
         var user = await FindUser();
 
@@ -123,7 +136,16 @@ public class DashboardController : Controller
             return Json(new {success = false});
         }
 
-        await _fileController.Delete(id);
+        var file = user.FilesUploaded.FirstOrDefault(x => x.UniqueId == id);
+
+        if (file == default)
+            return Json(new {success = false});
+
+        GudFileController.DeleteFileFromDrive(file, _logger);
+
+        _context.Files.Remove(file);
+
+        await _context.SaveChangesAsync();
 
         _notyf.Success($"File {id} deleted successfully", 2);
 
@@ -136,21 +158,8 @@ public class DashboardController : Controller
             .FirstOrDefaultAsync(x => x.Name == User.FindFirstValue(ClaimTypes.Name));
     }
 
-    public async Task<IActionResult> AdminSettings()
-    {
-        var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
-        {
-            Text = x.Name,
-            Value = x.UniqueId.ToString()
-        }).ToListAsync();
-
-        return View(new AdminSettingsViewModel
-        {
-            Users = users
-        });
-    }
-
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<JsonResult> CreateUser(AdminSettingsViewModel model)
     {
         var requestUser = await FindUser();
@@ -270,6 +279,7 @@ public class DashboardController : Controller
         return Json(new {success = true, message = "Password successfully changed"});
     }
 
+    [NonAction]
     private async Task RefreshLogin(User user, DateTimeOffset lastChangedTime)
     {
         var claims = new List<Claim>
@@ -293,6 +303,7 @@ public class DashboardController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<JsonResult> ResetPasswordOfUser(AdminSettingsViewModel model)
     {
         PasswordManager.HashPassword(model.ResetUserPwNewPassword!, out var salt, out var password);
@@ -313,9 +324,31 @@ public class DashboardController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<JsonResult> DeleteUser(AdminSettingsViewModel model)
     {
-        //TODO: delete user and all his data
+        var uid = Guid.TryParse(model.SelectedUser, out var guid) ? guid : Guid.Empty;
+
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.UniqueId == uid);
+
+        if (user == null)
+        {
+            _logger.LogWarning("The user with id {Name} wasn't found in the database",
+                model.SelectedUser);
+
+            _notyf.Error("The user couldn't be found in the database");
+
+            return Json(new {success = false});
+        }
+
+        foreach (var gudFile in user.FilesUploaded)
+        {
+            GudFileController.DeleteFileFromDrive(gudFile, _logger);
+        }
+
+        _context.Users.Remove(user);
+
+        await _context.SaveChangesAsync();
 
         var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
         {
@@ -324,6 +357,8 @@ public class DashboardController : Controller
         }).ToListAsync();
 
         model.Users = users;
+
+        _notyf.Success($"User '{user.Name}' successfully deleted");
 
         return Json(new {success = true, model});
     }
