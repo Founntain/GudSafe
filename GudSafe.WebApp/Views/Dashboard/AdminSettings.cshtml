@@ -10,9 +10,9 @@
 
     <h1 class="display-6 mb-1">Create new user</h1>
     <form id="createNewUser" class="mb-2">
-        <div class="input-group has-validation">
+        <div class="input-group">
             @Html.TextBoxFor(m => m.NewUserUsername, new {@class = "form-control", required = "required", type = "text", placeholder = "Username"})
-            <button class="btn btn-gudsafe-primary" type="button" onclick="CreateNewUser()">Create User</button>
+            <button class="btn btn-primary" type="button" onclick="CreateNewUser()">Create User</button>
         </div>
     </form>
 
@@ -29,7 +29,7 @@
             @Html.LabelFor(m => m.SelectedUser, "Select user to edit", new {@class = "form-label"})
             <div class="input-group">
                 @Html.DropDownListFor(m => m.SelectedUser, selectList: new SelectList(Model.Users, "Value", "Text"), new {@class = "form-select"})
-                <button class="btn btn-orange" type="button" onclick="ResetUserPassword()">Reset password</button>
+                <button class="btn btn-warning" type="button" onclick="ResetUserPassword()">Reset password</button>
                 <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteConfirmation">Delete?</button>
             </div>
         </form>

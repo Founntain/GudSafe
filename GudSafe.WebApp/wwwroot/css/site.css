@@ -50,27 +50,6 @@ body {
   display: inline-block;
 }
 
-.btn-gudsafe-primary{
-  background-color: #FFCC22 !important;
-}
-
-.btn-gudsafe-primary:hover{
-  background-color: #ecbb20 !important;
-}
-
-.btn-orange{
-  background-color: #ffa500 !important;
-}
-
-.btn-orange:hover{
-  background-color: #df7500 !important;
-}
-
-.btn.active {
-    background-color: #20222b !important;
-    color: #fff !important;
-}
-
 .btn:focus{
   box-shadow: none !important;
 }
