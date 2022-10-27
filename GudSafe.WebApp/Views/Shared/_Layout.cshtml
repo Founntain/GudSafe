@@ -47,13 +47,13 @@
         @if (ViewData["LoggedIn"] as bool? == true)
         {
             <div class="input-group mb-3">
-                <a class="btn btn-gudsafe-primary flex-fill" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
-                <a class="btn btn-gudsafe-primary flex-fill" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
+                <a class="btn btn-gudsafe-primary flex-fill border-1 border-dark" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
+                <a class="btn btn-gudsafe-primary flex-fill border-1 border-dark" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
                 @if ((string) ViewData["UserRole"]! == UserRole.Admin.ToString())
                 {
-                    <a class="btn btn-gudsafe-primary flex-fill" asp-controller="Dashboard" asp-action="AdminSettings">Admin settings</a>
+                    <a class="btn btn-gudsafe-primary flex-fill border-1 border-dark" asp-controller="Dashboard" asp-action="AdminSettings">Admin settings</a>
                 }
-                <a class="btn btn-gudsafe-primary flex-fill" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
+                <a class="btn btn-gudsafe-primary flex-fill border-1 border-dark" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
             </div>
         }
         @RenderBody()
