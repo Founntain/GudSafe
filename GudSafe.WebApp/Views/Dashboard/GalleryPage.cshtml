@@ -1,0 +1,73 @@
+@model GudSafe.Data.ViewModels.GalleryViewModel
+
+@{
+    int prevPage;
+    var prevDisabled = false;
+    int nextPage;
+    var nextDisabled = false;
+    if (Model.Page - 1 > 0)
+    {
+        prevPage = Model.Page - 1;
+    }
+    else
+    {
+        prevPage = 1;
+        prevDisabled = true;
+    }
+    if (Model.Page + 1 <= Model.TotalPages)
+    {
+        nextPage = Model.Page + 1;
+    }
+    else
+    {
+        nextPage = Model.TotalPages;
+        nextDisabled = true;
+    }
+}
+
+<div class="text-center">
+
+    <div class="input-group justify-content-center my-4">
+        <button class="btn btn-secondary mx-1p"
+                @if (prevDisabled)
+                {
+                    @Html.Raw("disabled=\"disabled\"")
+                }
+                onclick="loadGalleryPage(@prevPage)">
+            Prev
+        </button>
+        <button class="btn btn-secondary mx-1p"
+                @if (nextDisabled)
+                {
+                    @Html.Raw("disabled=\"disabled\"")
+                }
+                onclick="loadGalleryPage(@nextPage)">
+            Next
+        </button>
+    </div>
+
+    <div class="row">
+        @{
+            if (Model.Files == null) return;
+
+            foreach (var file in Model.Files)
+            {
+                <div class="col-lg-3 col-md-6 mb-4 d-flex flex-column" id="@file.UniqueId">
+                    <div class="uploadBox align-self-center">
+                        <a href="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId">
+                            <img class="upload" src="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId/thumbnail"/>
+                        </a>
+                    </div>
+
+                    <div>
+                        <p>@file.CreationTime.ToString("f", CultureInfo.CurrentCulture)</p>
+                        <hr/>
+                        <form class="align-self-end">
+                            <button class="btn btn-danger align-self-end" type="button" onclick="deleteFile('@file.UniqueId.ToString()')">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

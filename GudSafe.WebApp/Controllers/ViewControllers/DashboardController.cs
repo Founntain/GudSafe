@@ -50,13 +50,32 @@ public class DashboardController : Controller
     {
         var user = await FindUser();
 
-        var files = user?.FilesUploaded.OrderByDescending(x => x.CreationTime).ToList() ?? new List<GudFile>();
 
         return View(new GalleryViewModel
         {
-            Username = user?.Name,
-            Files = files.ToList()
+            Username = user?.Name
         });
+    }
+
+    public async Task<IActionResult> GalleryPage(int pageNumber)
+    {
+        var user = await FindUser();
+
+        if (user == null) return BadRequest();
+
+        var pagedFiles = user.FilesUploaded.OrderByDescending(x => x.CreationTime).Skip((pageNumber - 1) * 12).Take(12);
+        
+        var pageCount = (int)Math.Ceiling(user.FilesUploaded.Count / 12d);
+
+        var view = PartialView(new GalleryViewModel
+        {
+            Files = pagedFiles.ToList(),
+            Page = pageNumber,
+            TotalPages = pageCount
+        });
+
+        return view;
+        //return Json(new {success = true, content = view});
     }
 
     public async Task<IActionResult> UserSettings()

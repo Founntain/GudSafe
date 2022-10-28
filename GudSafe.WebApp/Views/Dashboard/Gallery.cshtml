@@ -1,40 +1,34 @@
 @model GudSafe.Data.ViewModels.GalleryViewModel
 
 @{
-    ViewData["Title"] = @Model.Username + "'s Gallery";
+    ViewData["Title"] = Model.Username + "'s Gallery";
 }
-<div class="text-center">
-    <div class="row">
 
-        @{
-            if (Model.Files == null) return;
-
-            foreach (var file in Model.Files)
-            {
-                <div class="col-lg-4 col-md-12 mb-4 " id="@file.UniqueId">
-                    <div class="uploadBox">
-                        <a href="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId">
-                            <img class="upload" src="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId/thumbnail"/>
-                        </a>
-                    </div>
-
-                    <div class="align-self-end">
-                        <p>@file.CreationTime.ToString("f", CultureInfo.CurrentCulture)</p>
-                        <hr/>
-                        <form class="align-self-end">
-                            <button class="btn btn-danger align-self-end" type="button" onclick="deleteFile('@file.UniqueId.ToString()')">Delete</button>
-                        </form>
-                    </div>
-                </div>
-            }
-        }
-
-    </div>
+<div id="gallery">
+    
 </div>
 
 @section Scripts
 {
     <script>
+        let currentPage = 1;
+        $(document).ready(function (){
+            loadGalleryPage(currentPage);
+        });
+    
+        function loadGalleryPage(pageNumber)
+        {
+            $.ajax({
+                url: '@Url.Action("GalleryPage", "Dashboard")',
+                type: 'GET',
+                data: { pageNumber: pageNumber },
+                success: function (data) {
+                    currentPage = pageNumber;
+                    $('#gallery').html(data);
+                }
+            });
+        }
+        
         function deleteFile(id) {
             $.ajax({
                 url: "@Url.Action("DeleteFile")",
@@ -43,7 +37,7 @@
                 data: {id: id},
                 success: function (result) {
                     if (result.success) {
-                        $("#" + id).remove();
+                        loadGalleryPage(currentPage);
                     }
                 }
             });
