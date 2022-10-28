@@ -10,3 +10,4 @@ dataSources.xml
 *.db-shm
 *.db-wal
 **/gudfiles/**
+**/wwwroot/css/bootstrap/**
