@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Nodes;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using AutoMapper;
 using GudSafe.Data;
@@ -19,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GudSafe.WebApp.Controllers.ViewControllers;
 
@@ -102,7 +104,7 @@ public class DashboardController : Controller
             Name = $"GudSafe {Request.Host}",
             DestinationType = "ImageUploader, FileUploader",
             RequestMethod = "POST",
-            RequestURL = $"{Request.Scheme}://{Request.Host}/files/upload",
+            RequestUrl = $"{Request.Scheme}://{Request.Host}/files/upload",
             Body = "MultipartFormData",
             Headers =
                 new Dictionary<string, object>
@@ -110,8 +112,8 @@ public class DashboardController : Controller
                     {"apikey", user.ApiKey}
                 },
             FileFormName = "file",
-            URL = "$json:url$",
-            ThumbnailURL = "$json:thumbnailurl$"
+            Url = "$json:url$",
+            ThumbnailUrl = "$json:thumbnailurl$"
         };
 
         var json = JsonConvert.SerializeObject(shareXProfile);

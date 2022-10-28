@@ -1,16 +1,15 @@
-@using System.Globalization
 @model GudSafe.Data.ViewModels.GalleryViewModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = @Model.Username + "'s Gallery";
-    Layout = "_Layout";
 }
 <div class="text-center">
     <div class="row">
 
         @{
-            foreach (var file in Model?.Files)
+            if (Model.Files == null) return;
+
+            foreach (var file in Model.Files)
             {
                 <div class="col-lg-4 col-md-12 mb-4 " id="@file.UniqueId">
                     <div class="uploadBox">
@@ -20,7 +19,7 @@
                     </div>
 
                     <div class="align-self-end">
-                        <p>@file.CreationTime.ToString("f", new CultureInfo("en-us"))</p>
+                        <p>@file.CreationTime.ToString("f", CultureInfo.CurrentCulture)</p>
                         <hr/>
                         <form class="align-self-end">
                             <button class="btn btn-danger align-self-end" type="button" onclick="deleteFile('@file.UniqueId.ToString()')">Delete</button>

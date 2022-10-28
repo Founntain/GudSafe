@@ -4,6 +4,7 @@ using GudSafe.Data;
 using GudSafe.WebApp.Controllers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -64,6 +65,13 @@ if (!app.Environment.IsDevelopment())
 
     //app.UseHttpsRedirection();
 }
+
+app.UseRequestLocalization(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en-us");
+    options.AddSupportedCultures("en-us");
+    options.AddSupportedUICultures("en-us");
+});
 
 app.UseStaticFiles();
 
