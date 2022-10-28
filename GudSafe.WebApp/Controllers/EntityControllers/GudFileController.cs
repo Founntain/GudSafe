@@ -114,14 +114,13 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         if (file.ContentType.Contains("image"))
         {
-            imageFs.Seek(0, SeekOrigin.Begin);
-            using var bitmap = SKBitmap.Decode(imageFs);
+            stream.Seek(0, SeekOrigin.Begin);
+            using var bitmap = SKBitmap.Decode(stream);
 
             var ratio = Math.Max(bitmap.Width / 200d, bitmap.Height / 200d);
 
             using var scaled = bitmap.Resize(
-                new SKImageInfo((int) (bitmap.Width / ratio), (int) (bitmap.Height / ratio)),
-                SKFilterQuality.Medium);
+                new SKImageInfo((int) (bitmap.Width / ratio), (int) (bitmap.Height / ratio)), SKFilterQuality.Medium);
             using var data = scaled.Encode(SKEncodedImageFormat.Webp, 75);
 
             await using var fs = System.IO.File.OpenWrite(thumbnailPath);
