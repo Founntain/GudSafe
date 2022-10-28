@@ -44,7 +44,7 @@
         <h1 class="display-4 text-center">@ViewData["Title"]</h1>
         @if (ViewData["LoggedIn"] as bool? == true)
         {
-            <div class="input-group mb-3">
+            <div class="input-group mb-3" id="dashboard-nav">
                 <a class="btn btn-primary flex-fill flex-grow-1 border-1 border-dark" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
                 <a class="btn btn-primary flex-fill border-1 border-dark" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
                 @if ((string) ViewData["UserRole"]! == UserRole.Admin.ToString())
@@ -67,6 +67,12 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
+<script>
+    $(document).ready(function() {
+        let url = window.location.pathname;
+        $("#dashboard-nav a[href='" + url + "']").addClass("active");
+    });
+</script>
 @await Component.InvokeAsync("Notyf")
 </body>
 </html>
