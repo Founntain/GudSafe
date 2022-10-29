@@ -1,0 +1,23 @@
+//
+// Offcanvas
+//
+
+%offcanvas-css-vars-alt {
+  --#{$prefix}offcanvas-color: #{$offcanvas-color-alt};
+  --#{$prefix}offcanvas-bg: #{$offcanvas-bg-color-alt};
+  --#{$prefix}offcanvas-border-color: #{$offcanvas-border-color-alt};
+  --#{$prefix}offcanvas-box-shadow: #{$offcanvas-box-shadow-alt};
+}
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+  $next: breakpoint-next($breakpoint, $grid-breakpoints);
+  $infix: breakpoint-infix($next, $grid-breakpoints);
+
+  .offcanvas#{$infix} {
+    @extend %offcanvas-css-vars-alt;
+  }
+}
+
+.offcanvas-backdrop {
+  @include overlay-backdrop-alt($offcanvas-backdrop-bg-alt, $offcanvas-backdrop-opacity-alt);
+}

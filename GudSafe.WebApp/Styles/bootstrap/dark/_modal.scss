@@ -1,0 +1,16 @@
+// Container that the modal scrolls within
+.modal {
+  --#{$prefix}modal-color: #{$modal-content-color-alt};
+  --#{$prefix}modal-bg: #{$modal-content-bg-alt};
+  --#{$prefix}modal-border-color: #{$modal-content-border-color-alt};
+  --#{$prefix}modal-box-shadow: #{$modal-content-box-shadow-xs-alt};
+  --#{$prefix}modal-header-border-color: #{$modal-header-border-color-alt};
+  --#{$prefix}modal-footer-bg: #{$modal-footer-bg-alt};
+  --#{$prefix}modal-footer-border-color: #{$modal-footer-border-color-alt};
+}
+
+// Modal background
+.modal-backdrop {
+  --#{$prefix}backdrop-bg: #{$modal-backdrop-bg-alt};
+  --#{$prefix}backdrop-opacity: #{$modal-backdrop-opacity-alt};
+}

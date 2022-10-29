@@ -1,0 +1,29 @@
+// Base class
+
+.list-group {
+  --#{$prefix}list-group-color: #{$list-group-color-alt};
+  --#{$prefix}list-group-bg: #{$list-group-bg-alt};
+  --#{$prefix}list-group-border-color: #{$list-group-border-color-alt};
+  --#{$prefix}list-group-action-color: #{$list-group-action-color-alt};
+  --#{$prefix}list-group-action-hover-color: #{$list-group-action-hover-color-alt};
+  --#{$prefix}list-group-action-hover-bg: #{$list-group-hover-bg-alt};
+  --#{$prefix}list-group-action-active-color: #{$list-group-action-active-color-alt};
+  --#{$prefix}list-group-action-active-bg: #{$list-group-action-active-bg-alt};
+  --#{$prefix}list-group-disabled-color: #{$list-group-disabled-color-alt};
+  --#{$prefix}list-group-disabled-bg: #{$list-group-disabled-bg-alt};
+  --#{$prefix}list-group-active-color: #{$list-group-active-color-alt};
+  --#{$prefix}list-group-active-bg: #{$list-group-active-bg-alt};
+  --#{$prefix}list-group-active-border-color: #{$list-group-active-border-color-alt};
+}
+
+// List group contextual variants
+
+@each $state, $value in $theme-colors-alt {
+  $list-group-variant-bg-alt: shift-color($value, $list-group-item-bg-scale-alt);
+  $list-group-variant-color-alt: shift-color($value, $list-group-item-color-scale-alt);
+  @if (contrast-ratio($list-group-variant-bg-alt, $list-group-variant-color-alt) < $min-contrast-ratio-alt) {
+    $list-group-variant-color-alt: mix($value, color-contrast($list-group-variant-bg-alt, $color-contrast-dark-alt, $color-contrast-light-alt, $min-contrast-ratio-alt), abs($list-group-item-color-scale-alt));
+  }
+
+  @include list-group-item-variant($state, $list-group-variant-bg-alt, $list-group-variant-color-alt);
+}

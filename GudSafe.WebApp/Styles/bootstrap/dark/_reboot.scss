@@ -1,0 +1,28 @@
+//
+// Reboot
+//
+
+// Content grouping
+
+hr {
+  color: $hr-color-alt; // 1
+  border-top-color: $hr-border-color-alt;
+  opacity: $hr-opacity-alt;
+}
+
+// Code
+
+pre {
+  color: $pre-color-alt;
+}
+
+kbd {
+  color: $kbd-color-alt;
+  background-color: $kbd-bg-alt;
+}
+
+// Tables
+
+caption {
+  color: $table-caption-color-alt;
+}

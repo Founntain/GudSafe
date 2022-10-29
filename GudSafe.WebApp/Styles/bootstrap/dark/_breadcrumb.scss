@@ -1,0 +1,5 @@
+.breadcrumb {
+  --#{$prefix}breadcrumb-bg: #{$breadcrumb-bg-alt};
+  --#{$prefix}breadcrumb-divider-color: #{$breadcrumb-divider-color-alt};
+  --#{$prefix}breadcrumb-item-active-color: #{$breadcrumb-active-color-alt};
+}

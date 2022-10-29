@@ -1,0 +1,12 @@
+//
+// Base styles
+//
+
+.card {
+  --#{$prefix}card-border-color: #{$card-border-color-alt};
+  --#{$prefix}card-box-shadow: #{$card-box-shadow};
+  --#{$prefix}card-cap-bg: #{$card-cap-bg-alt};
+  --#{$prefix}card-cap-color: #{$card-cap-color-alt};
+  --#{$prefix}card-color: #{$card-color-alt};
+  --#{$prefix}card-bg: #{$card-bg-alt};
+}

@@ -11,7 +11,8 @@
 @section Scripts
 {
     <script>
-        let currentPage = 1;
+        let currentPage = @Model.Page;
+        console.log(currentPage);
         $(document).ready(function (){
             loadGalleryPage(currentPage);
         });
@@ -19,7 +20,7 @@
         function loadGalleryPage(pageNumber)
         {
             $.ajax({
-                url: '@Url.Action("GalleryPage", "Dashboard")',
+                url: '@Url.Action("GalleryPage")',
                 type: 'GET',
                 data: { pageNumber: pageNumber },
                 success: function (data) {

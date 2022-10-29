@@ -1,0 +1,29 @@
+/*!
+ * Bootstrap Reboot v5.x.x (https://getbootstrap.com/)
+ * Copyright 2011-2022 The Bootstrap Authors
+ * Copyright 2011-2022 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md)
+ *
+ * Bootstrap-Dark (https://vinorodrigues.github.io/bootstrap-dark-5/)
+ * Copyright 2020-2022 Vino Rodrigues
+ * This version is the reboot only.
+ */
+
+@import "functions";
+@import "variables";
+@import "variables-alt";  // dark color set is here
+@import "maps";
+@import "mixins";
+@import "dark/mixins";
+
+@import "root";
+@include color-scheme-alt(alternative-color-scheme($default-color-scheme)) {
+  @import "dark/root";
+}
+
+@import "reboot";
+@include color-scheme-alt(alternative-color-scheme($default-color-scheme)) {
+  @import "dark/dark";
+  @import "dark/reboot";
+}

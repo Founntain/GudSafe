@@ -1,0 +1,6 @@
+// Base class
+.tooltip {
+  --#{$prefix}tooltip-color: #{$tooltip-color-alt};
+  --#{$prefix}tooltip-bg: #{$tooltip-bg-alt};
+  --#{$prefix}tooltip-opacity: #{$tooltip-opacity-alt};
+}

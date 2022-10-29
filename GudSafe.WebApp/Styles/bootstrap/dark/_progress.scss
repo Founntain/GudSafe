@@ -1,0 +1,10 @@
+//
+// progress
+//
+
+.progress {
+  --#{$prefix}progress-bg: #{$progress-bg-alt};
+  --#{$prefix}progress-box-shadow: #{$progress-box-shadow-alt};
+  --#{$prefix}progress-bar-color: #{$progress-bar-color-alt};
+  --#{$prefix}progress-bar-bg: #{$progress-bar-bg-alt};
+}

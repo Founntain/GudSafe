@@ -1,7 +1,5 @@
 html {
   font-size: 14px;
-  background: #282C34 !important;
-  color: white !important;
   
   overflow-x: hidden;
   overflow-y: scroll;
@@ -15,21 +13,23 @@ html {
   }
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+:root
+{
+  --custom-navbar-bg: #f6f6f6;
 }
 
-body {
-  margin-bottom: 60px;
-  background: #282C34 !important;
-  color: white !important;
+@media (prefers-color-scheme: dark) {
+  :root{
+    --custom-navbar-bg: #29292d;
+  }
+  
+  .navbar-custom {
+    border-color: black !important;
+  }
 }
 
 .navbar-custom{
-  background: #21252B !important;
-  color: white !important;
-  border-color: black !important;
+  background: var(--custom-navbar-bg) !important;
 }
 
 .uploadContainer {

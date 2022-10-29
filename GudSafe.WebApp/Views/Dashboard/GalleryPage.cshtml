@@ -52,9 +52,9 @@
 
             foreach (var file in Model.Files)
             {
-                <div class="col-lg-3 col-md-6 mb-4 d-flex flex-column" id="@file.UniqueId">
+                <div class="col-lg-2 col-md-3 col-sm-6 mb-4 d-flex flex-column" id="@file.UniqueId">
                     <div class="uploadBox align-self-center">
-                        <a href="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId">
+                        <a target="_blank" href="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId">
                             <img class="upload" src="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId/thumbnail"/>
                         </a>
                     </div>
@@ -62,9 +62,9 @@
                     <div>
                         <p>@file.CreationTime.ToString("f", CultureInfo.CurrentCulture)</p>
                         <hr/>
-                        <form class="align-self-end">
-                            <button class="btn btn-danger align-self-end" type="button" onclick="deleteFile('@file.UniqueId.ToString()')">Delete</button>
-                        </form>
+                        <button class="btn btn-outline-danger align-self-end p-1" type="button" onclick="deleteFile('@file.UniqueId.ToString()')">
+                            <span class="bi bi-trash fs-5" width="32" height="32" fill="white" viewBox="0 0 32 32"></span>
+                        </button>
                     </div>
                 </div>
             }

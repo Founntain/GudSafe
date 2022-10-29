@@ -1,0 +1,39 @@
+//
+// Navbar
+//
+
+.navbar {
+  --#{$prefix}navbar-color: #{$navbar-light-color-alt};
+  --#{$prefix}navbar-hover-color: #{$navbar-light-hover-color-alt};
+  --#{$prefix}navbar-disabled-color: #{$navbar-light-disabled-color-alt};
+  --#{$prefix}navbar-active-color: #{$navbar-light-active-color-alt};
+  --#{$prefix}navbar-brand-color: #{$navbar-light-brand-color-alt};
+  --#{$prefix}navbar-brand-hover-color: #{$navbar-light-brand-hover-color-alt};
+  --#{$prefix}navbar-toggler-icon-bg: #{escape-svg($navbar-light-toggler-icon-bg-alt)};
+  --#{$prefix}navbar-toggler-border-color: #{$navbar-light-toggler-border-color-alt};
+}
+
+//
+// Navbar nav
+//
+
+.navbar-nav {
+  --#{$prefix}nav-link-color: var(--#{$prefix}navbar-color-alt);
+  --#{$prefix}nav-link-hover-color: var(--#{$prefix}navbar-hover-color-alt);
+  --#{$prefix}nav-link-disabled-color: var(--#{$prefix}navbar-disabled-color-alt);
+}
+
+//
+// Navbar themes
+//
+
+.navbar-dark {
+  --#{$prefix}navbar-color: #{$navbar-dark-color-alt};
+  --#{$prefix}navbar-hover-color: #{$navbar-dark-hover-color-alt};
+  --#{$prefix}navbar-disabled-color: #{$navbar-dark-disabled-color-alt};
+  --#{$prefix}navbar-active-color: #{$navbar-dark-active-color-alt};
+  --#{$prefix}navbar-brand-color: #{$navbar-dark-brand-color-alt};
+  --#{$prefix}navbar-brand-hover-color: #{$navbar-dark-brand-hover-color-alt};
+  --#{$prefix}navbar-toggler-border-color: #{$navbar-dark-toggler-border-color-alt};
+  --#{$prefix}navbar-toggler-icon-bg: #{escape-svg($navbar-dark-toggler-icon-bg-alt)};
+}

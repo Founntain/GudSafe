@@ -50,10 +50,10 @@ public class DashboardController : Controller
     {
         var user = await FindUser();
 
-
         return View(new GalleryViewModel
         {
-            Username = user?.Name
+            Username = user?.Name,
+            Page = 1
         });
     }
 
@@ -63,9 +63,9 @@ public class DashboardController : Controller
 
         if (user == null) return BadRequest();
 
-        var pagedFiles = user.FilesUploaded.OrderByDescending(x => x.CreationTime).Skip((pageNumber - 1) * 12).Take(12);
-        
-        var pageCount = (int)Math.Ceiling(user.FilesUploaded.Count / 12d);
+        var pagedFiles = user.FilesUploaded.OrderByDescending(x => x.CreationTime).Skip((pageNumber - 1) * 18).Take(18);
+
+        var pageCount = (int) Math.Ceiling(user.FilesUploaded.Count / 18d);
 
         var view = PartialView(new GalleryViewModel
         {
@@ -74,8 +74,9 @@ public class DashboardController : Controller
             TotalPages = pageCount
         });
 
+        Response.Headers.CacheControl = "no-cache, no-store";
+        
         return view;
-        //return Json(new {success = true, content = view});
     }
 
     public async Task<IActionResult> UserSettings()

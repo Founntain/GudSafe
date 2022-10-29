@@ -1,0 +1,39 @@
+// Utilities maps
+// ______________________________________
+
+$utilities-colors-alt: $theme-colors-rgb-alt !default;
+
+// *** Don't need this, covered with CSS vars ***
+// $utilities-text-alt: map-merge(
+//   $utilities-colors-alt,
+//   (
+//     "black": to-rgb($black-alt),
+//     "white": to-rgb($white-alt),
+//     "body": to-rgb($body-color-alt)
+//   )
+// ) !default;
+// $utilities-text-colors-alt: map-loop($utilities-text-alt, rgba-css-var-alt, "$key", "text") !default;  // hack for issue #35
+// ***
+
+// *** Don't need this, covered with CSS vars ***
+// $utilities-bg-alt: map-merge(
+//   $utilities-colors-alt,
+//   (
+//     "black": to-rgb($black-alt),
+//     "white": to-rgb($white-alt),
+//     "body": to-rgb($body-bg-alt)
+//   )
+// ) !default;
+// $utilities-bg-colors-alt: map-loop($utilities-bg-alt, rgba-css-var-alt, "$key", "bg") !default;  // hack for issue #35
+// ***
+
+// *** Don't need this, covered with CSS vars ***
+// $utilities-border-alt: map-merge(
+//   $utilities-colors-alt,
+//   (
+//     "black": to-rgb($black-alt),
+//     "white": to-rgb($white-alt)
+//   )
+// ) !default;
+// $utilities-border-colors-alt: map-loop($utilities-border-alt, rgba-css-var, "$key", "border") !default;
+// ***

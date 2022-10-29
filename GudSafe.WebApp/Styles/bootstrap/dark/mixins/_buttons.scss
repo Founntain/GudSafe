@@ -1,0 +1,45 @@
+// Button variants
+
+@mixin button-variant-alt(
+  $background-alt,
+  $border-alt,
+  $color-alt: color-contrast($background-alt, $color-contrast-dark-alt, $color-contrast-light-alt, $min-contrast-ratio-alt),
+  $hover-background-alt: if($color-alt == $color-contrast-light-alt, shade-color($background-alt, $btn-hover-bg-shade-amount-alt), tint-color($background-alt, $btn-hover-bg-tint-amount-alt)),
+  $hover-border-alt: if($color-alt == $color-contrast-light-alt, shade-color($border-alt, $btn-hover-border-shade-amount-alt), tint-color($border-alt, $btn-hover-border-tint-amount-alt)),
+  $hover-color-alt: color-contrast($hover-background-alt, $color-contrast-dark-alt, $color-contrast-light-alt, $min-contrast-ratio-alt),
+  $active-background-alt: if($color-alt == $color-contrast-light-alt, shade-color($background-alt, $btn-active-bg-shade-amount-alt), tint-color($background-alt, $btn-active-bg-tint-amount-alt)),
+  $active-border-alt: if($color-alt == $color-contrast-light-alt, shade-color($border-alt, $btn-active-border-shade-amount-alt), tint-color($border-alt, $btn-active-border-tint-amount-alt)),
+  $active-color-alt: color-contrast($active-background-alt, $color-contrast-dark-alt, $color-contrast-light-alt, $min-contrast-ratio-alt),
+  $disabled-background-alt: $background-alt,
+  $disabled-border-alt: $border-alt,
+  $disabled-color-alt: color-contrast($disabled-background-alt, $color-contrast-dark-alt, $color-contrast-light-alt, $min-contrast-ratio-alt)
+) {
+  @include button-variant(
+    $background-alt,
+    $border-alt,
+    $color-alt,
+    $hover-background-alt,
+    $hover-border-alt,
+    $hover-color-alt,
+    $active-background-alt,
+    $active-border-alt,
+    $active-color-alt,
+    $disabled-background-alt,
+    $disabled-border-alt,
+    $disabled-color-alt );
+}
+
+@mixin button-outline-variant-alt(
+  $color-alt,
+  $color-hover-alt: color-contrast($color-alt),
+  $active-background-alt: $color-alt,
+  $active-border-alt: $color-alt,
+  $active-color-alt: color-contrast($active-background-alt)
+) {
+  @include button-outline-variant(
+    $color-alt,
+    $color-hover-alt,
+    $active-background-alt,
+    $active-border-alt,
+    $active-color-alt );
+}

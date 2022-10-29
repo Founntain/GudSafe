@@ -1,0 +1,45 @@
+// stylelint-disable custom-property-empty-line-before
+
+:root {
+  // Custom variable values only support SassScript inside `#{}`.
+  @each $color, $value in $colors-alt {
+    --#{$prefix}#{$color}: #{$value};
+  }
+
+  @each $color, $value in $grays-alt {
+    --#{$prefix}gray-#{$color}: #{$value};
+  }
+
+  @each $color, $value in $theme-colors-alt {
+    --#{$prefix}#{$color}: #{$value};
+  }
+
+  @each $color, $value in $theme-colors-rgb-alt {
+    --#{$prefix}#{$color}-rgb: #{$value};
+  }
+
+  --#{$prefix}white-rgb: #{to-rgb($white-alt)};
+  --#{$prefix}black-rgb: #{to-rgb($black-alt)};
+  --#{$prefix}body-color-rgb: #{to-rgb($body-color-alt)};
+  --#{$prefix}body-bg-rgb: #{to-rgb($body-bg-alt)};
+
+  // Root and body
+
+  --#{$prefix}body-color: #{$body-color-alt};
+  --#{$prefix}body-bg: #{$body-bg-alt};
+
+  // Fonts
+
+  --#{$prefix}gradient: #{$gradient-alt};
+
+  --#{$prefix}border-color: #{$border-color-alt};
+  --#{$prefix}border-color-translucent: #{$border-color-translucent-alt};
+
+  --#{$prefix}heading-color: #{$headings-color-alt};
+  --#{$prefix}link-color: #{$link-color-alt};
+  --#{$prefix}link-hover-color: #{$link-hover-color-alt};
+
+  --#{$prefix}code-color: #{$code-color-alt};
+
+  --#{$prefix}highlight-bg: #{$mark-bg-alt};
+}

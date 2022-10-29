@@ -1,0 +1,9 @@
+.popover {
+  --#{$prefix}popover-bg: #{$popover-bg-alt};
+  --#{$prefix}popover-border-color: #{$popover-border-color-alt};
+  --#{$prefix}popover-box-shadow: #{$popover-box-shadow-alt};
+  --#{$prefix}popover-header-color: #{$popover-header-color-alt};
+  --#{$prefix}popover-header-bg: #{$popover-header-bg-alt};
+  --#{$prefix}popover-body-color: #{$popover-body-color-alt};
+  --#{$prefix}popover-arrow-border: var(--#{$prefix}popover-border-color-alt);
+}

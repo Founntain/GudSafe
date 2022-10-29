@@ -1,0 +1,17 @@
+//
+// Base styles
+//
+
+.accordion {
+  --#{$prefix}accordion-color: #{color-contrast($accordion-bg-alt)};
+  --#{$prefix}accordion-bg: #{$accordion-bg-alt};
+  --#{$prefix}accordion-border-color: #{$accordion-border-color-alt};
+  --#{$prefix}accordion-btn-color: #{$accordion-button-color-alt};
+  --#{$prefix}accordion-btn-bg: #{$accordion-button-bg-alt};
+  --#{$prefix}accordion-btn-icon: #{escape-svg($accordion-button-icon-alt)};
+  --#{$prefix}accordion-btn-active-icon: #{escape-svg($accordion-button-active-icon-alt)};
+  --#{$prefix}accordion-btn-focus-border-color: #{$accordion-button-focus-border-color-alt};
+  --#{$prefix}accordion-btn-focus-box-shadow: #{$accordion-button-focus-box-shadow-alt};
+  --#{$prefix}accordion-active-color: #{$accordion-button-active-color-alt};
+  --#{$prefix}accordion-active-bg: #{$accordion-button-active-bg-alt};
+}

@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
@@ -36,6 +37,7 @@ public class GudFileController : BaseEntityController<GudFileController>
             var file = System.IO.File.Open(path, FileMode.Open);
 
             HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
+            HttpContext.Response.Headers.CacheControl = "public, max-age=15552000";
 
             return File(file, dbFile.FileType);
         }
@@ -64,6 +66,7 @@ public class GudFileController : BaseEntityController<GudFileController>
             var file = System.IO.File.Open(path, FileMode.Open);
 
             HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
+            HttpContext.Response.Headers.CacheControl = "public, max-age=15552000";
 
             return File(file, "image/webp");
         }

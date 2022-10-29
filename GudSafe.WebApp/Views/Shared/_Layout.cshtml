@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - GudSafe</title>
-    <link rel="stylesheet" href="~/css/bootstrap/bootstrap.css"/>
+    <link rel="stylesheet" href="~/css/bootstrap/bootstrap-dark.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/GudSafe.WebApp.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 </head>
-<body>
+<body class="d-flex flex-column h-100">
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3 navbar-custom">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3 navbar-custom">
         <div class="container-fluid">
-            <a class="navbar-brand text-light" asp-area="" asp-controller="Home" asp-action="Index">GudSafe</a>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GudSafe</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -20,18 +21,18 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
                     @if (ViewData["LoggedIn"] as bool? == false)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a>
                         </li>
                     }
                 </ul>
@@ -39,27 +40,27 @@
         </div>
     </nav>
 </header>
-<div class="container">
-    <main role="main" class="pb-3">
+<main role="main" class="pb-3 flex-shrink-0">
+    <div class="container">
         <h1 class="display-4 text-center">@ViewData["Title"]</h1>
         @if (ViewData["LoggedIn"] as bool? == true)
         {
             <div class="input-group mb-3" id="dashboard-nav">
-                <a class="btn btn-primary flex-fill flex-grow-1 border-1 border-dark" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
-                <a class="btn btn-primary flex-fill border-1 border-dark" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
+                <a class="btn btn-primary flex-fill flex-grow-1 border-1 mx-1p" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
+                <a class="btn btn-primary flex-fill border-1 mx-1p" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
                 @if ((string) ViewData["UserRole"]! == UserRole.Admin.ToString())
                 {
-                    <a class="btn btn-primary flex-fill border-1 border-dark" asp-controller="Dashboard" asp-action="AdminSettings">Admin settings</a>
+                    <a class="btn btn-primary flex-fill border-1 mx-1p" asp-controller="Dashboard" asp-action="AdminSettings">Admin settings</a>
                 }
-                <a class="btn btn-primary flex-fill border-1 border-dark" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
+                <a class="btn btn-primary flex-fill border-1 mx-1p" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
             </div>
         }
         @RenderBody()
-    </main>
-</div>
+    </div>
+</main>
 
-<footer class="border-top footer text-muted navbar-custom">
-    <div class="container text-light">
+<footer class="footer navbar-custom border-top text-muted mt-auto">
+    <div class="container">
         &copy; 2022 - GudSafe
     </div>
 </footer>

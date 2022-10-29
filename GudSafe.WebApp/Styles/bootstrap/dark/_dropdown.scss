@@ -1,0 +1,31 @@
+// The dropdown menu
+.dropdown-menu {
+  --#{$prefix}dropdown-color: #{$dropdown-color-alt};
+  --#{$prefix}dropdown-bg: #{$dropdown-bg-alt};
+  --#{$prefix}dropdown-border-color: #{$dropdown-border-color-alt};
+  --#{$prefix}dropdown-divider-bg: #{$dropdown-divider-bg-alt};
+  --#{$prefix}dropdown-box-shadow: #{$dropdown-box-shadow-alt};
+  --#{$prefix}dropdown-link-color: #{$dropdown-link-color-alt};
+  --#{$prefix}dropdown-link-hover-color: #{$dropdown-link-hover-color-alt};
+  --#{$prefix}dropdown-link-hover-bg: #{$dropdown-link-hover-bg-alt};
+  --#{$prefix}dropdown-link-active-color: #{$dropdown-link-active-color-alt};
+  --#{$prefix}dropdown-link-active-bg: #{$dropdown-link-active-bg-alt};
+  --#{$prefix}dropdown-link-disabled-color: #{$dropdown-link-disabled-color-alt};
+  --#{$prefix}dropdown-header-color: #{$dropdown-header-color-alt};
+}
+
+// Dark dropdowns
+.dropdown-menu-dark {
+  --#{$prefix}dropdown-color: #{$dropdown-dark-color-alt};
+  --#{$prefix}dropdown-bg: #{$dropdown-dark-bg-alt};
+  --#{$prefix}dropdown-border-color: #{$dropdown-dark-border-color-alt};
+  --#{$prefix}dropdown-box-shadow: #{$dropdown-dark-box-shadow-alt};
+  --#{$prefix}dropdown-link-color: #{$dropdown-dark-link-color-alt};
+  --#{$prefix}dropdown-link-hover-color: #{$dropdown-dark-link-hover-color-alt};
+  --#{$prefix}dropdown-divider-bg: #{$dropdown-dark-divider-bg-alt};
+  --#{$prefix}dropdown-link-hover-bg: #{$dropdown-dark-link-hover-bg-alt};
+  --#{$prefix}dropdown-link-active-color: #{$dropdown-dark-link-active-color-alt};
+  --#{$prefix}dropdown-link-active-bg: #{$dropdown-dark-link-active-bg-alt};
+  --#{$prefix}dropdown-link-disabled-color: #{$dropdown-dark-link-disabled-color-alt};
+  --#{$prefix}dropdown-header-color: #{$dropdown-dark-header-color-alt};
+}

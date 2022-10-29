@@ -1,0 +1,59 @@
+// Utilities
+
+$utilities-alt: () !default;
+// stylelint-disable-next-line scss/dollar-variable-default
+$utilities-alt: map-merge(
+  (
+    // ----------
+    "shadow": (
+      property: box-shadow,
+      class: shadow,
+      values: (
+        null: $box-shadow-alt,
+        sm: $box-shadow-sm-alt,
+        lg: $box-shadow-lg-alt,
+      )
+    ),
+    // ----------
+    // *** Don't need this, covered by CSS vars ***
+    // "border-color": (
+    //   property: border-color,
+    //   class: border,
+    //   local-vars: (
+    //     "border-opacity": 1
+    //   ),
+    //   values: $utilities-border-colors-alt
+    // ),
+    // ----------
+    // *** Don't need this, covered by CSS vars ***
+    // "gradient": (
+    //   property: background-image,
+    //   class: bg,
+    //   values: (gradient: var(--#{$variable-prefix}gradient))
+    // )
+    // ----------
+    "color": (
+      property: color,
+      class: text,
+      // local-vars: (
+      //   "text-opacity": 1
+      // ),
+      values: (
+        // "muted": $text-muted-alt,  // *** already a CSS var
+        "white-50": rgba($white-alt, .5),
+        "black-50": rgba($black-alt, .5)
+      )
+    ),
+    // ----------
+    // *** Don't need this, covered by CSS vars ***
+    // "background-color": (
+    //   property: background-color,
+    //   class: bg,
+    //   local-vars: (
+    //     "bg-opacity": 1
+    //   ),
+    //   values: $utilities-bg-colors-alt
+    // )
+  ),
+  $utilities-alt
+);

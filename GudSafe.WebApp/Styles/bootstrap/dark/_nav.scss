@@ -1,0 +1,29 @@
+//
+// Base class
+//
+
+.nav {
+  --#{$prefix}nav-link-color: #{$nav-link-color-alt};
+  --#{$prefix}nav-link-hover-color: #{$nav-link-hover-color-alt};
+  --#{$prefix}nav-link-disabled-color: #{$nav-link-disabled-color-alt};
+}
+
+//
+// Tabs
+//
+
+.nav-tabs {
+  --#{$prefix}nav-tabs-border-color: #{$nav-tabs-border-color-alt};
+  --#{$prefix}nav-tabs-link-hover-border-color: #{$nav-tabs-link-hover-border-color-alt};
+  --#{$prefix}nav-tabs-link-active-color: #{$nav-tabs-link-active-color-alt};
+  --#{$prefix}nav-tabs-link-active-bg: #{$nav-tabs-link-active-bg-alt};
+  --#{$prefix}nav-tabs-link-active-border-color: #{$nav-tabs-link-active-border-color-alt};
+}
+
+//
+// Pills
+//
+
+.nav-pills {
+  --#{$prefix}nav-pills-link-active-color: #{$nav-pills-link-active-color-alt};
+}

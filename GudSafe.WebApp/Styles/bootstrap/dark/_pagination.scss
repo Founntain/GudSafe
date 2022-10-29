@@ -1,0 +1,17 @@
+.pagination {
+  --#{$prefix}pagination-color: #{$pagination-color-alt};
+  --#{$prefix}pagination-bg: #{$pagination-bg-alt};
+  --#{$prefix}pagination-border-color: #{$pagination-border-color-alt};
+  --#{$prefix}pagination-hover-color: #{$pagination-hover-color-alt};
+  --#{$prefix}pagination-hover-bg: #{$pagination-hover-bg-alt};
+  --#{$prefix}pagination-hover-border-color: #{$pagination-hover-border-color-alt};
+  --#{$prefix}pagination-focus-color: #{$pagination-focus-color-alt};
+  --#{$prefix}pagination-focus-bg: #{$pagination-focus-bg-alt};
+  --#{$prefix}pagination-focus-box-shadow: #{$pagination-focus-box-shadow-alt};
+  --#{$prefix}pagination-active-color: #{$pagination-active-color-alt};
+  --#{$prefix}pagination-active-bg: #{$pagination-active-bg-alt};
+  --#{$prefix}pagination-active-border-color: #{$pagination-active-border-color-alt};
+  --#{$prefix}pagination-disabled-color: #{$pagination-disabled-color-alt};
+  --#{$prefix}pagination-disabled-bg: #{$pagination-disabled-bg-alt};
+  --#{$prefix}pagination-disabled-border-color: #{$pagination-disabled-border-color-alt};
+}

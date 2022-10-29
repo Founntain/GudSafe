@@ -1,0 +1,45 @@
+//
+// Base styles
+//
+
+.btn {
+  --#{$prefix}btn-color: #{$body-color-alt};
+  --#{$prefix}btn-bg: transparent;
+  --#{$prefix}btn-border-color: transparent;
+  --#{$prefix}btn-box-shadow: #{$btn-box-shadow-alt};
+
+  --#{$prefix}btn-focus-box-shadow: 0 0 0 #{$btn-focus-width} rgba(var(--#{$prefix}btn-focus-shadow-rgb-alt), .5);
+}
+
+//
+// Alternate buttons
+//
+
+@each $color, $value in $theme-colors-alt {
+  .btn-#{$color} {
+    @include button-variant-alt($value, $value);
+  }
+}
+
+@each $color, $value in $theme-colors-alt {
+  .btn-outline-#{$color} {
+    @include button-outline-variant-alt($value);
+  }
+}
+
+//
+// Link buttons
+//
+
+// Make a button look and behave like a link
+.btn-link {
+  --#{$prefix}btn-color: #{$btn-link-color-alt};
+  --#{$prefix}btn-bg: transparent;
+  --#{$prefix}btn-border-color: transparent;
+  --#{$prefix}btn-hover-color: #{$btn-link-hover-color-alt};
+  --#{$prefix}btn-hover-border-color: transparent;
+  --#{$prefix}btn-active-border-color: transparent;
+  --#{$prefix}btn-disabled-color: #{$btn-link-disabled-color-alt};
+  --#{$prefix}btn-disabled-border-color: transparent;
+  --#{$prefix}btn-box-shadow: none;
+}
