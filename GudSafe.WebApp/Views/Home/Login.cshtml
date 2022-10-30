@@ -5,20 +5,51 @@
 }
 
 <div>
-    @using (Html.BeginForm("Login", "Home", new {returnUrl = Context.Request.Query["returnUrl"]}, FormMethod.Post))
+    @using (Html.BeginForm("Login", "Home", new {returnUrl = Context.Request.Query["returnUrl"]}, FormMethod.Post, true, new {id = "login", onsubmit = "event.preventDefault(); Login()"}))
     {
+    @* <form id="login"> *@
         <div class="form-group">
-            @Html.LabelFor(m => m.Name, "Name")
-            @Html.TextBoxFor(m => m.Name, new {@class = "form-control", @type = "text", @placeholder = "Enter username"})
+            @Html.LabelFor(m => m.Name, "Name", new {@class = "form-label"})
+            <input id="@nameof(Model.Name)" name="name" class="form-control" placeholder="Enter password" autocomplete="username"/>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.Password, "Password")
-            @Html.TextBoxFor(m => m.Password, new {@class = "form-control", @type = "password", @placeholder = "Enter password"})
+            @Html.LabelFor(m => m.Password, "Password", new {@class = "form-label"})
+            <input id="@nameof(Model.Password)" type="password" name="password" class="form-control" placeholder="Enter password" autocomplete="current-password"/>
         </div>
 
         <div class="row">
-            <button class="btn btn-gudsafe-primary col m-3" type="submit">Login</button>
+            <button class="btn btn-primary col m-3" type="submit" accesskey="enter">Login</button>
         </div>
+        // </form>
     }
 </div>
+
+@section Scripts
+{
+    <script>
+        function Login() {            
+            let form = $("#login");
+            let data = form.serialize();
+            
+            let reqUrl = "@Url.Action("Login")";
+            if (window.location.search) {
+                reqUrl += window.location.search;
+            }
+            
+            $.ajax({
+                url: reqUrl,
+                type: "POST",
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        window.location.href = result.redirectUrl;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("Error: " + error);
+                }
+            });
+        }
+    </script>
+}

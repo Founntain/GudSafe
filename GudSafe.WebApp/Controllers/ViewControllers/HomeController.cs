@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 using System.Security.Claims;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using GudSafe.Data;
 using GudSafe.Data.Cryptography;
 using GudSafe.Data.ViewModels;
@@ -15,11 +16,13 @@ public class HomeController : Controller
 {
     private readonly GudSafeContext _context;
     private readonly ILogger<HomeController> _logger;
+    private readonly INotyfService _notyf;
 
-    public HomeController(GudSafeContext context, ILogger<HomeController> logger)
+    public HomeController(GudSafeContext context, ILogger<HomeController> logger, INotyfService notyf)
     {
         _context = context;
         _logger = logger;
+        _notyf = notyf;
     }
 
     public IActionResult Index()
@@ -45,20 +48,34 @@ public class HomeController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(LoginViewModel loginModel, string? returnUrl)
+    public async Task<JsonResult> Login(LoginViewModel loginModel, string? returnUrl)
     {
         if (string.IsNullOrWhiteSpace(loginModel.Name) || string.IsNullOrWhiteSpace(loginModel.Password))
-            return BadRequest();
+        {
+            _notyf.Error("Either the username or password were empty.");
+
+            return Json(new {success = false});
+        }
 
         var user = _context.Users.FirstOrDefault(x => x.Name == loginModel.Name);
 
         if (user == null)
-            return BadRequest();
+        {
+            _logger.LogError("User {User} not found in db", loginModel.Name);
+
+            _notyf.Error("Username or password incorrect.");
+
+            return Json(new {success = false});
+        }
 
         var success = PasswordManager.CheckIfPasswordIsCorrect(loginModel.Password, user.Salt, user.Password);
 
         if (!success)
-            return View(loginModel);
+        {
+            _notyf.Error("Username or password incorrect.");
+
+            return Json(new {success = false, redirectUrl = $"{Url.Action("Login")}"});
+        }
 
         var claims = new List<Claim>
         {
@@ -81,10 +98,10 @@ public class HomeController : Controller
 
         if (!string.IsNullOrWhiteSpace(returnUrl))
         {
-            return Redirect(returnUrl);
+            return Json(new {success = true, redirectUrl = returnUrl});
         }
 
-        return RedirectToAction("Index");
+        return Json(new {success = true, redirectUrl = $"{Url.Action("Index")}"});
     }
 
     public async Task<IActionResult> Logout()
