@@ -33,7 +33,7 @@ public class DashboardController : Controller
     private readonly INotyfService _notyf;
 
     public DashboardController(GudSafeContext context, IMapper mapper, ILogger<DashboardController> logger,
-        INotyfService notyf)
+        INotyfService notyf, IConfiguration configuration)
     {
         _context = context;
         _mapper = mapper;

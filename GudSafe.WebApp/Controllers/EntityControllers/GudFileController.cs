@@ -3,6 +3,7 @@ using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
 using GudSafe.WebApp.Classes.Attributes;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
@@ -81,9 +82,7 @@ public class GudFileController : BaseEntityController<GudFileController>
     [HttpPost]
     [UserAccess]
     [Route("upload")]
-    // TODO: Maybe Admin Customizable number
-    [DisableRequestSizeLimit]
-    [RequestFormLimits(MultipartBodyLengthLimit = 1024L * 1024L * 500L)]
+    [BodyLimit]
     public async Task<IActionResult> UploadFile()
     {
         if (Request.ContentType == null || !Request.ContentType.StartsWith("multipart/form-data"))
