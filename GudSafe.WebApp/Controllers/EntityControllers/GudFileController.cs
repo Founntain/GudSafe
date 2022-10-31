@@ -3,8 +3,10 @@ using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
 using GudSafe.WebApp.Classes.Attributes;
+using GudSafe.WebApp.Hubs;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
 
@@ -16,9 +18,13 @@ public class GudFileController : BaseEntityController<GudFileController>
     public static readonly string ImagesPath = "gudfiles";
     public static readonly string ThumbnailsPath = Path.Combine(ImagesPath, "thumbnails");
 
-    public GudFileController(GudSafeContext context, IMapper mapper, ILogger<GudFileController> logger) : base(context,
+    private readonly IHubContext<UploadHub> _uploadHub;
+
+    public GudFileController(GudSafeContext context, IMapper mapper, ILogger<GudFileController> logger,
+        IHubContext<UploadHub> uploadHub) : base(context,
         mapper, logger)
     {
+        _uploadHub = uploadHub;
     }
 
     [HttpGet]
@@ -153,6 +159,8 @@ public class GudFileController : BaseEntityController<GudFileController>
         }
 
         await Context.SaveChangesAsync();
+
+        await _uploadHub.Clients.User(user.UniqueId.ToString()).SendAsync("RefreshFiles");
 
         return Ok(new
         {

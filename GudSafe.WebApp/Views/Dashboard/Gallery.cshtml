@@ -10,11 +10,18 @@
 
 @section Scripts
 {
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
     <script>
         let currentPage = @Model.Page;
-        console.log(currentPage);
+        let connection = new signalR.HubConnectionBuilder().withUrl("/uploadHub").build();
+        
         $(document).ready(function (){
             loadGalleryPage(currentPage);
+            connection.start();
+        });
+        
+        connection.on("RefreshFiles", function () {
+            loadGalleryPage(1);
         });
     
         function loadGalleryPage(pageNumber)

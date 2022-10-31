@@ -10,7 +10,7 @@ public class BodyLimitAttribute : Attribute, IFilterFactory, IOrderedFilter
 
     public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
     {
-        var service = serviceProvider.GetService<BodyLimitFilter>();
+        var service = serviceProvider.GetRequiredService<BodyLimitFilter>();
         return service;
     }
 }

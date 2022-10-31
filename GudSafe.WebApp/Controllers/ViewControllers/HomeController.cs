@@ -79,6 +79,7 @@ public class HomeController : Controller
 
         var claims = new List<Claim>
         {
+            new (ClaimTypes.NameIdentifier, user.UniqueId.ToString()),
             new(ClaimTypes.Name, user.Name),
             new("LastChanged", user.LastChangedTicks.ToString(CultureInfo.InvariantCulture)),
             new(ClaimTypes.Role, user.UserRole.ToString())

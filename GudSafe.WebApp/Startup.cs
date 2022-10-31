@@ -4,6 +4,7 @@ using GudSafe.Data;
 using GudSafe.Data.Configuration;
 using GudSafe.WebApp.Classes.Attributes;
 using GudSafe.WebApp.Controllers;
+using GudSafe.WebApp.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
@@ -21,6 +22,8 @@ public static class Startup
         builder.Services.AddSingleton(configService);
 
         builder.WebHost.UseUrls($"http://localhost:{configService.Container.Port}");
+
+        builder.Services.AddSignalR();
 
         builder.Services.AddControllersWithViews();
 
@@ -112,6 +115,8 @@ public static class Startup
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
+        
+        app.MapHub<UploadHub>("/uploadHub");
 
         return app;
     }

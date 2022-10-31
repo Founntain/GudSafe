@@ -133,7 +133,7 @@ public class DashboardController : Controller
                 },
             FileFormName = "file",
             Url = "$json:url$",
-            ThumbnailUrl = "$json:thumbnailurl$"
+            ThumbnailUrl = "$json:thumbnailUrl$"
         };
 
         var json = JsonConvert.SerializeObject(shareXProfile);
