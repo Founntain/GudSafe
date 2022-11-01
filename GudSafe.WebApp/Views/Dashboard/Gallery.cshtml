@@ -5,50 +5,48 @@
 }
 
 <div id="gallery">
-    
 </div>
 
-@section Scripts
-{
-    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
-    <script>
-        let currentPage = @Model.Page;
-        let connection = new signalR.HubConnectionBuilder().withUrl("/uploadHub").build();
-        
-        $(document).ready(function (){
-            loadGalleryPage(currentPage);
-            connection.start();
-        });
-        
-        connection.on("RefreshFiles", function () {
-            loadGalleryPage(1);
-        });
+<script>
+$(function () {
+    loadGalleryPage(window.galleryData.currentPage);
+
+    try {
+        window.galleryData.connection.start();
+    } catch (err) {
+        console.error(err);
+    }
     
-        function loadGalleryPage(pageNumber)
-        {
-            $.ajax({
-                url: '@Url.Action("GalleryPage")',
-                type: 'GET',
-                data: { pageNumber: pageNumber },
-                success: function (data) {
-                    currentPage = pageNumber;
-                    $('#gallery').html(data);
-                }
-            });
+    setWindowTitle("@Html.Raw(ViewBag.Title)");
+});
+
+window.galleryData.connection.on("RefreshFiles", function () {
+    loadGalleryPage(1);
+});
+
+function loadGalleryPage(pageNumber) {
+    $.ajax({
+        url: "@Url.Action("GalleryPage")",
+        type: 'GET',
+        data: {pageNumber: pageNumber},
+        success: function (data) {
+            window.galleryData.currentPage = pageNumber;
+            $('#gallery').html(data);
         }
-        
-        function deleteFile(id) {
-            $.ajax({
-                url: "@Url.Action("DeleteFile")",
-                type: "POST",
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                data: {id: id},
-                success: function (result) {
-                    if (result.success) {
-                        loadGalleryPage(currentPage);
-                    }
-                }
-            });
-        }
-    </script>
+    });
 }
+
+function deleteFile(id) {
+    $.ajax({
+        url: "@Url.Action("DeleteFile")",
+        type: "POST",
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: {id: id},
+        success: function (result) {
+            if (result.success) {
+                loadGalleryPage(window.galleryData.currentPage);
+            }
+        }
+    });
+}
+</script>

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -28,30 +29,40 @@ public class DashboardController : Controller
     private readonly IMapper _mapper;
     private readonly ILogger<DashboardController> _logger;
     private readonly INotyfService _notyf;
+    private readonly IHtmlHelper _htmlHelper;
 
     public DashboardController(GudSafeContext context, IMapper mapper, ILogger<DashboardController> logger,
-        INotyfService notyf, IConfiguration configuration)
+        INotyfService notyf, IHtmlHelper htmlHelper)
     {
         _context = context;
         _mapper = mapper;
         _logger = logger;
         _notyf = notyf;
+        _htmlHelper = htmlHelper;
     }
 
     public IActionResult Index()
     {
-        return RedirectToAction("Gallery");
+        if (!Request.IsAjax())
+            return View();
+
+        return PartialView();
     }
 
     public async Task<IActionResult> Gallery()
     {
+        if (!Request.IsAjax())
+            return View("Index");
+
         var user = await FindUser();
 
-        return View(new GalleryViewModel
+        var viewModel = new GalleryViewModel
         {
             Username = user?.Name,
             Page = 1
-        });
+        };
+
+        return PartialView(viewModel);
     }
 
     public async Task<IActionResult> GalleryPage(int pageNumber)
@@ -72,36 +83,44 @@ public class DashboardController : Controller
         });
 
         Response.Headers.CacheControl = "no-cache, no-store";
-        
+
         return view;
     }
 
     public async Task<IActionResult> UserSettings()
     {
+        if (!Request.IsAjax())
+            return View("Index");
+
         var user = await FindUser();
 
-        var viewmodel = new UserSettingsViewModel
+        var viewModel = new UserSettingsViewModel
         {
             User = _mapper.Map<UserModel>(user),
             ApiKey = user?.ApiKey ?? string.Empty
         };
 
-        return View(viewmodel);
+        return PartialView(viewModel);
     }
 
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AdminSettings()
     {
+        if (!Request.IsAjax())
+            return View("Index");
+
         var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
         {
             Text = x.Name,
             Value = x.UniqueId.ToString()
         }).ToListAsync();
 
-        return View(new AdminSettingsViewModel
+        var viewModel = new AdminSettingsViewModel
         {
             Users = users
-        });
+        };
+
+        return PartialView(viewModel);
     }
 
     public async Task<IActionResult> ShareXProfile()

@@ -26,7 +26,7 @@
                     @if (ViewBag.LoggedIn)
                     {
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="dashboardDropdown" data-bs-toggle="dropdown" aria-expanded="false">Dashboard</a>
+                            <a class="nav-link dropdown-toggle" id="dashboardDropdown" asp-controller="Dashboard" asp-action="Index" data-bs-toggle="dropdown" aria-expanded="false">Dashboard</a>
                             <ul class="dropdown-menu" aria-labelledby="dashboardDropdown">
                                 <a class="dropdown-item" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
                                 <a class="dropdown-item" asp-controller="Dashboard" asp-action="UserSettings">User Settings</a>
@@ -53,7 +53,7 @@
 </header>
 <main role="main" class="pb-3 flex-shrink-0">
     <div class="container">
-        <h1 class="display-4 text-center">@ViewData["Title"]</h1>
+        <h1 class="display-4 text-center" id="window-title">@ViewData["Title"]</h1>
         @if (ViewBag.LoggedIn)
         {
             <div class="input-group mb-3" id="dashboard-nav">
@@ -66,7 +66,9 @@
                 <a class="btn btn-primary flex-fill border-1 mx-1p" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
             </div>
         }
-        @RenderBody()
+        <div id="page-content">
+            @RenderBody()
+        </div>
     </div>
 </main>
 
@@ -77,19 +79,9 @@
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
-<script>
-    $(document).ready(function() {
-        let url = window.location.pathname;
-        
-        let navbarNav = $(".navbar-nav a[href='" + url + "']");
-        navbarNav.addClass("active");
-        navbarNav.closest(".dropdown")[0].querySelector(".dropdown-toggle").classList.add("active");
-        
-        $("#dashboard-nav a[href='" + url + "']").addClass("active");
-    });
-</script>
 @await Component.InvokeAsync("Notyf")
 </body>
 </html>
