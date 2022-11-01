@@ -18,9 +18,9 @@
 //
 
 .navbar-nav {
-  --#{$prefix}nav-link-color: var(--#{$prefix}navbar-color-alt);
-  --#{$prefix}nav-link-hover-color: var(--#{$prefix}navbar-hover-color-alt);
-  --#{$prefix}nav-link-disabled-color: var(--#{$prefix}navbar-disabled-color-alt);
+  --#{$prefix}nav-link-color: var(--#{$prefix}navbar-color);
+  --#{$prefix}nav-link-hover-color: var(--#{$prefix}navbar-hover-color);
+  --#{$prefix}nav-link-disabled-color: var(--#{$prefix}navbar-disabled-color);
 }
 
 //
