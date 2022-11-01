@@ -1,10 +1,8 @@
-using System.Net.Http.Headers;
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
 using GudSafe.WebApp.Classes.Attributes;
 using GudSafe.WebApp.Hubs;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;

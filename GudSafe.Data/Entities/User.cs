@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using GudSafe.Data.Enums;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace GudSafe.Data.Entities;
 

@@ -1,4 +1,3 @@
-using GudSafe.Data.Models;
 using GudSafe.Data.Models.EntityModels;
 
 namespace GudSafe.Data.ViewModels;

@@ -1,5 +1,3 @@
-using GudSafe.Data.Models;
-using GudSafe.Data.Models.EntityModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GudSafe.Data.ViewModels;

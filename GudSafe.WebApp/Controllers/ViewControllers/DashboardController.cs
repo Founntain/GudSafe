@@ -1,8 +1,6 @@
 using System.Globalization;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json.Nodes;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using AutoMapper;
 using GudSafe.Data;
@@ -20,7 +18,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace GudSafe.WebApp.Controllers.ViewControllers;
 
