@@ -5,6 +5,7 @@ using AspNetCoreHero.ToastNotification.Abstractions;
 using GudSafe.Data;
 using GudSafe.Data.Cryptography;
 using GudSafe.Data.ViewModels;
+using GudSafe.WebApp.Classes;
 using GudSafe.WebApp.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -30,7 +31,10 @@ public class HomeController : Controller
         if (User.Identity?.IsAuthenticated ?? false)
             return RedirectToAction("Index", "Dashboard");
 
-        return View();
+        if (!Request.IsAjax())
+            return View();
+
+        return PartialView();
     }
 
     public IActionResult Login()
@@ -38,7 +42,10 @@ public class HomeController : Controller
         if (HttpContext.User.FindFirstValue(ClaimTypes.Name) != null)
             return RedirectToAction("Index");
 
-        return View();
+        if (!Request.IsAjax())
+            return View("Index");
+
+        return PartialView();
     }
 
     public IActionResult AccessDenied()
@@ -108,8 +115,12 @@ public class HomeController : Controller
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        if (!Request.IsAjax())
+            return RedirectToAction("Index");
 
-        return RedirectToAction("Index");
+        Response.StatusCode = 403;
+        return Json(new {redirectUrl = $"{Url.Action("Index")}"});
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

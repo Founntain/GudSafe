@@ -77,16 +77,21 @@ function clickHandler(url) {
 function loadPage(url) {
     $.ajax({
         url: url,
-        type: "POST",
-        success: function (data) {
+        type: "GET",
+        success: function (data, status, xhr) {
             $("#page-content").html(data);
+            console.log(status);
+            console.log(xhr);
+        },
+        error: function (xhr, status, error) {
+            if (xhr.status === 403) {
+                window.location.href = xhr.responseJSON.redirectUrl;
+            }
         }
     });
 }
 
 function refreshDashboardActiveClass(url) {
-    console.log(url);
-
     $(".navbar-nav a").removeClass("active");
 
     let navbarNav = $(".navbar-nav a[href='" + url + "']");
