@@ -56,7 +56,7 @@ public class GudFileController : BaseEntityController<GudFileController>
             var file = System.IO.File.Open(path, FileMode.Open);
 
             HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
-            HttpContext.Response.Headers.CacheControl = "public, max-age=15552000";
+            HttpContext.Response.Headers.CacheControl = "public, max-age=3600";
 
             return File(file, dbFile.FileType);
         }
