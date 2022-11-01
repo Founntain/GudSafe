@@ -9,13 +9,13 @@ window.galleryData = window.galleryData || {
 };
 
 $(function () {
-    window.history.pushState({newUrl: window.location.pathname}, '', window.location.pathname);
+    // window.history.pushState({newUrl: window.location.pathname.concat(window.location.search)}, '', window.location.pathname.concat(window.location.search));
 
     initLinks();
 
-    loadPage(window.location.pathname);
+    loadPage(window.location.pathname.concat(window.location.search), onSuccess);
 
-    refreshDashboardActiveClass(window.location.pathname);
+    // refreshDashboardActiveClass(window.location.pathname);
 });
 
 window.onpopstate = async function (e) {
@@ -60,13 +60,14 @@ function navCallback(e) {
 }
 
 function clickHandler(url) {
-    if (url === window.location.pathname)
+    if (url === window.location.pathname.concat(window.location.search)) {
         return;
+    }
 
     loadPage(url, onSuccess);
 }
 
-function onSuccess(url) {    
+function onSuccess(url) {
     window.history.pushState({newUrl: url}, '', url);
     
     refreshDashboardActiveClass(window.location.pathname);

@@ -47,7 +47,10 @@ public class HomeController : Controller
 
     public IActionResult AccessDenied()
     {
-        return View();
+        if (!Request.IsAjax())
+            return View();
+
+        return PartialView();
     }
 
     [HttpPost]
@@ -83,7 +86,7 @@ public class HomeController : Controller
 
         var claims = new List<Claim>
         {
-            new (ClaimTypes.NameIdentifier, user.UniqueId.ToString()),
+            new(ClaimTypes.NameIdentifier, user.UniqueId.ToString()),
             new(ClaimTypes.Name, user.Name),
             new("LastChanged", user.LastChangedTicks.ToString(CultureInfo.InvariantCulture)),
             new(ClaimTypes.Role, user.UserRole.ToString())
@@ -112,7 +115,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        
+
         if (!Request.IsAjax())
             return RedirectToAction("Index");
 
