@@ -28,9 +28,6 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        if (User.Identity?.IsAuthenticated ?? false)
-            return RedirectToAction("Index", "Dashboard");
-
         if (!Request.IsAjax())
             return View();
 

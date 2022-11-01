@@ -43,26 +43,20 @@ public class DashboardController : Controller
 
     public IActionResult Index()
     {
+        return RedirectToAction("Gallery");
+        
         if (!Request.IsAjax())
             return View();
 
         return PartialView();
     }
 
-    public async Task<IActionResult> Gallery()
+    public IActionResult Gallery()
     {
         if (!Request.IsAjax())
             return View("Index");
 
-        var user = await FindUser();
-
-        var viewModel = new GalleryViewModel
-        {
-            Username = user?.Name,
-            Page = 1
-        };
-
-        return PartialView(viewModel);
+        return PartialView();
     }
 
     public async Task<IActionResult> GalleryPage(int pageNumber)

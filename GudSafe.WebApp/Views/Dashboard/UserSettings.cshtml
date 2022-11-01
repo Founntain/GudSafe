@@ -43,35 +43,35 @@
     </form>
 </div>
 
-@section Scripts {
-    <script>
-        function changePassword() {
-            let data = $("#changePassword").serialize();
-        
-            $.ajax({
-                url: "@Url.Action("ChangePassword")",
-                type: "POST",
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                data: data,
-                success: function (result) {
-                    if (result.success) {
-                        $("#changePassword").trigger("reset");
-                    }
-                },
-            });
-        }
+<script>
+    setWindowTitle("@Html.Raw(ViewBag.Title)");
 
-        function resetApiKey() {
-            $.ajax({
-                url: "@Url.Action("ResetApiKey")",
-                type: "POST",
-                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                success: function (result) {
-                    if (result.success) {
-                        $("#apikey").val(result.apiKey);
-                    }
-                },
-            });
-        }
-    </script>
-}
+    function changePassword() {
+        let data = $("#changePassword").serialize();
+    
+        $.ajax({
+            url: "@Url.Action("ChangePassword")",
+            type: "POST",
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: data,
+            success: function (result) {
+                if (result.success) {
+                    $("#changePassword").trigger("reset");
+                }
+            },
+        });
+    }
+
+    function resetApiKey() {
+        $.ajax({
+            url: "@Url.Action("ResetApiKey")",
+            type: "POST",
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (result) {
+                if (result.success) {
+                    $("#apikey").val(result.apiKey);
+                }
+            },
+        });
+    }
+</script>

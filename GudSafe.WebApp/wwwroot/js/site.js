@@ -70,25 +70,36 @@ function clickHandler(url) {
     loadPage(url, onSuccess);
 }
 
-function onSuccess(url) {
+function onSuccess(url) {    
     window.history.pushState({newUrl: url}, '', url);
-
-    refreshDashboardActiveClass(url);
+    
+    refreshDashboardActiveClass(window.location.pathname);
 }
 
 function loadPage(url, successCallback) {
     $.ajax({
+        xhr: function () {
+            let xhr = new XMLHttpRequest();
+
+            xhr.onloadend = function () {
+                if (successCallback) {
+                    successCallback(xhr.responseURL);
+                }
+            };
+
+            return xhr;
+        },
         url: url,
         type: "GET",
         success: function (data, status, xhr) {
             let content = xhr.getResponseHeader("Content-Disposition");
+
             if (content && content.includes("attachment")) {
                 window.location = url;
                 return;
             }
 
             $("#page-content").html(data);
-            successCallback(url);
         },
         error: function (xhr, status, error) {
             if (xhr.status === 403) {

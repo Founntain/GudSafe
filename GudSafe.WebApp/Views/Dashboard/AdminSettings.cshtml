@@ -59,6 +59,8 @@
 </div>
 
 <script>
+    setWindowTitle("@Html.Raw(ViewBag.Title)");
+
     function CreateNewUser() {
         let form = $("#createNewUser");
         let data = form.serialize();
