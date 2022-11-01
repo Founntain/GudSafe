@@ -8,13 +8,13 @@
 <script>
     setWindowTitle("@Html.Raw(ViewBag.Title)");
     
-    $(function () {
+    $(async function () {
         loadGalleryPage(window.galleryData.currentPage);
     
         try {
-            window.galleryData.connection.start();
+            await window.galleryData.connection.start();
         } catch (err) {
-            console.error(err);
+            console.log(err);
         }
     });
     

@@ -44,11 +44,6 @@ public class DashboardController : Controller
     public IActionResult Index()
     {
         return RedirectToAction("Gallery");
-        
-        if (!Request.IsAjax())
-            return View();
-
-        return PartialView();
     }
 
     public IActionResult Gallery()

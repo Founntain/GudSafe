@@ -18,10 +18,10 @@ $(function () {
     refreshDashboardActiveClass(window.location.pathname);
 });
 
-window.onpopstate = function (e) {
+window.onpopstate = async function (e) {
     if (e.state) {
-        loadPage(e.state.newUrl);
-        refreshDashboardActiveClass(e.state.newUrl);
+        await loadPage(e.state.newUrl);
+        refreshDashboardActiveClass(window.location.pathname);
     }
 }
 
@@ -63,10 +63,6 @@ function clickHandler(url) {
     if (url === window.location.pathname)
         return;
 
-    if (window.galleryData.connection && !url.includes("gallery")) {
-        window.galleryData.connection.stop();
-    }
-
     loadPage(url, onSuccess);
 }
 
@@ -76,7 +72,11 @@ function onSuccess(url) {
     refreshDashboardActiveClass(window.location.pathname);
 }
 
-function loadPage(url, successCallback) {
+async function loadPage(url, successCallback) {
+    if (window.galleryData.connection && !url.includes("gallery")) {
+        await window.galleryData.connection.stop();
+    }
+
     $.ajax({
         xhr: function () {
             let xhr = new XMLHttpRequest();
