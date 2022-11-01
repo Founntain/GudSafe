@@ -31,7 +31,19 @@ public class GudFileController : BaseEntityController<GudFileController>
     [Route("{name}")]
     public async Task<ActionResult> Get(string name)
     {
-        var guid = Guid.Parse(name);
+        Guid guid;
+
+        try
+        {
+            guid = Guid.Parse(name);
+        }
+        catch (Exception)
+        {
+            Logger.LogWarning("Failed formatting {Name} to guid", name);
+
+            return NotFound("Couldn't find the requested file");
+        }
+
         var dbFile = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
 
         if (dbFile == null)
@@ -60,7 +72,19 @@ public class GudFileController : BaseEntityController<GudFileController>
     [Route("{name}/thumbnail")]
     public async Task<ActionResult> GetThumb(string name)
     {
-        var guid = Guid.Parse(name);
+        Guid guid;
+
+        try
+        {
+            guid = Guid.Parse(name);
+        }
+        catch (Exception)
+        {
+            Logger.LogWarning("Failed formatting {Name} to guid", name);
+
+            return NotFound("Couldn't find the requested file");
+        }
+
         var dbFile = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
 
         if (dbFile == null)
