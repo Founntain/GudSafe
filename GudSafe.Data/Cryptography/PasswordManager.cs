@@ -52,12 +52,7 @@ public class PasswordManager
 
     private static string GetSalt()
     {
-        var rng = new RNGCryptoServiceProvider();
-
-        var data = new byte[2048];
-        rng.GetBytes(data);
-
-        var salt = BitConverter.ToString(data);
+        var salt = BitConverter.ToString(RandomNumberGenerator.GetBytes(2048));
 
         return salt;
     }
