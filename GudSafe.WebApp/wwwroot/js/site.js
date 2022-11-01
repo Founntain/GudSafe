@@ -46,7 +46,7 @@ function dropdownCallback(e) {
     let url = $(this).attr("href");
 
     clickHandler(url);
-    
+
     $(this).closest(".dropdown").find(".dropdown-toggle").dropdown("toggle");
 }
 
@@ -67,21 +67,28 @@ function clickHandler(url) {
         window.galleryData.connection.stop();
     }
 
-    loadPage(url);
+    loadPage(url, onSuccess);
+}
 
+function onSuccess(url) {
     window.history.pushState({newUrl: url}, '', url);
 
     refreshDashboardActiveClass(url);
 }
 
-function loadPage(url) {
+function loadPage(url, successCallback) {
     $.ajax({
         url: url,
         type: "GET",
         success: function (data, status, xhr) {
+            let content = xhr.getResponseHeader("Content-Disposition");
+            if (content && content.includes("attachment")) {
+                window.location = url;
+                return;
+            }
+
             $("#page-content").html(data);
-            console.log(status);
-            console.log(xhr);
+            successCallback(url);
         },
         error: function (xhr, status, error) {
             if (xhr.status === 403) {
