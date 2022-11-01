@@ -6,7 +6,8 @@
     var userName = User.FindFirstValue(ClaimTypes.Name);
     var userRole = User.FindFirstValue(ClaimTypes.Role);
 
-    ViewData["LoggedIn"] = userName != null;
+    ViewBag.LoggedIn = User.Identity?.IsAuthenticated;
     ViewData["Username"] = userName ?? string.Empty;
     ViewData["UserRole"] = userRole ?? UserRole.Default.ToString();
+    ViewBag.IsAdmin = userRole == UserRole.Admin.ToString();
 }

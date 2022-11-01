@@ -21,18 +21,29 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
-                    @if (ViewData["LoggedIn"] as bool? == false)
+                    @if (ViewBag.LoggedIn)
                     {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="dashboardDropdown" data-bs-toggle="dropdown" aria-expanded="false">Dashboard</a>
+                            <ul class="dropdown-menu" aria-labelledby="dashboardDropdown">
+                                <a class="dropdown-item" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
+                                <a class="dropdown-item" asp-controller="Dashboard" asp-action="UserSettings">User Settings</a>
+                                @if (ViewBag.IsAdmin)
+                                {
+                                    <a class="dropdown-item" asp-controller="Dashboard" asp-action="AdminSettings">Admin Settings</a>
+                                }
+                            </ul>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="Logout">Logout</a>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="Login">Login</a>
                         </li>
                     }
                 </ul>
@@ -43,12 +54,12 @@
 <main role="main" class="pb-3 flex-shrink-0">
     <div class="container">
         <h1 class="display-4 text-center">@ViewData["Title"]</h1>
-        @if (ViewData["LoggedIn"] as bool? == true)
+        @if (ViewBag.LoggedIn)
         {
             <div class="input-group mb-3" id="dashboard-nav">
                 <a class="btn btn-primary flex-fill flex-grow-1 border-1 mx-1p" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
                 <a class="btn btn-primary flex-fill border-1 mx-1p" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
-                @if ((string) ViewData["UserRole"]! == UserRole.Admin.ToString())
+                @if (ViewBag.IsAdmin)
                 {
                     <a class="btn btn-primary flex-fill border-1 mx-1p" asp-controller="Dashboard" asp-action="AdminSettings">Admin settings</a>
                 }
@@ -71,6 +82,11 @@
 <script>
     $(document).ready(function() {
         let url = window.location.pathname;
+        
+        let navbarNav = $(".navbar-nav a[href='" + url + "']");
+        navbarNav.addClass("active");
+        navbarNav.closest(".dropdown")[0].querySelector(".dropdown-toggle").classList.add("active");
+        
         $("#dashboard-nav a[href='" + url + "']").addClass("active");
     });
 </script>
