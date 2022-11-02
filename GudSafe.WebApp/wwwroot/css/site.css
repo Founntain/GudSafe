@@ -1,68 +1,65 @@
 html {
-  font-size: 14px;
-  
-  overflow-x: hidden;
-  overflow-y: scroll;
-  scrollbar-width: thin;
-  scrollbar-gutter: stable;
+    font-size: 14px;
+
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-:root
-{
-  --custom-navbar-bg: #f6f6f6;
+:root {
+    --custom-navbar-bg: #f6f6f6;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root{
+.alt-colors {
     --custom-navbar-bg: #29292d;
-  }
-  
-  .navbar-custom {
-    border-color: black !important;
-  }
 }
 
-.navbar-custom{
-  background: var(--custom-navbar-bg) !important;
+.alt-colors .navbar-custom {
+    border-color: black !important;
+}
+
+.navbar-custom {
+    background: var(--custom-navbar-bg) !important;
 }
 
 .uploadContainer {
-  height: 250px;
-  width: 250px;
-  border: 1px #21252B solid;
-  border-radius: 5px;
+    height: 250px;
+    width: 250px;
+    border: 1px #21252B solid;
+    border-radius: 5px;
 }
 
-.upload{
-  width: auto;
-  height: 200px;
-  border-radius: 5px;
-  display: block;
-  max-width: 100%;
-  object-fit: contain;
-  margin: auto;
+.upload {
+    width: auto;
+    height: 200px;
+    border-radius: 5px;
+    display: block;
+    max-width: 100%;
+    object-fit: contain;
+    margin: auto;
 }
 
-.uploadBox{
-  height: 100%;
-  width: 100%;
-  display: inline-block;
+.uploadBox {
+    height: 100%;
+    width: 100%;
+    display: inline-block;
 }
 
-.btn:focus{
-  box-shadow: none !important;
+.btn:focus {
+    box-shadow: none !important;
 }
 
-.form-control:focus{
-  box-shadow: none !important;
+.form-control:focus {
+    box-shadow: none !important;
 }
 
-.form-select:focus{
-  box-shadow: none !important;
+.form-select:focus {
+    box-shadow: none !important;
 }

@@ -1,7 +1,7 @@
 // scss-docs-start mixin-color-scheme
 @mixin color-scheme-alt($scheme: light) {
   @if $scheme == dark {
-    @media (prefers-color-scheme: dark) {
+    .alt-colors {
       @content;
     }
   } @else if $scheme == light {
@@ -17,6 +17,20 @@
   }
 }
 // scss-docs-end mixin-color-scheme
+
+@mixin color-scheme-alt-root($scheme: light) {
+  @if $scheme == dark {
+      @content;
+  } @else if $scheme == light {
+      @content;
+  } @else {
+    // assume what gets passed here is not light or dark, thus is a CSS element,
+    // e.g. "html.dark", or "[data-theme-dark]"
+    #{$scheme} {
+      @content;
+    }
+  }
+}
 
 @mixin color-scheme-property($scheme: light, $dual: false) {
   @if $dual {

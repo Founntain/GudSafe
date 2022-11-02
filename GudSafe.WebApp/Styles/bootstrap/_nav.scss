@@ -29,6 +29,8 @@
   color: var(--#{$prefix}nav-link-color);
   text-decoration: if($link-decoration == none, null, none);
   @include transition($nav-link-transition);
+  margin-top: auto;
+  margin-bottom: auto;
 
   &:hover,
   &:focus {
@@ -42,6 +44,10 @@
     pointer-events: none;
     cursor: default;
   }
+}
+
+.nav-item {
+  display: flex;
 }
 
 //
