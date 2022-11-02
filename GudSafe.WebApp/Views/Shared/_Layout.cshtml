@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en" class="h-100 alt-colors">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="color-scheme" content="light dark"/>
     <title>@ViewData["Title"] - GudSafe</title>
     <link rel="stylesheet" href="~/css/bootstrap/bootstrap-dark.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
@@ -46,11 +47,46 @@
                             <a class="nav-link" asp-controller="Home" asp-action="Login">Login</a>
                         </li>
                     }
+                    <li class="nav-item align-self-end">
+                        <a class="nav-link" onclick="toggleDarkMode()">
+                            <span class="fs-4" id="dark-icon"></span>
+                            <span class="fs-4" id="dark-toggle"></span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 </header>
+<script>
+    let wantsDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    let config = localStorage.getItem('isDark');
+
+    console.log(config);
+
+    if (config === null) {
+        localStorage.setItem('isDark', wantsDark.toString());
+    } else {
+        wantsDark = config === 'true';
+    }
+
+    let darkIcon = document.getElementById('dark-icon');
+    let darkToggle = document.getElementById('dark-toggle');
+    
+    if (wantsDark) {
+        document.documentElement.classList.add('alt-colors');
+        localStorage.setItem('isDark', "true");
+        
+        darkIcon.classList.add('bi-moon');
+        darkToggle.classList.add('bi-toggle-off');
+    } else {
+        document.documentElement.classList.remove('alt-colors');
+        localStorage.setItem('isDark', "false");
+        
+        darkIcon.classList.add('bi-sun');
+        darkToggle.classList.add('bi-toggle-on');
+    }
+</script>
 <main role="main" class="pb-3 flex-shrink-0">
     <div class="container">
         <h1 class="display-4 text-center" id="window-title">@ViewData["Title"]</h1>
@@ -78,6 +114,7 @@
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

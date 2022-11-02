@@ -24,7 +24,7 @@
 // Layout & components
 @import "dark/color-scheme";
 @import "root";
-@include color-scheme-alt(alternative-color-scheme($default-color-scheme)) {
+@include color-scheme-alt-root(alternative-color-scheme($default-color-scheme)) {
   @import "dark/root";
 }
 
