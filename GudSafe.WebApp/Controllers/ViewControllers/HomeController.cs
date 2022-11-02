@@ -119,7 +119,7 @@ public class HomeController : Controller
         if (!Request.IsAjax())
             return RedirectToAction("Index");
 
-        Response.StatusCode = StatusCodes.Status410Gone;
+        //Response.StatusCode = StatusCodes.Status410Gone;
         return Json(new {redirectUrl = $"{Url.Action("Index")}"});
     }
 

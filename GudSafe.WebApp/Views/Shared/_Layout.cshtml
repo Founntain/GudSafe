@@ -62,8 +62,6 @@
     let wantsDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     let config = localStorage.getItem('isDark');
 
-    console.log(config);
-
     if (config === null) {
         localStorage.setItem('isDark', wantsDark.toString());
     } else {

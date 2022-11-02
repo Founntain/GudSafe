@@ -108,12 +108,12 @@ async function loadPage(url, successCallback) {
                 return;
             }
 
-            $("#page-content").html(data);
-        },
-        error: function (xhr, status, error) {
-            if (xhr.status === 410) {
-                window.location.href = xhr.responseJSON.redirectUrl;
+            if (data.redirectUrl) {
+                window.location.href = data.redirectUrl;
+                return;
             }
+
+            $("#page-content").html(data);
         }
     });
 }
