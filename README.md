@@ -8,7 +8,7 @@ If you want to contribute to the project, read the [contributing information](#-
 
 #### GudSafe requirements
 
-- A working computer (best would be a server, not your private pc)
+- A working machine for hosting (best would be a server, not your private pc)
 - .NET 6 or later installed
 	> Follow Microsoft's instructions on how to install it on your platform
 - Use a reverse proxy for the GudSafe instance and knowledge how to set one up
