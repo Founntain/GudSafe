@@ -104,14 +104,14 @@ async function loadPage(url, successCallback) {
             let content = xhr.getResponseHeader("Content-Disposition");
 
             if (content && content.includes("attachment")) {
-                window.location = url;
+                window.location.href = url;
                 return;
             }
 
             $("#page-content").html(data);
         },
         error: function (xhr, status, error) {
-            if (xhr.status === 403) {
+            if (xhr.status === 410) {
                 window.location.href = xhr.responseJSON.redirectUrl;
             }
         }
