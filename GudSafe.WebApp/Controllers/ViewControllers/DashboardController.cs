@@ -29,16 +29,14 @@ public class DashboardController : Controller
     private readonly IMapper _mapper;
     private readonly ILogger<DashboardController> _logger;
     private readonly INotyfService _notyf;
-    private readonly IHtmlHelper _htmlHelper;
 
     public DashboardController(GudSafeContext context, IMapper mapper, ILogger<DashboardController> logger,
-        INotyfService notyf, IHtmlHelper htmlHelper)
+        INotyfService notyf)
     {
         _context = context;
         _mapper = mapper;
         _logger = logger;
         _notyf = notyf;
-        _htmlHelper = htmlHelper;
     }
 
     public IActionResult Index()

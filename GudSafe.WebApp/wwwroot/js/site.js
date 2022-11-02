@@ -3,6 +3,8 @@
 
 // Write your JavaScript code.
 
+let isDark = (localStorage.getItem('isDark') || "false") === "true";
+
 window.galleryData = window.galleryData || {
     currentPage: 1,
     connection: new signalR.HubConnectionBuilder().withUrl("/uploadHub").build()
@@ -10,6 +12,12 @@ window.galleryData = window.galleryData || {
 
 $(function () {
     // window.history.pushState({newUrl: window.location.pathname.concat(window.location.search)}, '', window.location.pathname.concat(window.location.search));
+
+    let mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    mediaQuery.onchange = function (e) {
+        toggleDarkMode(e.matches);
+    };
 
     initLinks();
 
@@ -69,7 +77,7 @@ function clickHandler(url) {
 
 function onSuccess(url) {
     window.history.pushState({newUrl: url}, '', url);
-    
+
     refreshDashboardActiveClass(window.location.pathname);
 }
 
@@ -127,15 +135,6 @@ function setWindowTitle(title) {
     document.title = title;
     $("#window-title").html(title);
 }
-let isDark = (localStorage.getItem('isDark') || "false") === "true";
-
-$(function () {
-    let mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    mediaQuery.onchange = function (e) {
-        toggleDarkMode(e.matches);
-    };
-})
 
 function toggleDarkMode(newVal) {
     if (!newVal) {
@@ -147,15 +146,14 @@ function toggleDarkMode(newVal) {
     } else {
         $("html").removeClass('alt-colors');
     }
-    
+
     updateIcons(newVal);
 
     localStorage.setItem('isDark', newVal);
     isDark = newVal;
 }
 
-function updateIcons(dark)
-{
+function updateIcons(dark) {
     let darkModeIcon = $("#dark-icon");
     let darkModeToggle = $("#dark-toggle");
 
