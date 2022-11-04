@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -23,7 +22,7 @@ using Newtonsoft.Json;
 namespace GudSafe.WebApp.Controllers.ViewControllers;
 
 [Authorize]
-public class DashboardController : Controller
+public class DashboardController : BaseViewController
 {
     private readonly GudSafeContext _context;
     private readonly IMapper _mapper;
@@ -46,10 +45,7 @@ public class DashboardController : Controller
 
     public IActionResult Gallery()
     {
-        if (!Request.IsAjax())
-            return View("Index");
-
-        return PartialView();
+        return View();
     }
 
     public async Task<IActionResult> GalleryPage(int pageNumber)
@@ -76,9 +72,6 @@ public class DashboardController : Controller
 
     public async Task<IActionResult> UserSettings()
     {
-        if (!Request.IsAjax())
-            return View("Index");
-
         var user = await FindUser();
 
         var viewModel = new UserSettingsViewModel
@@ -87,15 +80,12 @@ public class DashboardController : Controller
             ApiKey = user?.ApiKey ?? string.Empty
         };
 
-        return PartialView(viewModel);
+        return View(viewModel);
     }
 
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AdminSettings()
     {
-        if (!Request.IsAjax())
-            return View("Index");
-
         var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
         {
             Text = x.Name,
@@ -107,7 +97,7 @@ public class DashboardController : Controller
             Users = users
         };
 
-        return PartialView(viewModel);
+        return View(viewModel);
     }
 
     public async Task<IActionResult> ShareXProfile()

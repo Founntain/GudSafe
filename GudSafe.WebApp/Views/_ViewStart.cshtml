@@ -1,7 +1,8 @@
 ﻿@using System.Security.Claims
 @using GudSafe.Data.Enums
+@using GudSafe.WebApp.Classes
 @{
-    Layout = "_Layout";
+    Layout = Context.Request.IsAjax() ? null : "_Layout";
 
     var userName = User.FindFirstValue(ClaimTypes.Name);
     var userRole = User.FindFirstValue(ClaimTypes.Role);

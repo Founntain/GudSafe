@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GudSafe.WebApp.Controllers.ViewControllers;
 
-public class HomeController : Controller
+public class HomeController : BaseViewController
 {
     private readonly GudSafeContext _context;
     private readonly ILogger<HomeController> _logger;
@@ -28,10 +28,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        if (!Request.IsAjax())
-            return View();
-
-        return PartialView();
+        return View();
     }
 
     public IActionResult Login()
@@ -39,18 +36,12 @@ public class HomeController : Controller
         if (HttpContext.User.FindFirstValue(ClaimTypes.Name) != null)
             return RedirectToAction("Index");
 
-        if (!Request.IsAjax())
-            return View("Index");
-
-        return PartialView();
+        return View();
     }
 
     public IActionResult AccessDenied()
     {
-        if (!Request.IsAjax())
-            return View();
-
-        return PartialView();
+        return View();
     }
 
     [HttpPost]
@@ -119,7 +110,6 @@ public class HomeController : Controller
         if (!Request.IsAjax())
             return RedirectToAction("Index");
 
-        //Response.StatusCode = StatusCodes.Status410Gone;
         return Json(new {redirectUrl = $"{Url.Action("Index")}"});
     }
 
