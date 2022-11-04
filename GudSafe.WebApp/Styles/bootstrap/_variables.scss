@@ -408,10 +408,12 @@ $body-text-align:           null !default;
 //
 // Style anchor elements.
 
-$link-color:                              $primary !default;
+//$link-color:                              $primary !default;
+$link-color:                              rgba($black, .55) !default;
 $link-decoration:                         underline !default;
 $link-shade-percentage:                   20% !default;
-$link-hover-color:                        shift-color($link-color, $link-shade-percentage) !default;
+//$link-hover-color:                        shift-color($link-color, $link-shade-percentage) !default;
+$link-hover-color:                        rgba($black, .7) !default;
 $link-hover-decoration:                   null !default;
 
 $stretched-link-pseudo-element:           after !default;

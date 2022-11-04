@@ -342,8 +342,10 @@ $body-color-alt:                $gray-100-alt !default;
 // Style anchor elements.
 
 $link-shade-percentage-alt:                   20% !default;  // not used
-$link-color-alt:                              shift-color($primary-alt, -$link-shade-percentage-alt) !default;
-$link-hover-color-alt:                        shift-color($primary-alt, -$link-shade-percentage-alt * .5) !default;  // math.div(2)
+//$link-color-alt:                              shift-color($primary-alt, -$link-shade-percentage-alt) !default;
+$link-color-alt:                                rgba($white-alt, .55) !default;
+//$link-hover-color-alt:                        shift-color($primary-alt, -$link-shade-percentage-alt * .5) !default;  // math.div(2)
+$link-hover-color-alt:                          rgba($white-alt, .7) !default;
 
 
 // Components

@@ -16,7 +16,6 @@
 </header>
 <main role="main" class="pb-3 flex-shrink-0">
     <div class="container d-flex flex-row">
-        @* <h1 class="display-4 text-center" id="window-title">@ViewData["Title"]</h1> *@
         @if (ViewBag.LoggedIn)
         {
             <ul id="dashboard-nav" class="nav nav-pills flex-column col-2">
@@ -37,8 +36,11 @@
                 </li>
             </ul>
         }
-        <div id="page-content" class="flex-grow-1">
-            @RenderBody()
+        <div class="flex-grow-1 mx-4">
+            <h1 class="display-4 text-center my-2" id="window-title">@ViewData["Title"]</h1>
+            <div id="ajax-div">
+                @RenderBody()
+            </div>
         </div>
     </div>
 </main>

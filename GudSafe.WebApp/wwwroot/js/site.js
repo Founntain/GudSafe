@@ -101,7 +101,7 @@ async function loadPage(url, successCallback) {
                 return;
             }
 
-            $("#page-content").html(data);
+            $("#ajax-div").html(data);
 
             if (successCallback) {
                 successCallback(url);
