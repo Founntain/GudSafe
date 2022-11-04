@@ -15,21 +15,29 @@
     @await Html.PartialAsync("_Header")
 </header>
 <main role="main" class="pb-3 flex-shrink-0">
-    <div class="container">
-        <h1 class="display-4 text-center" id="window-title">@ViewData["Title"]</h1>
+    <div class="container d-flex flex-row">
+        @* <h1 class="display-4 text-center" id="window-title">@ViewData["Title"]</h1> *@
         @if (ViewBag.LoggedIn)
         {
-            <div class="input-group mb-3" id="dashboard-nav">
-                <a class="btn btn-primary flex-fill flex-grow-1 border-1 mx-1p" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
-                <a class="btn btn-primary flex-fill border-1 mx-1p" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
+            <ul id="dashboard-nav" class="nav nav-pills flex-column col-2">
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Gallery">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="UserSettings">User settings</a>
+                </li>
                 @if (ViewBag.IsAdmin)
                 {
-                    <a class="btn btn-primary flex-fill border-1 mx-1p" asp-controller="Dashboard" asp-action="AdminSettings">Admin settings</a>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Dashboard" asp-action="AdminSettings">Admin settings</a>
+                    </li>
                 }
-                <a class="btn btn-primary flex-fill border-1 mx-1p" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
-            </div>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="ShareXProfile">ShareX profile</a>
+                </li>
+            </ul>
         }
-        <div id="page-content">
+        <div id="page-content" class="flex-grow-1">
             @RenderBody()
         </div>
     </div>
