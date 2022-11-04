@@ -8,6 +8,11 @@ public class AjaxSinglePageAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
+        if (context.ActionDescriptor.EndpointMetadata.Any(x => x is IgnoreAjaxAttribute))
+        {
+            return;
+        }
+        
         if (!context.HttpContext.Request.IsAjax())
         {
             if (context.Controller is not BaseViewController controller) return;

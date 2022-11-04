@@ -10,6 +10,7 @@ using GudSafe.Data.Enums;
 using GudSafe.Data.Models.EntityModels;
 using GudSafe.Data.ViewModels;
 using GudSafe.WebApp.Classes;
+using GudSafe.WebApp.Classes.Attributes;
 using GudSafe.WebApp.Controllers.EntityControllers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -100,6 +101,7 @@ public class DashboardController : BaseViewController
         return View(viewModel);
     }
 
+    [IgnoreAjax]
     public async Task<IActionResult> ShareXProfile()
     {
         var user = await FindUser();

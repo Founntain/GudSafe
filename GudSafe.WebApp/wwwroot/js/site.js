@@ -22,8 +22,6 @@ $(function () {
     initLinks();
 
     loadPage(window.location.pathname.concat(window.location.search), onSuccess);
-
-    // refreshDashboardActiveClass(window.location.pathname);
 });
 
 window.onpopstate = async function (e) {
@@ -77,6 +75,7 @@ function clickHandler(url) {
 
 function onSuccess(url) {
     window.history.pushState({newUrl: url}, '', url);
+    console.log(window.history);
 
     refreshDashboardActiveClass(window.location.pathname);
 }
@@ -87,17 +86,6 @@ async function loadPage(url, successCallback) {
     }
 
     $.ajax({
-        xhr: function () {
-            let xhr = new XMLHttpRequest();
-
-            xhr.onloadend = function () {
-                if (successCallback) {
-                    successCallback(xhr.responseURL);
-                }
-            };
-
-            return xhr;
-        },
         url: url,
         type: "GET",
         success: function (data, status, xhr) {
@@ -114,6 +102,10 @@ async function loadPage(url, successCallback) {
             }
 
             $("#page-content").html(data);
+
+            if (successCallback) {
+                successCallback(url);
+            }
         }
     });
 }
