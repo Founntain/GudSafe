@@ -25,6 +25,7 @@ If you want to contribute to the project, read the [contributing information](#-
   + Extract the .zip somewhere and run `docker compose up -d` to start the **GudSafe** and **GudSafe-Watchtower** Containers
     > *The watchtower is used to auto update your GudSafe, when a new docker image of GudSafe is released.*
   + The default TimeZone of the WatchTower and GudSafe is set to **Europe/Berlin**, change it to your wishes inside the **docker-compose.yml**!
+  + If you wish you can change the update check for the watchtower inside the **docker-compose.yml**, just change the number on `command: --interval 30 --cleanup`
   + ⚠️ *If you change the port inside the **config.json**, you have to change the port in the **docker-compose.yml** aswell! We recommend to leave the config.json as it is!*
 
 
