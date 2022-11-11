@@ -9,12 +9,24 @@ If you want to contribute to the project, read the [contributing information](#-
 #### GudSafe requirements
 
 - A working machine for hosting (best would be a server, not your private pc)
-- .NET 6 or later installed
-	> Follow Microsoft's instructions on how to install it on your platform
-- Use a reverse proxy for the GudSafe instance and knowledge how to set one up
-	> This is not a definitive requirement but our configuration is built to use one.
-	> 
-	> To configure the reverse proxy correctly best is to follow these steps provided by Microsoft [Configure Nginx](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-6.0#configure-nginx) if you are using nginx (recommended)
+- .NET 7 or later installed
+  > Follow Microsoft's instructions on how to install it on your platform
+#### 🚀 Regular Setup
+  
+  + Use a reverse proxy for the GudSafe instance and knowledge how to set one up
+    > This is not a definitive requirement but our configuration is built to use one.
+    > 
+    > To configure the reverse proxy correctly best is to follow these steps provided by Microsoft [Configure Nginx](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-6.0#configure-nginx) if you are using nginx (recommended)
+
+#### 🐬Docker Setup
+  + We recommend using `Docker Compose` when running GudSafe via Docker
+  + Download our **[prepare docker compose .zip file](https://github.com/Founntain/gudsafe/files/9990455/GudSafe-Docker.zip)**
+
+  + Extract the .zip somewhere and run `docker compose up -d` to start the **GudSafe** and **GudSafe-Watchtower** Containers
+    > *The watchtower is used to auto update your GudSafe, when a new docker image of GudSafe is released.*
+  + The default TimeZone of the WatchTower and GudSafe is set to **Europe/Berlin**, change it to your wishes inside the **docker-compose.yml**!
+  + ⚠️ *If you change the port inside the **config.json**, you have to change the port in the **docker-compose.yml** aswell! We recommend to leave the config.json as it is!*
+
 
 #### Download GudSafe
 You can download the latest release on the repos [releases page](https://github.com/Founntain/gudsafe/releases). If you want to build the project from source follow the steps below.
