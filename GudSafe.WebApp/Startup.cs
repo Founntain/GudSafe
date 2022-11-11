@@ -21,7 +21,12 @@ public static class Startup
         
         builder.Services.AddSingleton(configService);
 
-        builder.WebHost.UseUrls($"http://localhost:{configService.Container.Port}");
+        bool.TryParse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"), out var result);
+        
+        if (result)
+            builder.WebHost.UseUrls($"http://*:{configService.Container.Port}");
+        else
+            builder.WebHost.UseUrls($"http://localhost:{configService.Container.Port}");
 
         builder.Services.AddSignalR();
 
