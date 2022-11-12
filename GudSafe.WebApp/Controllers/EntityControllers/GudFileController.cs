@@ -144,40 +144,11 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         if (file.ContentType.Contains("image"))
         {
-            stream.Seek(0, SeekOrigin.Begin);
-            using var bitmap = SKBitmap.Decode(stream);
-
-            var ratio = Math.Max(bitmap.Width / 200d, bitmap.Height / 200d);
-
-            using var scaled = bitmap.Resize(
-                new SKImageInfo((int) (bitmap.Width / ratio), (int) (bitmap.Height / ratio)), SKFilterQuality.Medium);
-            using var data = scaled.Encode(SKEncodedImageFormat.Webp, 75);
-
-            await using var fs = System.IO.File.OpenWrite(thumbnailPath);
-
-            await data.AsStream().CopyToAsync(fs);
+            await ImageToThumbnail(stream, thumbnailPath, newFile);
         }
         else
         {
-            using var bitmap = new SKBitmap();
-            using var surface = SKSurface.Create(new SKImageInfo(200, 200));
-            using var paint = new SKPaint();
-
-            paint.Color = SKColors.White;
-            paint.TextAlign = SKTextAlign.Center;
-            paint.TextSize = 36;
-            paint.IsAntialias = true;
-            paint.FilterQuality = SKFilterQuality.High;
-
-            surface.Canvas.DrawColor(new SKColor(255, 255, 255, 25));
-            surface.Canvas.DrawText($".{newFile.FileExtension}", 100, 109, paint);
-            surface.Canvas.Flush();
-
-            using var data = surface.Snapshot().Encode(SKEncodedImageFormat.Webp, 75);
-
-            await using var fs = System.IO.File.OpenWrite(thumbnailPath);
-
-            await data.AsStream().CopyToAsync(fs);
+            await ExtensionToThumbnail(newFile, thumbnailPath);
         }
 
         await Context.SaveChangesAsync();
@@ -189,6 +160,52 @@ public class GudFileController : BaseEntityController<GudFileController>
             Url = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}",
             ThumbnailUrl = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}/thumbnail"
         });
+    }
+
+    private static async Task ImageToThumbnail(Stream stream, string thumbnailPath, GudFile newFile)
+    {
+        stream.Seek(0, SeekOrigin.Begin);
+        using var bitmap = SKBitmap.Decode(stream);
+
+        if (bitmap == null)
+        {
+            await ExtensionToThumbnail(newFile, thumbnailPath);
+
+            return;
+        }
+
+        var ratio = Math.Max(bitmap.Width / 200d, bitmap.Height / 200d);
+
+        using var scaled = bitmap.Resize(
+            new SKImageInfo((int) (bitmap.Width / ratio), (int) (bitmap.Height / ratio)), SKFilterQuality.Medium);
+        using var data = scaled.Encode(SKEncodedImageFormat.Webp, 75);
+
+        await using var fs = System.IO.File.OpenWrite(thumbnailPath);
+
+        await data.AsStream().CopyToAsync(fs);
+    }
+
+    private static async Task ExtensionToThumbnail(GudFile newFile, string thumbnailPath)
+    {
+        using var bitmap = new SKBitmap();
+        using var surface = SKSurface.Create(new SKImageInfo(200, 200));
+        using var paint = new SKPaint();
+
+        paint.Color = SKColors.White;
+        paint.TextAlign = SKTextAlign.Center;
+        paint.TextSize = 36;
+        paint.IsAntialias = true;
+        paint.FilterQuality = SKFilterQuality.High;
+
+        surface.Canvas.DrawColor(new SKColor(255, 255, 255, 25));
+        surface.Canvas.DrawText($".{newFile.FileExtension}", 100, 109, paint);
+        surface.Canvas.Flush();
+
+        using var data = surface.Snapshot().Encode(SKEncodedImageFormat.Webp, 75);
+
+        await using var fs = System.IO.File.OpenWrite(thumbnailPath);
+
+        await data.AsStream().CopyToAsync(fs);
     }
 
     [HttpPost]
