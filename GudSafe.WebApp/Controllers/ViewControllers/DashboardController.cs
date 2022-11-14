@@ -28,15 +28,13 @@ public class DashboardController : BaseViewController
     private readonly GudSafeContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<DashboardController> _logger;
-    private readonly INotyfService _notyf;
 
     public DashboardController(GudSafeContext context, IMapper mapper, ILogger<DashboardController> logger,
-        INotyfService notyf)
+        INotyfService notyf) : base(notyf)
     {
         _context = context;
         _mapper = mapper;
         _logger = logger;
-        _notyf = notyf;
     }
 
     public IActionResult Index()
@@ -148,7 +146,7 @@ public class DashboardController : BaseViewController
             _logger.LogWarning("The logged in user {Name} wasn't found in the database",
                 User.FindFirstValue(ClaimTypes.Name));
 
-            _notyf.Error("User not found");
+            Notyf.Error("User not found");
 
             return Json(new {success = false});
         }
@@ -164,7 +162,7 @@ public class DashboardController : BaseViewController
 
         await _context.SaveChangesAsync();
 
-        _notyf.Success($"File {id} deleted successfully", 2);
+        Notyf.Success($"File {id} deleted successfully", 2);
 
         return Json(new {success = true});
     }
@@ -186,28 +184,28 @@ public class DashboardController : BaseViewController
             _logger.LogWarning("The logged in user {Name} wasn't found in the database",
                 User.FindFirstValue(ClaimTypes.Name));
 
-            _notyf.Error("User not found");
+            Notyf.Error("User not found");
 
             return Json(new {success = false, message = "User not found"});
         }
 
         if (requestUser.UserRole != UserRole.Admin)
         {
-            _notyf.Error("You are not authorized to create a user");
+            Notyf.Error("You are not authorized to create a user");
 
             return Json(new {success = false, message = "You are not authorized to create a user"});
         }
 
         if (string.IsNullOrWhiteSpace(model.NewUserUsername))
         {
-            _notyf.Error("Username can't be empty.");
+            Notyf.Error("Username can't be empty.");
 
             return Json(new {success = false, message = "Username can't be empty."});
         }
 
         if (string.IsNullOrWhiteSpace(model.NewUserPassword))
         {
-            _notyf.Error("Password can't be empty.");
+            Notyf.Error("Password can't be empty.");
 
             return Json(new {success = false, message = "Password can't be empty."});
         }
@@ -216,7 +214,7 @@ public class DashboardController : BaseViewController
 
         if (_context.Users.Any(x => x.Name.ToLower() == model.NewUserUsername.ToLower()))
         {
-            _notyf.Error("The username already exists");
+            Notyf.Error("The username already exists");
 
             return Json(new {success = false, message = "The username already exists"});
         }
@@ -233,9 +231,9 @@ public class DashboardController : BaseViewController
         var result = await _context.SaveChangesAsync();
 
         if (result != 1)
-            _notyf.Error("The user can't be saved in the database");
+            Notyf.Error("The user can't be saved in the database");
         else
-            _notyf.Success("User successfully created");
+            Notyf.Success("User successfully created");
 
         var users = await _context.Users.Where(x => x.ID != 1).Select(x => new SelectListItem
         {
@@ -258,7 +256,7 @@ public class DashboardController : BaseViewController
             _logger.LogWarning("The logged in user {Name} wasn't found in the database",
                 User.FindFirstValue(ClaimTypes.Name));
 
-            _notyf.Error("User not found");
+            Notyf.Error("User not found");
 
             return Json(new {success = false, message = "User not found"});
         }
@@ -267,14 +265,14 @@ public class DashboardController : BaseViewController
 
         if (!isPasswordCorrect)
         {
-            _notyf.Error("The entered password was not correct");
+            Notyf.Error("The entered password was not correct");
 
             return Json(new {success = false, message = "The entered password was not correct"});
         }
 
         if (model.NewPassword != model.ConfirmNewPassword)
         {
-            _notyf.Error("The new passwords don't match");
+            Notyf.Error("The new passwords don't match");
 
             return Json(new {success = false, message = "The new passwords don't match"});
         }
@@ -291,7 +289,7 @@ public class DashboardController : BaseViewController
 
         await RefreshLogin(user, lastChangedTime);
 
-        _notyf.Success("Password successfully changed");
+        Notyf.Success("Password successfully changed");
 
         return Json(new {success = true, message = "Password successfully changed"});
     }
@@ -333,9 +331,9 @@ public class DashboardController : BaseViewController
         var result = await _context.SaveChangesAsync();
 
         if (result == 1)
-            _notyf.Success($"{user.Name}'s password successfully reset");
+            Notyf.Success($"{user.Name}'s password successfully reset");
         else
-            _notyf.Error($"{user.Name}'s password couldn't be reset");
+            Notyf.Error($"{user.Name}'s password couldn't be reset");
 
         return Json(new {success = true, model});
     }
@@ -353,7 +351,7 @@ public class DashboardController : BaseViewController
             _logger.LogWarning("The user with id {Name} wasn't found in the database",
                 model.SelectedUser);
 
-            _notyf.Error("The user couldn't be found in the database");
+            Notyf.Error("The user couldn't be found in the database");
 
             return Json(new {success = false});
         }
@@ -375,7 +373,7 @@ public class DashboardController : BaseViewController
 
         model.Users = users;
 
-        _notyf.Success($"User '{user.Name}' successfully deleted");
+        Notyf.Success($"User '{user.Name}' successfully deleted");
 
         return Json(new {success = true, model});
     }
@@ -390,7 +388,7 @@ public class DashboardController : BaseViewController
             _logger.LogWarning("The logged in user {Name} wasn't found in the database",
                 User.FindFirstValue(ClaimTypes.Name));
 
-            _notyf.Error("User not found");
+            Notyf.Error("User not found");
 
             return Json(new {success = false, message = "User not found"});
         }
@@ -402,7 +400,7 @@ public class DashboardController : BaseViewController
         var result = await _context.SaveChangesAsync();
 
         if (result == 1)
-            _notyf.Success("Api key successfully reset");
+            Notyf.Success("Api key successfully reset");
 
         return Json(new {success = true, apiKey = newApiKey});
     }

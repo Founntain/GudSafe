@@ -1,3 +1,4 @@
+using GudSafe.WebApp.Classes.GithubUpdater;
 using GudSafe.WebApp.Controllers.ViewControllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -12,12 +13,18 @@ public class AjaxSinglePageAttribute : ActionFilterAttribute
         {
             return;
         }
-        
-        if (!context.HttpContext.Request.IsAjax())
-        {
-            if (context.Controller is not BaseViewController controller) return;
 
-            context.Result = controller.View("Main");
+        if (context.HttpContext.Request.IsAjax()) return;
+
+        if (context.Controller is not BaseViewController controller) return;
+
+        var githubUpdateService = context.HttpContext.RequestServices.GetService<GithubUpdateService>();
+
+        if ((githubUpdateService?.LatestResponse.IsNewVersionAvailable ?? false) && context.HttpContext.User.IsInRole("Admin"))
+        {
+            controller.Notyf.Information($"A new version of the gudsafe is available. You can find it on <a href=\"{githubUpdateService.LatestResponse.HtmlUrl}\" target=\"_blank\">Github</a>", 9999);
         }
+
+        context.Result = controller.View("Main");
     }
 }

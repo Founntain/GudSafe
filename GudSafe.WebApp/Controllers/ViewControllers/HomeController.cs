@@ -17,13 +17,11 @@ public class HomeController : BaseViewController
 {
     private readonly GudSafeContext _context;
     private readonly ILogger<HomeController> _logger;
-    private readonly INotyfService _notyf;
 
-    public HomeController(GudSafeContext context, ILogger<HomeController> logger, INotyfService notyf)
+    public HomeController(GudSafeContext context, ILogger<HomeController> logger, INotyfService notyf) : base(notyf)
     {
         _context = context;
         _logger = logger;
-        _notyf = notyf;
     }
 
     public IActionResult Index()
@@ -50,7 +48,7 @@ public class HomeController : BaseViewController
     {
         if (string.IsNullOrWhiteSpace(loginModel.Name) || string.IsNullOrWhiteSpace(loginModel.Password))
         {
-            _notyf.Error("Either the username or password were empty.");
+            Notyf.Error("Either the username or password were empty.");
 
             return Json(new {success = false});
         }
@@ -61,7 +59,7 @@ public class HomeController : BaseViewController
         {
             _logger.LogError("User {User} not found in db", loginModel.Name);
 
-            _notyf.Error("Username or password incorrect.");
+            Notyf.Error("Username or password incorrect.");
 
             return Json(new {success = false});
         }
@@ -70,7 +68,7 @@ public class HomeController : BaseViewController
 
         if (!success)
         {
-            _notyf.Error("Username or password incorrect.");
+            Notyf.Error("Username or password incorrect.");
 
             return Json(new {success = false, redirectUrl = $"{Url.Action("Login")}"});
         }

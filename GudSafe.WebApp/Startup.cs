@@ -3,6 +3,7 @@ using AspNetCoreHero.ToastNotification.Extensions;
 using GudSafe.Data;
 using GudSafe.Data.Configuration;
 using GudSafe.WebApp.Classes.Attributes;
+using GudSafe.WebApp.Classes.GithubUpdater;
 using GudSafe.WebApp.Controllers;
 using GudSafe.WebApp.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -18,12 +19,12 @@ public static class Startup
     {
         // Add services to the container.
         var configService = new ConfigService();
-        
+
         builder.Services.AddSingleton(configService);
 
-        bool.TryParse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"), out var result);
-        
-        if (result)
+        var success = bool.TryParse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"), out var result);
+
+        if (success && result)
             builder.WebHost.UseUrls($"http://*:{configService.Container.Port}");
         else
             builder.WebHost.UseUrls($"http://localhost:{configService.Container.Port}");
@@ -52,6 +53,8 @@ public static class Startup
             loggingBuilder.AddDebug();
             loggingBuilder.AddEventSourceLogger();
         });
+
+        builder.Services.AddSingleton<GithubUpdateService>();
 
         builder.Services.AddNotyf(config =>
         {
@@ -120,7 +123,7 @@ public static class Startup
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
-        
+
         app.MapHub<UploadHub>("/uploadHub");
 
         return app;
