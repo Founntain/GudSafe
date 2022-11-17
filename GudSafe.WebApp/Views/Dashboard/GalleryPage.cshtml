@@ -53,8 +53,8 @@
             {
                 <div class="col-lg-2 col-md-3 col-sm-6 mb-4 d-flex flex-column" id="@file.UniqueId">
                     <div class="uploadBox align-self-center">
-                        <a target="_blank" href="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId">
-                            <img class="upload" src="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId/thumbnail"/>
+                        <a target="_blank" href="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId.@file.FileExtension">
+                            <img class="upload" src="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId.@file.FileExtension/thumbnail"/>
                         </a>
                     </div>
 

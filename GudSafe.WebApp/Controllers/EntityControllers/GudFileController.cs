@@ -29,11 +29,16 @@ public class GudFileController : BaseEntityController<GudFileController>
     [Route("{name}")]
     public async Task<ActionResult> Get(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            return BadRequest("File name is empty");
+
+        var parts = name.Split('.');
+
         Guid guid;
 
         try
         {
-            guid = Guid.Parse(name);
+            guid = Guid.Parse(parts[0]);
         }
         catch (Exception)
         {
@@ -47,7 +52,13 @@ public class GudFileController : BaseEntityController<GudFileController>
         if (dbFile == null)
             return NotFound();
 
-        var path = Path.Combine(ImagesPath, $"{name}.{dbFile.FileExtension}");
+        if (parts.Length != 2)
+            return RedirectPermanent($"/files/{dbFile.UniqueId}.{dbFile.FileExtension}");
+
+        if (dbFile.FileExtension != parts[1])
+            return NotFound("Couldn't find the requested file");
+
+        var path = Path.Combine(ImagesPath, $"{guid}.{dbFile.FileExtension}");
 
         try
         {
@@ -70,15 +81,20 @@ public class GudFileController : BaseEntityController<GudFileController>
     [Route("{name}/thumbnail")]
     public async Task<ActionResult> GetThumb(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            return BadRequest("File name is empty");
+
+        var parts = name.Split('.');
+
         Guid guid;
 
         try
         {
-            guid = Guid.Parse(name);
+            guid = Guid.Parse(parts[0]);
         }
         catch (Exception)
         {
-            Logger.LogWarning("Failed formatting {Name} to guid", name);
+            Logger.LogWarning("Failed formatting {Name} to guid", parts[0]);
 
             return NotFound("Couldn't find the requested file");
         }
@@ -88,7 +104,10 @@ public class GudFileController : BaseEntityController<GudFileController>
         if (dbFile == null)
             return NotFound();
 
-        var path = Path.Combine(ThumbnailsPath, name);
+        if (parts.Length == 2 && dbFile.FileExtension != parts[1])
+            return NotFound("Couldn't find the requested file");
+
+        var path = Path.Combine(ThumbnailsPath, $"{guid}");
 
         try
         {
@@ -157,8 +176,9 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         return Ok(new
         {
-            Url = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}",
-            ThumbnailUrl = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}/thumbnail"
+            Url = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}.{newEntry.Entity.FileExtension}",
+            ThumbnailUrl =
+                $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}.{newEntry.Entity.FileExtension}/thumbnail"
         });
     }
 

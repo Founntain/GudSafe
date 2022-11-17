@@ -29,4 +29,12 @@
         <ProjectReference Include="..\GudSafe.Data\GudSafe.Data.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Remove="config.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="GudSafe.db" />
+    </ItemGroup>
+
 </Project>
