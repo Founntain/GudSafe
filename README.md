@@ -1,6 +1,6 @@
 # GudSafe 
 
-GudSafe is a self hostable open source file uploader using ASP.NET (Core) 6 being platform independent. GudSafe is mainly developed by [@Cesan](https://github.com/Cesan) and [@Founntain](https://github.com/Founntain).
+GudSafe is a self hostable open source file uploader using ASP.NET (Core) 7 being platform independent. GudSafe is mainly developed by [@Cesan](https://github.com/Cesan) and [@Founntain](https://github.com/Founntain).
 
 If you want to contribute to the project, read the [contributing information](#-contribute) and follow the steps described there.
 
