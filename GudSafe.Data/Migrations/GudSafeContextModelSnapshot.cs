@@ -15,7 +15,11 @@ namespace GudSafe.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true);
 
             modelBuilder.Entity("GudCollectionGudFile", b =>
                 {
@@ -29,7 +33,7 @@ namespace GudSafe.Data.Migrations
 
                     b.HasIndex("FilesID");
 
-                    b.ToTable("GudCollectionGudFile", (string)null);
+                    b.ToTable("GudCollectionGudFile");
                 });
 
             modelBuilder.Entity("GudSafe.Data.Entities.GudCollection", b =>
@@ -61,7 +65,7 @@ namespace GudSafe.Data.Migrations
                     b.HasIndex("UniqueId")
                         .IsUnique();
 
-                    b.ToTable("Collections", (string)null);
+                    b.ToTable("Collections");
                 });
 
             modelBuilder.Entity("GudSafe.Data.Entities.GudFile", b =>
@@ -88,6 +92,9 @@ namespace GudSafe.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ShortUrl")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("UniqueId")
                         .HasColumnType("TEXT");
 
@@ -98,7 +105,7 @@ namespace GudSafe.Data.Migrations
                     b.HasIndex("UniqueId")
                         .IsUnique();
 
-                    b.ToTable("Files", (string)null);
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("GudSafe.Data.Entities.User", b =>
@@ -146,7 +153,7 @@ namespace GudSafe.Data.Migrations
                     b.HasIndex("UniqueId")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("GudCollectionGudFile", b =>

@@ -8,6 +8,7 @@ public class GudFileModel : BaseModel
     public byte[] Thumbnail { get; set; }
     public FileType FileType { get; set; }
     public string FileExtension { get; set; }
+    public string ShortUrl { get; set; }
 
     public UserModel Creator { get; set; }
     public List<GudCollectionModel> Collections { get; set; }
