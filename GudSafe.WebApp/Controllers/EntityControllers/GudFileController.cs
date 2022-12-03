@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
@@ -34,20 +35,26 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         var parts = name.Split('.');
 
-        Guid guid;
+        if (!parts.Any())
+        {
+            return BadRequest("Couldn't parse filename and file extension");
+        }
+        
+        GudFile? dbFile;
 
         try
         {
-            guid = Guid.Parse(parts[0]);
+            if (Guid.TryParse(parts[0], out var guid))
+                dbFile = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
+            else
+                dbFile = await Context.Files.FirstOrDefaultAsync(x => x.ShortUrl == parts[0]);
         }
         catch (Exception)
         {
-            Logger.LogWarning("Failed formatting {Name} to guid", name);
+            Logger.LogWarning("Couldn't find the file {name} via GUID nor via short URL!", name);
 
             return NotFound("Couldn't find the requested file");
         }
-
-        var dbFile = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
 
         if (dbFile == null)
             return NotFound();
@@ -58,7 +65,7 @@ public class GudFileController : BaseEntityController<GudFileController>
         if (dbFile.FileExtension != parts[1])
             return NotFound("Couldn't find the requested file");
 
-        var path = Path.Combine(ImagesPath, $"{guid}.{dbFile.FileExtension}");
+        var path = Path.Combine(ImagesPath, $"{dbFile.UniqueId}.{dbFile.FileExtension}");
 
         try
         {
@@ -83,23 +90,29 @@ public class GudFileController : BaseEntityController<GudFileController>
     {
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest("File name is empty");
-
+        
         var parts = name.Split('.');
 
-        Guid guid;
+        if (!parts.Any())
+        {
+            return BadRequest("Couldn't parse filename and file extension");
+        }
+        
+        GudFile? dbFile;
 
         try
         {
-            guid = Guid.Parse(parts[0]);
+            if (Guid.TryParse(parts[0], out var guid))
+                dbFile = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
+            else
+                dbFile = await Context.Files.FirstOrDefaultAsync(x => x.ShortUrl == parts[0]);
         }
         catch (Exception)
         {
-            Logger.LogWarning("Failed formatting {Name} to guid", parts[0]);
+            Logger.LogWarning("Couldn't find the file {name} via GUID nor via short URL!", name);
 
             return NotFound("Couldn't find the requested file");
         }
-
-        var dbFile = await Context.Files.FirstOrDefaultAsync(x => x.UniqueId == guid);
 
         if (dbFile == null)
             return NotFound();
@@ -107,7 +120,7 @@ public class GudFileController : BaseEntityController<GudFileController>
         if (parts.Length == 2 && dbFile.FileExtension != parts[1])
             return NotFound("Couldn't find the requested file");
 
-        var path = Path.Combine(ThumbnailsPath, $"{guid}");
+        var path = Path.Combine(ThumbnailsPath, $"{dbFile.UniqueId}");
 
         try
         {
@@ -151,6 +164,8 @@ public class GudFileController : BaseEntityController<GudFileController>
             Name = file.FileName
         };
 
+        GenerateShortUrl(ref newFile);
+        
         var newEntry = await Context.Files.AddAsync(newFile);
 
         var imagePath = Path.Combine(ImagesPath, $"{newFile.UniqueId}.{newFile.FileExtension}");
@@ -176,9 +191,9 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         return Ok(new
         {
-            Url = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}.{newEntry.Entity.FileExtension}",
+            Url = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}",
             ThumbnailUrl =
-                $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.UniqueId}.{newEntry.Entity.FileExtension}/thumbnail"
+                $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}/thumbnail"
         });
     }
 
@@ -278,5 +293,39 @@ public class GudFileController : BaseEntityController<GudFileController>
         {
             logger.LogError("The thumbnail file {FileName} couldn't be deleted", file.UniqueId);
         }
+    }
+
+    private void GenerateShortUrl(ref GudFile file)
+    {
+        // First we generate a short URL from our UniqueId
+        var guidString = Convert.ToBase64String(file.UniqueId.ToByteArray());
+        
+        var shortUrl = guidString.Replace("=","");
+        shortUrl = shortUrl.Replace("+","");
+        shortUrl = shortUrl.Replace("/","");
+        shortUrl = shortUrl.Replace("\\","");
+
+        shortUrl = shortUrl[..10];
+        
+        var isInDb = Context.Files.Any(x => x.ShortUrl == shortUrl);
+
+        // Check if for some reason the short URL is already in the Database
+        // Then we generate short URLs until we find one that isn't used yet!
+        while(isInDb){
+            var base64String = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            
+            base64String = base64String.Replace("=","");
+            
+            base64String = base64String.Replace("+","");
+            base64String = base64String.Replace("/","");
+            base64String = base64String.Replace("\\", "");
+
+            shortUrl = base64String;
+
+            isInDb = Context.Files.Any(x => x.ShortUrl == shortUrl);
+        };
+        
+        // Take the first 10 chars from the Base64 string
+        file.ShortUrl = shortUrl[..10];
     }
 }

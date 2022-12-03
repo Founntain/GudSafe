@@ -3,6 +3,7 @@ using System;
 using GudSafe.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GudSafe.Data.Migrations
 {
     [DbContext(typeof(GudSafeContext))]
-    partial class GudSafeContextModelSnapshot : ModelSnapshot
+    [Migration("20221203125917_ShortURLs")]
+    partial class ShortURLs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
