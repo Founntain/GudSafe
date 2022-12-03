@@ -28,6 +28,11 @@ public static class Startup
             builder.WebHost.UseUrls($"http://*:{configService.Container.Port}");
         else
             builder.WebHost.UseUrls($"http://localhost:{configService.Container.Port}");
+        
+        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        });
 
         builder.Services.AddSignalR();
 
@@ -80,6 +85,8 @@ public static class Startup
             db.Database.Migrate();
         }
 
+        app.UseForwardedHeaders();
+
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
@@ -110,11 +117,6 @@ public static class Startup
         app.UseCookiePolicy(new CookiePolicyOptions
         {
             MinimumSameSitePolicy = SameSiteMode.Strict
-        });
-
-        app.UseForwardedHeaders(new ForwardedHeadersOptions
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
         });
 
         app.UseAuthentication();
