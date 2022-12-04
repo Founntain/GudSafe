@@ -12,6 +12,7 @@ using SkiaSharp;
 namespace GudSafe.WebApp.Controllers.EntityControllers;
 
 [Route("files")]
+[Route("f")]
 public class GudFileController : BaseEntityController<GudFileController>
 {
     public static readonly string ImagesPath = "gudfiles";
@@ -60,7 +61,7 @@ public class GudFileController : BaseEntityController<GudFileController>
             return NotFound();
 
         if (parts.Length != 2)
-            return RedirectPermanent($"/files/{dbFile.UniqueId}.{dbFile.FileExtension}");
+            return RedirectPermanent($"/f/{dbFile.UniqueId}.{dbFile.FileExtension}");
 
         if (dbFile.FileExtension != parts[1])
             return NotFound("Couldn't find the requested file");
@@ -191,9 +192,9 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         return Ok(new
         {
-            Url = $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}",
+            Url = $"{Request.Scheme}://{Request.Host}/f/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}",
             ThumbnailUrl =
-                $"{Request.Scheme}://{Request.Host}/files/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}/thumbnail"
+                $"{Request.Scheme}://{Request.Host}/f/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}/thumbnail"
         });
     }
 
