@@ -190,6 +190,18 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         await _uploadHub.Clients.User(user.UniqueId.ToString()).SendAsync("RefreshFiles");
 
+        var success = bool.TryParse(Environment.GetEnvironmentVariable("FORCE_HTTPS"), out var result);
+
+        if (success && result)
+        {
+            return Ok(new
+            {
+                Url = $"https://{Request.Host}/f/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}",
+                ThumbnailUrl =
+                    $"https://{Request.Host}/f/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}/thumbnail"
+            });
+        }
+
         return Ok(new
         {
             Url = $"{Request.Scheme}://{Request.Host}/f/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}",
