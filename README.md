@@ -20,7 +20,7 @@ If you want to contribute to the project, read the [contributing information](#-
 
 #### 🐬Docker Setup
   + We recommend using `Docker Compose` when running GudSafe via Docker
-  + Download our **[prepare docker compose .zip file](https://github.com/Founntain/gudsafe/files/9990455/GudSafe-Docker.zip)**
+  + Download our **[prepared docker compose .zip file](https://github.com/Founntain/gudsafe/files/9990455/GudSafe-Docker.zip)**
 
   + Extract the .zip somewhere and run `docker compose up -d` to start the **GudSafe** and **GudSafe-Watchtower** Containers
     > *The watchtower is used to auto update your GudSafe, when a new docker image of GudSafe is released.*
