@@ -43,7 +43,7 @@ The default user for the gudsafe is `admin` and the password should change immed
 - If you use an IDE you can just use the build option there, everything should be done automatically
 	> Alternatively you can use the dotnet cli by using *dotnet restore* and *dotnet build* in the project root
 	> More information on this can be found in Microsoft documentation
-- After you have built the project. You can run the executable found in the *GudSafe.WebApp/bin/(Debug or Release)/net6.0* folder
+- After you have built the project. You can run the executable found in the *GudSafe.WebApp/bin/(Debug or Release)/net7.0* folder
 
 ## 👋 Contribute
 #### ☝️ Requirements
