@@ -29,8 +29,13 @@ If you want to contribute to the project, read the [contributing information](#-
   + ⚠️ *If you change the port inside the **config.json**, you have to change the port in the **docker-compose.yml** aswell! We recommend to leave the config.json as it is! **However the Host-Port can be changed without any issues.***
 
 
-#### Download GudSafe
+#### 💾 Download GudSafe
 You can download the latest release on the repos [releases page](https://github.com/Founntain/gudsafe/releases). If you want to build the project from source follow the steps below.
+
+#### ❗Additional Information
+The default user for the gudsafe is `admin` and the password should change immediately after the first login! See the credentials below:
++ Username: `admin`
++ Password: `admin`
 
 ## ⚒️ Building the project
 - Clone or download the source
