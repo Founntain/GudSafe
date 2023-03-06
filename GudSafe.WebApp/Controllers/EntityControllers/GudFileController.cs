@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Entities;
@@ -7,6 +6,7 @@ using GudSafe.WebApp.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using SkiaSharp;
 
 namespace GudSafe.WebApp.Controllers.EntityControllers;
@@ -40,7 +40,7 @@ public class GudFileController : BaseEntityController<GudFileController>
         {
             return BadRequest("Couldn't parse filename and file extension");
         }
-        
+
         GudFile? dbFile;
 
         try
@@ -70,9 +70,14 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         try
         {
-            var file = System.IO.File.Open(path, FileMode.Open);
+            var file = System.IO.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
+            var contentDispositionHeader = new ContentDispositionHeaderValue("inline")
+            {
+                FileNameStar = dbFile.Name
+            };
+
+            HttpContext.Response.Headers.ContentDisposition = contentDispositionHeader.ToString();
             HttpContext.Response.Headers.CacheControl = "public, max-age=3600";
 
             return File(file, dbFile.FileType);
@@ -91,14 +96,14 @@ public class GudFileController : BaseEntityController<GudFileController>
     {
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest("File name is empty");
-        
+
         var parts = name.Split('.');
 
         if (!parts.Any())
         {
             return BadRequest("Couldn't parse filename and file extension");
         }
-        
+
         GudFile? dbFile;
 
         try
@@ -127,7 +132,12 @@ public class GudFileController : BaseEntityController<GudFileController>
         {
             var file = System.IO.File.Open(path, FileMode.Open);
 
-            HttpContext.Response.Headers.Add("Content-Disposition", $"filename={dbFile.Name}");
+            var contentDispositionHeader = new ContentDispositionHeaderValue("inline")
+            {
+                FileNameStar = dbFile.Name
+            };
+
+            HttpContext.Response.Headers.ContentDisposition = contentDispositionHeader.ToString();
             HttpContext.Response.Headers.CacheControl = "public, max-age=15552000";
 
             return File(file, "image/webp");
@@ -166,7 +176,7 @@ public class GudFileController : BaseEntityController<GudFileController>
         };
 
         GenerateShortUrl(ref newFile);
-        
+
         var newEntry = await Context.Files.AddAsync(newFile);
 
         var imagePath = Path.Combine(ImagesPath, $"{newFile.UniqueId}.{newFile.FileExtension}");
@@ -312,32 +322,35 @@ public class GudFileController : BaseEntityController<GudFileController>
     {
         // First we generate a short URL from our UniqueId
         var guidString = Convert.ToBase64String(file.UniqueId.ToByteArray());
-        
-        var shortUrl = guidString.Replace("=","");
-        shortUrl = shortUrl.Replace("+","");
-        shortUrl = shortUrl.Replace("/","");
-        shortUrl = shortUrl.Replace("\\","");
+
+        var shortUrl = guidString.Replace("=", "");
+        shortUrl = shortUrl.Replace("+", "");
+        shortUrl = shortUrl.Replace("/", "");
+        shortUrl = shortUrl.Replace("\\", "");
 
         shortUrl = shortUrl[..10];
-        
+
         var isInDb = Context.Files.Any(x => x.ShortUrl == shortUrl);
 
         // Check if for some reason the short URL is already in the Database
         // Then we generate short URLs until we find one that isn't used yet!
-        while(isInDb){
+        while (isInDb)
+        {
             var base64String = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            
-            base64String = base64String.Replace("=","");
-            
-            base64String = base64String.Replace("+","");
-            base64String = base64String.Replace("/","");
+
+            base64String = base64String.Replace("=", "");
+
+            base64String = base64String.Replace("+", "");
+            base64String = base64String.Replace("/", "");
             base64String = base64String.Replace("\\", "");
 
             shortUrl = base64String;
 
             isInDb = Context.Files.Any(x => x.ShortUrl == shortUrl);
-        };
-        
+        }
+
+        ;
+
         // Take the first 10 chars from the Base64 string
         file.ShortUrl = shortUrl[..10];
     }
