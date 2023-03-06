@@ -1,5 +1,9 @@
+using System.Security.Claims;
 using GudSafe.Data;
+using GudSafe.Data.Entities;
 using GudSafe.Data.Enums;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +17,24 @@ public class UserAccessAttribute : Attribute, IAsyncActionFilter
     {
         var req = context.HttpContext.Request;
 
-        var apiKey = req.Headers["apikey"].First();
+        User? user;
 
-        await using var db = new GudSafeContext();
+        if (context.HttpContext.User.Identity?.IsAuthenticated ?? false)
+        {
+            var name = context.HttpContext.User.FindFirstValue(ClaimTypes.Name);
 
-        var user = await db.Users.FirstOrDefaultAsync(x => x.ApiKey == apiKey);
+            await using var db = new GudSafeContext();
+
+            user = await db.Users.FirstOrDefaultAsync(x => x.Name == name);
+        }
+        else
+        {
+            var apiKey = req.Headers["apikey"].First();
+
+            await using var db = new GudSafeContext();
+
+            user = await db.Users.FirstOrDefaultAsync(x => x.ApiKey == apiKey);
+        }
 
         if (user == default)
         {

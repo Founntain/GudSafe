@@ -137,6 +137,55 @@ public class DashboardController : BaseViewController
     }
 
     [HttpPost]
+    [IgnoreAjax]
+    public async Task<JsonResult> UploadFile()
+    {
+        if (Request.ContentType == null || !Request.ContentType.StartsWith("multipart/form-data"))
+            return Json(new {success = false});
+
+        var curChunk = int.Parse(Request.Form["chunk"].ToString());
+        var chunkCount = int.Parse(Request.Form["chunkCount"].ToString());
+        var isFirst = !Guid.TryParse(Request.Form["uploadId"].ToString(), out var uploadId);
+
+        var file = Request.Form.Files[0];
+
+        var user = await FindUser();
+
+        if (user == default)
+            return Json(new {success = false});
+
+        GudFile gudFile;
+
+        if (isFirst)
+        {
+            gudFile = (await GudFileController.UploadFile(file, user, _context)).Entity;
+        }
+        else
+        {
+            gudFile = await _context.Files.FirstAsync(x => x.UniqueId == uploadId);
+
+            await GudFileController.UploadChunk(file, gudFile, curChunk, _context);
+        }
+
+        if (curChunk == chunkCount - 1)
+        {
+            await GudFileController.GenerateThumbnail(gudFile);
+
+            var success = bool.TryParse(Environment.GetEnvironmentVariable("FORCE_HTTPS"), out var result);
+
+            var url = success && result
+                ? $"https://{Request.Host}/f/{gudFile.ShortUrl}.{gudFile.FileExtension}"
+                : $"{Request.Scheme}://{Request.Host}/f/{gudFile.ShortUrl}.{gudFile.FileExtension}";
+
+            Notyf.Success(
+                $"File uploaded successfully.\n Open <a href=\"{url}\" target=\"_blank\">here</a>!",
+                4);
+        }
+
+        return Json(new {success = true, uploadId = gudFile.UniqueId.ToString()});
+    }
+
+    [HttpPost]
     public async Task<JsonResult> DeleteFile(Guid id)
     {
         var user = await FindUser();

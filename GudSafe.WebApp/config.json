@@ -1,4 +1,4 @@
 {
   "port": 5000,
-  "maxUploadSizeMb": 100
+  "maxUploadSizeMb": 150
 }

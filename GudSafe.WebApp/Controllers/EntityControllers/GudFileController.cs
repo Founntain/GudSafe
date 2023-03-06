@@ -5,7 +5,9 @@ using GudSafe.WebApp.Classes.Attributes;
 using GudSafe.WebApp.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Net.Http.Headers;
 using SkiaSharp;
 
@@ -165,38 +167,9 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         var user = await Context.Users.FirstAsync(x => x.ApiKey == token);
 
-        await using var stream = file.OpenReadStream();
+        var newEntry = await UploadFile(file, user, Context);
 
-        var newFile = new GudFile
-        {
-            Creator = user,
-            FileExtension = Path.GetExtension(file.FileName)[1..],
-            FileType = file.ContentType,
-            Name = file.FileName
-        };
-
-        GenerateShortUrl(ref newFile);
-
-        var newEntry = await Context.Files.AddAsync(newFile);
-
-        var imagePath = Path.Combine(ImagesPath, $"{newFile.UniqueId}.{newFile.FileExtension}");
-        var thumbnailPath = Path.Combine(ThumbnailsPath, newFile.UniqueId.ToString());
-
-        Directory.CreateDirectory(ThumbnailsPath);
-
-        await using var imageFs = new FileStream(imagePath, FileMode.Create);
-        await stream.CopyToAsync(imageFs);
-
-        if (file.ContentType.Contains("image"))
-        {
-            await ImageToThumbnail(stream, thumbnailPath, newFile);
-        }
-        else
-        {
-            await ExtensionToThumbnail(newFile, thumbnailPath);
-        }
-
-        await Context.SaveChangesAsync();
+        await GenerateThumbnail(newEntry.Entity);
 
         await _uploadHub.Clients.User(user.UniqueId.ToString()).SendAsync("RefreshFiles");
 
@@ -218,6 +191,66 @@ public class GudFileController : BaseEntityController<GudFileController>
             ThumbnailUrl =
                 $"{Request.Scheme}://{Request.Host}/f/{newEntry.Entity.ShortUrl}.{newEntry.Entity.FileExtension}/thumbnail"
         });
+    }
+
+    public static async Task<EntityEntry<GudFile>> UploadFile(IFormFile file, User user, GudSafeContext context)
+    {
+        new FileExtensionContentTypeProvider().TryGetContentType(file.FileName, out var contentType);
+
+        await using var stream = file.OpenReadStream();
+
+        var newFile = new GudFile
+        {
+            Creator = user,
+            FileExtension = Path.GetExtension(file.FileName)[1..],
+            FileType = contentType ?? file.ContentType,
+            Name = file.FileName
+        };
+
+        GenerateShortUrl(ref newFile);
+
+        var newEntry = await context.Files.AddAsync(newFile);
+
+        var imagePath = Path.Combine(ImagesPath, $"{newFile.UniqueId}.{newFile.FileExtension}");
+
+        Directory.CreateDirectory(ThumbnailsPath);
+
+        await using var imageFs = new FileStream(imagePath, FileMode.Create);
+        await stream.CopyToAsync(imageFs);
+
+        await context.SaveChangesAsync();
+
+        return newEntry;
+    }
+
+    public static async Task UploadChunk(IFormFile file, GudFile gudFile, int curChunk, GudSafeContext context)
+    {
+        var imagePath = Path.Combine(ImagesPath, $"{gudFile.UniqueId}.{gudFile.FileExtension}");
+
+        await using var stream = file.OpenReadStream();
+
+        await using var imageFs = new FileStream(imagePath, FileMode.Append);
+
+        await stream.CopyToAsync(imageFs);
+    }
+
+    public static async Task GenerateThumbnail(GudFile file)
+    {
+        new FileExtensionContentTypeProvider().TryGetContentType(file.Name, out var contentType);
+
+        var imagePath = Path.Combine(ImagesPath, $"{file.UniqueId}.{file.FileExtension}");
+        var thumbnailPath = Path.Combine(ThumbnailsPath, file.UniqueId.ToString());
+
+        if (contentType?.Contains("image") ?? false)
+        {
+            await using var stream = System.IO.File.OpenRead(imagePath);
+
+            await ImageToThumbnail(stream, thumbnailPath, file);
+        }
+        else
+        {
+            await ExtensionToThumbnail(file, thumbnailPath);
+        }
     }
 
     private static async Task ImageToThumbnail(Stream stream, string thumbnailPath, GudFile newFile)
@@ -318,7 +351,7 @@ public class GudFileController : BaseEntityController<GudFileController>
         }
     }
 
-    private void GenerateShortUrl(ref GudFile file)
+    public static void GenerateShortUrl(ref GudFile file)
     {
         // First we generate a short URL from our UniqueId
         var guidString = Convert.ToBase64String(file.UniqueId.ToByteArray());
@@ -330,7 +363,9 @@ public class GudFileController : BaseEntityController<GudFileController>
 
         shortUrl = shortUrl[..10];
 
-        var isInDb = Context.Files.Any(x => x.ShortUrl == shortUrl);
+        using var context = new GudSafeContext();
+
+        var isInDb = context.Files.Any(x => x.ShortUrl == shortUrl);
 
         // Check if for some reason the short URL is already in the Database
         // Then we generate short URLs until we find one that isn't used yet!
@@ -346,10 +381,8 @@ public class GudFileController : BaseEntityController<GudFileController>
 
             shortUrl = base64String;
 
-            isInDb = Context.Files.Any(x => x.ShortUrl == shortUrl);
+            isInDb = context.Files.Any(x => x.ShortUrl == shortUrl);
         }
-
-        ;
 
         // Take the first 10 chars from the Base64 string
         file.ShortUrl = shortUrl[..10];
