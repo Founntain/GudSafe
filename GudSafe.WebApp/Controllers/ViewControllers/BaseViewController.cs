@@ -1,10 +1,8 @@
-using AspNetCoreHero.ToastNotification.Abstractions;
-using GudSafe.WebApp.Classes.Attributes;
+using RoverCore.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GudSafe.WebApp.Controllers.ViewControllers;
 
-[AjaxSinglePage]
 public class BaseViewController : Controller
 {
     public INotyfService Notyf { get; }

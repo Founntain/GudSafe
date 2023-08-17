@@ -1,5 +1,5 @@
-using AspNetCoreHero.ToastNotification;
-using AspNetCoreHero.ToastNotification.Extensions;
+using RoverCore.ToastNotification;
+using RoverCore.ToastNotification.Extensions;
 using GudSafe.Data;
 using GudSafe.Data.Configuration;
 using GudSafe.WebApp.Classes.Attributes;
@@ -28,7 +28,7 @@ public static class Startup
             builder.WebHost.UseUrls($"http://*:{configService.Container.Port}");
         else
             builder.WebHost.UseUrls($"http://localhost:{configService.Container.Port}");
-        
+
         builder.Services.Configure<ForwardedHeadersOptions>(options =>
         {
             options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -38,7 +38,12 @@ public static class Startup
 
         builder.Services.AddControllersWithViews();
 
-        builder.Services.AddMvc(options => { options.EnableEndpointRouting = false; }).AddControllersAsServices();
+        var mvcBuilder = builder.Services.AddMvc(options => { options.EnableEndpointRouting = false; }).AddControllersAsServices();
+        
+        if (builder.Environment.IsDevelopment())
+        {
+            mvcBuilder.AddRazorRuntimeCompilation();
+        }
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>

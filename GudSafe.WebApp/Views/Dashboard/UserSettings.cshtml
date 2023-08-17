@@ -43,9 +43,8 @@
     </form>
 </div>
 
+@section Scripts {
 <script>
-    setWindowTitle("@Html.Raw(ViewBag.Title)");
-
     function changePassword() {
         let data = $("#changePassword").serialize();
     
@@ -75,3 +74,4 @@
         });
     }
 </script>
+}

@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Security.Claims;
 using System.Text;
-using AspNetCoreHero.ToastNotification.Abstractions;
+using RoverCore.ToastNotification.Abstractions;
 using AutoMapper;
 using GudSafe.Data;
 using GudSafe.Data.Cryptography;
@@ -42,30 +42,29 @@ public class DashboardController : BaseViewController
         return RedirectToAction("Gallery");
     }
 
-    public IActionResult Gallery()
-    {
-        return View();
-    }
-
-    public async Task<IActionResult> GalleryPage(int pageNumber)
+    public async Task<IActionResult> Gallery(int page = 1)
     {
         var user = await FindUser();
 
         if (user == null) return BadRequest();
 
-        var pagedFiles = user.FilesUploaded.OrderByDescending(x => x.CreationTime).Skip((pageNumber - 1) * 18).Take(18);
-
         var pageCount = (int) Math.Ceiling(user.FilesUploaded.Count / 18d);
 
-        var view = PartialView(new GalleryViewModel
+        if (page < 1)
+            return RedirectToAction("Gallery", new {page = 1});
+
+        if (page > pageCount)
+            return RedirectToAction("Gallery", new {page = pageCount});
+
+        var pagedFiles = user.FilesUploaded.OrderByDescending(x => x.CreationTime).Skip((page - 1) * 18).Take(18);
+
+        var view = View(new GalleryViewModel
         {
             Files = pagedFiles.ToList(),
-            Page = pageNumber,
+            Page = page,
             TotalPages = pageCount
         });
-
-        Response.Headers.CacheControl = "no-cache, no-store";
-
+        
         return view;
     }
 
@@ -99,7 +98,6 @@ public class DashboardController : BaseViewController
         return View(viewModel);
     }
 
-    [IgnoreAjax]
     public async Task<IActionResult> ShareXProfile()
     {
         var user = await FindUser();
@@ -137,7 +135,6 @@ public class DashboardController : BaseViewController
     }
 
     [HttpPost]
-    [IgnoreAjax]
     public async Task<JsonResult> UploadFile()
     {
         if (Request.ContentType == null || !Request.ContentType.StartsWith("multipart/form-data"))

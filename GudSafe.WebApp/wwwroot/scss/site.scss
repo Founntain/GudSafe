@@ -1,0 +1,151 @@
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "../bootstrap/scss/functions";
+
+// 2. Include any default variable overrides here
+//$color-mode-type: "";
+
+$body-color-dark: #f2e9e9;
+$body-bg-dark: #222;
+$body-secondary-bg-dark: #29292d;
+$body-tertiary-bg-dark: tint-color($body-bg-dark, 6%);
+$border-color-dark: tint-color($body-bg-dark, 15%);
+$link-color-dark: rgba(255, 255, 255, 0.65);
+
+$primary-dark: #f39c12;
+//$secondary-dark: #88C2CE;
+
+$body-color: #161616;
+$body-bg: white;
+$body-secondary-bg: #f6f6f6;
+$body-tertiary-bg: shade-color($body-bg, 6%);
+$border-color: shade-color($body-bg, 15%);
+$link-color: rgba(0, 0, 0, 0.65);
+
+$primary: #f39c12;
+//$secondary: #88C2CE;
+//$tertiary: #33364c;
+
+$nav-link-font-weight: 500;
+
+// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
+@import "../bootstrap/scss/variables";
+@import "../bootstrap/scss/variables-dark";
+
+// 4. Include any default map overrides here
+
+// 5. Include remainder of required parts
+@import "../bootstrap/scss/maps";
+@import "../bootstrap/scss/mixins";
+@import "../bootstrap/scss/root";
+
+//$theme-colors-dark: null !default;
+
+//@if ($enable-dark-mode) {
+//  $theme-colors-dark: (
+//          "primary": $primary-dark,
+//          "secondary": $secondary-dark,
+//  );
+//
+//  $theme-colors-dark-rgb: map-loop($theme-colors-dark, to-rgb, "$value") !default;
+//
+//  @include color-mode(dark, true) {
+//    @each $color, $value in $theme-colors-dark {
+//      --#{$prefix}#{$color}: #{$value};
+//    }
+//
+//    @each $color, $value in $theme-colors-dark-rgb {
+//      --#{$prefix}#{$color}-rgb: #{$value};
+//    }
+//  }
+//}
+
+// 6. Optionally include any other parts as needed
+@import "../bootstrap/scss/utilities";
+@import "../bootstrap/scss/reboot";
+@import "../bootstrap/scss/type";
+@import "../bootstrap/scss/images";
+@import "../bootstrap/scss/containers";
+@import "../bootstrap/scss/grid";
+@import "../bootstrap/scss/helpers";
+@import "../bootstrap/scss/buttons";
+@import "../bootstrap/scss/button-group";
+@import "../bootstrap/scss/forms";
+@import "../bootstrap/scss/nav";
+@import "../bootstrap/scss/navbar";
+@import "../bootstrap/scss/dropdown";
+@import "../bootstrap/scss/modal";
+@import "../bootstrap/scss/close";
+@import "../bootstrap/scss/list-group";
+@import "../bootstrap/scss/transitions";
+
+// 7. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
+@import "../bootstrap/scss/utilities/api";
+
+html {
+  font-size: 14px;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+[data-bs-theme="dark"] .navbar, .footer {
+  border-color: black !important;
+}
+
+.mx-1p {
+  margin-left: 1px !important;
+  margin-right: 1px !important;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+.footer {
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+.uploadContainer {
+  height: 250px;
+  width: 250px;
+  border: 1px #21252B solid;
+  border-radius: 5px;
+}
+
+.upload {
+  width: auto;
+  height: 200px;
+  border-radius: 5px;
+  display: block;
+  max-width: 100%;
+  object-fit: contain;
+  margin: auto;
+}
+
+.uploadBox {
+  height: 100%;
+  width: 100%;
+  display: inline-block;
+}
+
+.btn:focus {
+  box-shadow: none !important;
+}
+
+.form-control:focus {
+  box-shadow: none !important;
+}
+
+.form-select:focus {
+  box-shadow: none !important;
+}

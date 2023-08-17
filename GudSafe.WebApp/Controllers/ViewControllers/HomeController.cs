@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 using System.Security.Claims;
-using AspNetCoreHero.ToastNotification.Abstractions;
+using RoverCore.ToastNotification.Abstractions;
 using GudSafe.Data;
 using GudSafe.Data.Cryptography;
 using GudSafe.Data.ViewModels;

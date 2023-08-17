@@ -1,50 +1,96 @@
+@model GudSafe.Data.ViewModels.GalleryViewModel
+
 @{
     ViewData["Title"] = "Your Gallery";
+
+    int prevPage;
+    var prevDisabled = false;
+    int nextPage;
+    var nextDisabled = false;
+    if (Model.Page - 1 > 0)
+    {
+        prevPage = Model.Page - 1;
+    }
+    else
+    {
+        prevPage = 1;
+        prevDisabled = true;
+    }
+    if (Model.Page + 1 <= Model.TotalPages)
+    {
+        nextPage = Model.Page + 1;
+    }
+    else
+    {
+        nextPage = Model.TotalPages;
+        nextDisabled = true;
+    }
 }
 
-<div id="gallery">
+<div class="text-center">
+    <div class="input-group justify-content-center my-4">
+        <a class="btn btn-secondary mx-1p 
+           @if (prevDisabled)
+           {
+               @Html.Raw("disabled")
+           }"
+           @if (!prevDisabled)
+           {
+               @Html.Raw("href=\"/Dashboard/Gallery?page=" + prevPage + "\"")
+           }
+           onclick="loadGalleryPage(@prevPage)">
+            Prev
+        </a>
+        <a class="btn btn-secondary mx-1p 
+           @if (nextDisabled)
+           {
+               @Html.Raw("disabled")
+           }"
+           @if (!nextDisabled)
+           {
+               @Html.Raw("href=\"/Dashboard/Gallery?page=" + nextPage + "\"")
+           }
+           onclick="loadGalleryPage(@nextPage)">
+            Next
+        </a>
+    </div>
+
+    <div class="row">
+        @{
+            if (Model.Files == null) return;
+
+            foreach (var file in Model.Files)
+            {
+                <div class="col-lg-2 col-md-3 col-sm-6 mb-4 d-flex flex-column" id="@file.UniqueId">
+                    <div class="uploadBox align-self-center">
+                        @if (string.IsNullOrWhiteSpace(file.ShortUrl))
+                        {
+                            <a target="_blank" href="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId.@file.FileExtension">
+                                <img class="upload" src="@Context.Request.Scheme://@Context.Request.Host/files/@file.UniqueId.@file.FileExtension/thumbnail"/>
+                            </a>
+                        }
+                        else
+                        {
+                            <a target="_blank" href="@Context.Request.Scheme://@Context.Request.Host/files/@file.ShortUrl.@file.FileExtension">
+                                <img class="upload" src="@Context.Request.Scheme://@Context.Request.Host/files/@file.ShortUrl.@file.FileExtension/thumbnail"/>
+                            </a>
+                        }
+
+                    </div>
+
+                    <div>
+                        <p>@file.CreationTime.ToString("g", CultureInfo.CurrentCulture)</p>
+                        <hr/>
+                        <button class="btn btn-outline-danger align-self-end p-1" type="button" onclick="deleteFile('@file.UniqueId.ToString()')">
+                            <span class="bi bi-trash fs-5" width="32" height="32" fill="white" viewBox="0 0 32 32"></span>
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    </div>
 </div>
 
-<script>
-    setWindowTitle("@Html.Raw(ViewBag.Title)");
-    
-    $(async function () {
-        loadGalleryPage(window.galleryData.currentPage);
-    
-        try {
-            await window.galleryData.connection.start();
-        } catch (err) {
-            console.log(err);
-        }
-    });
-    
-    window.galleryData.connection.on("RefreshFiles", function () {
-        loadGalleryPage(1);
-    });
-    
-    function loadGalleryPage(pageNumber) {
-        $.ajax({
-            url: "@Url.Action("GalleryPage")",
-            type: 'GET',
-            data: {pageNumber: pageNumber},
-            success: function (data) {
-                window.galleryData.currentPage = pageNumber;
-                $('#gallery').html(data);
-            }
-        });
-    }
-    
-    function deleteFile(id) {
-        $.ajax({
-            url: "@Url.Action("DeleteFile")",
-            type: "POST",
-            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-            data: {id: id},
-            success: function (result) {
-                if (result.success) {
-                    loadGalleryPage(window.galleryData.currentPage);
-                }
-            }
-        });
-    }
-</script>
+@section Scripts {
+    <script src="~/js/gallery.js"></script>
+}
