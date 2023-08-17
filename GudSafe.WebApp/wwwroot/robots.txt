@@ -1,4 +1,4 @@
 User-Agent: *
-Allow: /
-Allow: /Home/*
-Disallow: /Dashboard/*
+Disallow: /Dashboard/
+Disallow: /f/
+Disallow: /files/
