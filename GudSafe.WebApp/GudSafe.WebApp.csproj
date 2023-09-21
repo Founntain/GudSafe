@@ -22,7 +22,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.0" />
         <PackageReference Include="Octokit" Version="4.0.1" />
         <PackageReference Include="RoverCore.ToastNotification" Version="1.2.3" />
-        <PackageReference Include="SkiaSharp" Version="2.88.3" />
+        <PackageReference Include="SkiaSharp" Version="2.88.6" />
         <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
     </ItemGroup>
 
